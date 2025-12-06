@@ -13,8 +13,8 @@ public class GameCycle : MonoBehaviour
     private int _completedTasks = 0;
     private float _isRabbitHere = 0;
     private float _rabbitInterval;
-    private TaskManager _taskManager;
-    private UIManager _uiManager;
+    //!private TaskManager _taskManager;
+    //!private UIManager _uiManager;
     
     private enum GameState
     {
@@ -51,53 +51,53 @@ public class GameCycle : MonoBehaviour
         _taskTimer = 0f;
         _timer = 0f;
         _completedTasks = 0;
-        _isRabbitHere = false;
+        //!_isRabbitHere = false;
     }
-    void GameCycleUpdate() 
-    {
-        if (_currentState != GameState.Playing) return;
-        UpdateTimer();
-        if (!_isRabbitHere) 
-        {
-            UpdateRabbitTimer();
-            UpdateStress(0.2);
-        }
-        else
-        {
-            UpdateNoRabbitTimer();
-            UpdateStress(0.1);
-        }
+    //! void GameCycleUpdate() 
+    // {
+    //     if (_currentState != GameState.Playing) return;
+    //     UpdateTimer();
+    //     if (!_isRabbitHere) 
+    //     {
+    //         UpdateRabbitTimer();
+    //         UpdateStress(0.2);
+    //     }
+    //     else
+    //     {
+    //         UpdateNoRabbitTimer();
+    //         UpdateStress(0.1);
+    //    }
 
-        CheckIsGameOver();
-    }
+    //     CheckIsGameOver();
+    // }
 
     public void StartGame()
     {
         InitializeGame();
         _currentState = GameState.Playing;
     }
-    public void PauseGame()
-    {
-        if (_currentState == GameState.Playing)
-        {
-            _currentState = GameState.Paused;
-            Time.timeScale = 0f;
-        }
-    }
+    // public void PauseGame()
+    // {
+    //     if (_currentState == GameState.Playing)
+    //     {
+    //         _currentState = GameState.Paused;
+    //         Time.timeScale = 0f;
+    //     }
+    // }
     
     // Возобновить игру
-    public void ResumeGame()
-    {
-        if (_currentState == GameState.Paused)
-        {
-            _currentState = GameState.Playing;
-            Time.timeScale = 1f;
-        }
-    }
-    public void QuitGame()
-    {
-        EndGame(GameResult.Quit);
-    }
+    // public void ResumeGame()
+    // {
+    //     if (_currentState == GameState.Paused)
+    //     {
+    //         _currentState = GameState.Playing;
+    //         Time.timeScale = 1f;
+    //     }
+    // }
+    // public void QuitGame()
+    // {
+    //     EndGame(GameResult.Quit);
+    // }
 
     private void UpdateTimer()
     {
