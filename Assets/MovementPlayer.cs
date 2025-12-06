@@ -17,6 +17,6 @@ public class MovementPlayer : MonoBehaviour
             Input.GetAxisRaw("Horizontal"), 
             Input.GetAxisRaw("Vertical")
         ).normalized;
-        rb.velocity = rawInput * moveSpeed;
+        rb.linearVelocity = rawInput * moveSpeed;
     }
 }
