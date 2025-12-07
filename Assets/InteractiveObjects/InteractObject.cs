@@ -5,8 +5,10 @@ namespace InteractiveObjects
 {
     abstract public class InteractObject : MonoBehaviour
     {
-        [SerializeField]
-        private int id = 1;
+        [Header("Object")]
+        [SerializeField] private int id = 1;
+        [SerializeField] private Transform _item_placement;
+        private bool _is_visible = false;
         public int ID => id;
         public string State {get; protected set;} = "Недоступен";
 
