@@ -1,6 +1,6 @@
 using UnityEngine;
 using DialogueManager;
-
+namespace Bunny {
 public class BunnyDialogueManager : DialogueManager.DialogueManager
 {
     private Bunny _activeBunny;
@@ -87,5 +87,6 @@ public class BunnyDialogueManager : DialogueManager.DialogueManager
             }
             
             _activeBunny = null; // Сброс ссылки
+    }
     }
     }

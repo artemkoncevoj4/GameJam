@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+namespace Bunny {
 // Определяем простой класс для задачи (не ScriptableObject, а обычный класс)
 public class GameTask
 {
@@ -147,4 +147,5 @@ public class TestTaskManager : MonoBehaviour
             CompleteCurrentTask();
         }
     }
+}
 }

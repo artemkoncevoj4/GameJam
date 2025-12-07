@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+namespace Bunny {
 public class BunnyManager : MonoBehaviour
 {
     [SerializeField] private Bunny _bunny;
@@ -49,4 +49,5 @@ public class BunnyManager : MonoBehaviour
             _bunny.Appear();
         }
     }
+}
 }

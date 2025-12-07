@@ -123,7 +123,7 @@ namespace DialogueManager {
             // Показываем TextCloud, скрываем индикатор
             textCloud.SetActive(true);
             isDialogueActive = true;
-            
+
             if (continueText != null)
                 continueText.gameObject.SetActive(false);
             
@@ -178,7 +178,7 @@ namespace DialogueManager {
             foreach (char letter in sentence.ToCharArray())
             {
                 dialogueText.text += letter;
-                yield return new WaitForSeconds(0.01f); // Используем ту же задержку, что и раньше
+                yield return null;
             }
             
             isTyping = false;

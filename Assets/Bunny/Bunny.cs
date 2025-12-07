@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DialogueManager;
+namespace Bunny {
 public class Bunny : MonoBehaviour
 {
     [Header("Позиция появления")]
@@ -247,4 +248,5 @@ public class Bunny : MonoBehaviour
         SetVisible(false);
     }
     
+}
 }
