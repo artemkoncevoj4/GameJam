@@ -29,7 +29,7 @@ namespace Bunny {
         private bool _isActive = false;
         private bool _isTaskPresent = false;
         private Coroutine _currentBehavior;
-
+        private ScreenFad screenFader;
         private BunnyDialogueManager _bunnyDialogueManager;
         [Header("Диалоги Зайца")] 
         [SerializeField] private Dialogue _shoutDialogue;
@@ -324,7 +324,8 @@ namespace Bunny {
             }
             else if (randomEffect < 0.8f)
             {
-                 screenFader.FadeScreen();
+                screenFader.FadeScreen();
+                Debug.Log("Хаос: экран потемнел!");
             }
             else
             {

@@ -3,65 +3,64 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class ScreenFader : MonoBehaviour
+namespace Shaders
 {
-    [SerializeField] private Image fadeImage;
-    [SerializeField] private float fadeDuration = 1f;
-
-    void Awake()
+    public class ScreenFad : MonoBehaviour
     {
-        if (fadeImage == null)
+        [SerializeField] private Image fadeImage;
+        [SerializeField] private float fadeDuration = 1f;
+
+        void Awake()
         {
-            Debug.LogError("ScreenFader: fadeImage doesn't exist!");
-            return;
+
+
+            if (fadeImage == null)
+            {
+                Debug.LogError("ScreenFader: fadeImage doesn't exist!");
+                return;
+            }
+
+            SetAlpha(0f);
         }
 
-        SetAlpha(0f);
-    }
-
-    public void Fade_in()
-    {
-        StartCoroutine(Fade(0.7f));
-    }
-
-    public void Fade_out()
-    {
-        StartCoroutine(Fade(0f));
-    }
-
-    private System.Collections.IEnumerator Fade(float targetAlpha)
-    {
-        float startAlpha = fadeImage.color.a;
-        float time = 0f;
-
-        while (time < fadeDuration)
-        {
-            float alpha = Mathf.Lerp(startAlpha, targetAlpha, time / fadeDuration);
-            SetAlpha(alpha);
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        SetAlpha(targetAlpha);
-    }
-
-    private void SetAlpha(float alpha)
-    {
-        Color c = fadeImage.color;
-        c.a = alpha;
-        fadeImage.color = c;
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Fade_out();
-        }
-        if (Input.GetKeyDown(KeyCode.G))
+        public IEnumerator FadeScreen()
         {
             Fade_in();
+            yield return new WaitForSeconds(3f);
+            Fade_out();
+        }
+
+        public void Fade_in()
+        {
+            StartCoroutine(Fade(0.7f));
+        }
+
+        public void Fade_out()
+        {
+            StartCoroutine(Fade(0f));
+        }
+
+        private IEnumerator Fade(float targetAlpha)
+        {
+            float startAlpha = fadeImage.color.a;
+            float time = 0f;
+
+            while (time < fadeDuration)
+            {
+                float alpha = Mathf.Lerp(startAlpha, targetAlpha, time / fadeDuration);
+                SetAlpha(alpha);
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            SetAlpha(targetAlpha);
+        }
+
+        private void SetAlpha(float alpha)
+        {
+            Color c = fadeImage.color;
+            c.a = alpha;
+            fadeImage.color = c;
         }
     }
 }
