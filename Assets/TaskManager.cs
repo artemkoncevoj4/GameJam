@@ -483,12 +483,12 @@ public class TaskManager : MonoBehaviour
 
     public string GetTaskTitle()
     {
-        return _currentTask.Title
+        return _currentTask.Title;
     }
 
     public string GetTaskDesription()
     {
-        return _currentTask.Description
+        return _currentTask.Description;
     }
 
     public List<string> GetRequiredItemsForCurrentTask()

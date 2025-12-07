@@ -159,33 +159,37 @@ public class Bunny : MonoBehaviour
     
    //* ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
     
+    public string BunnyName => _shoutDialogue != null ? _shoutDialogue.name : "Заяц";
+
     private void AssignOrModifyTask()
     {
-        Dialogue dialogueData = _shoutDialogue; 
+        if (_bunnyDialogueManager == null) return; // Проверка на Null
         
-        // 1. Проверяем, есть ли следующее предложение
-        if (dialogueData == null || _currentDialogueIndex >= dialogueData.sentences.Length)
+        string sentenceToStart = string.Empty;
+        
+        if (TestTaskManager.Instance != null)
         {
-            Debug.Log("Bunny: Все реплики диалога исчерпаны. Заяц уходит насовсем.");
-            // Здесь можно вызвать более длительный уход или EndGame
+            // 1. [КЛЮЧЕВОЙ МОМЕНТ] Вызываем функцию у TaskManager для получения строки.
+            sentenceToStart = TaskManager.Instance.GetTaskDesription();
+        }
+
+        // 2. Проверяем, есть ли что говорить.
+        if (string.IsNullOrEmpty(sentenceToStart))
+        {
+            Debug.Log($"Bunny: Все реплики диалога исчерпаны (индекс {_currentDialogueIndex}). Заяц уходит.");
             Leave(); 
             return;
         }
 
-        // 2. Создаем временный объект Dialogue только с одним текущим предложением
+        // 3. Создаем временный объект Dialogue только с одной текущей строкой.
         Dialogue singleSentenceDialogue = new Dialogue
         {
-            name = dialogueData.name,
-            sentences = new string[] { dialogueData.sentences[_currentDialogueIndex] }
+            name = BunnyName, // Используем имя Зайца из старого объекта Dialogue
+            sentences = new string[] { sentenceToStart }
         };
         
-        // 3. Запускаем диалог
-        if (_bunnyDialogueManager != null)
-        {
-            _bunnyDialogueManager.StartBunnyDialogue(singleSentenceDialogue, this);
-            // Индекс увеличится в BunnyDialogueManager.EndDialogue, 
-            // так как нам нужно знать, что предложение было успешно показано.
-        }
+        // 4. Запускаем диалог
+        _bunnyDialogueManager.StartBunnyDialogue(singleSentenceDialogue, this);
     }
     
     private void TriggerChaosEffect()
