@@ -1,4 +1,4 @@
-/*using UnityEngine;
+using UnityEngine;
 
 namespace InteractiveObjects
 {
@@ -23,29 +23,46 @@ namespace InteractiveObjects
 
             OnInteractionStarted();
 
-            // Сообщаем TaskManager о взятии предмета
-            if (TaskManager.Instance != null)
+            if (PlayerInventory.Instance != null && PlayerInventory.Instance.AddItem(_itemType))
             {
-                TaskManager.Instance.ReportItemCollected(_itemType, id); //task manager
+                // Сообщаем TaskManager о взятии предмета (для возможной внутренней логики)
+                if (TaskManager.Instance != null)
+                {
+                    // TaskManager.Instance.ReportItemCollected(_itemType, ID); // ID из InteractObject
+                }
+
+                // Визуальные и звуковые эффекты
+                PlayPickupEffects();
+
+                // Делаем предмет невидимым/неактивным
+                _isCollected = true;
+                State = "Собран";
+
+                // Отключаем коллайдер и рендерер (предполагаем наличие)
+                var renderer = GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.enabled = false;
+                }
+
+                // Деактивируем на время, пока не будет респавна
+                gameObject.SetActive(false);
+
+                Debug.Log($"Предмет {_itemType} собран (ID: {ID})");
             }
-
-            // Визуальные и звуковые эффекты
-            PlayPickupEffects();
-
-            // Делаем предмет невидимым/неактивным
-            _isCollected = true;
-            State = "Собран";
-
-            // Отключаем коллайдер и рендерер
-            GetComponent<SpriteRenderer>().enabled = false;
-
-            Debug.Log($"Предмет {_itemType} собран (ID: {id})");
+            else
+            {
+                // Не удалось добавить предмет (инвентарь полон)
+                _isCollected = false;
+                State = "Готов к сбору";
+            }
         }
 
         private void PlayPickupEffects()
         {
             if (_pickupSound != null)
             {
+                // Предполагается наличие AudioSource
                 AudioSource.PlayClipAtPoint(_pickupSound, transform.position);
             }
 
@@ -62,4 +79,4 @@ namespace InteractiveObjects
             Gizmos.DrawWireSphere(transform.position, 0.5f);
         }
     }
-}*/
+}

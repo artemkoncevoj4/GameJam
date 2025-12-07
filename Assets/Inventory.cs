@@ -1,12 +1,14 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance { get; private set; }
 
     private List<string> _collectedItems = new List<string>();
-    //private int _maxItems = 3; // Максимум предметов за раз
+    [SerializeField] private int _maxItems = 3; // Максимум предметов за раз
+    public event Action OnInventoryChanged;
 
     void Awake()
     {
@@ -33,21 +35,35 @@ public class PlayerInventory : MonoBehaviour
 
         _collectedItems.Add(itemType);
         Debug.Log($"Добавлен предмет: {itemType}. Всего: {_collectedItems.Count}");
+        OnInventoryChanged?.Invoke();
         return true;
     }
 
     public bool RemoveItem(string itemType)
     {
-        return _collectedItems.Remove(itemType);
+        bool removed = _collectedItems.Remove(itemType);
+        if (removed)
+        {
+            Debug.Log($"Удален предмет: {itemType}");
+            OnInventoryChanged?.Invoke();
+        }
+        return removed;
     }
 
     public void ClearInventory()
     {
         _collectedItems.Clear();
+        OnInventoryChanged?.Invoke();
+        Debug.Log("Инвентарь полностью очищен.");
     }
 
     public List<string> GetItems()
     {
         return new List<string>(_collectedItems);
     }
-}*/
+
+    public int GetitemCount()
+    {
+        return _collectedItems.Count;
+    }
+}

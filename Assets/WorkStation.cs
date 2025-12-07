@@ -1,4 +1,5 @@
-/*using UnityEngine;
+using UnityEngine;
+using System.Collections.Generic; // Добавлено для List
 
 namespace InteractiveObjects
 {
@@ -6,7 +7,8 @@ namespace InteractiveObjects
     {
         [Header("Настройки станции")]
         [SerializeField] private string _stationType = "desk"; // Тип станции
-        [SerializeField] private List<GameObject> _requiredItems = []; // Нужнie предметi //task manager
+        // Исправлено: List должен быть string, а не GameObject, чтобы работать с инвентарем
+        [SerializeField] private List<string> _requiredItems = new List<string>();
         [SerializeField] private Transform _itemPlacementPoint; // Где разместить предмет
 
         private bool _isUsed = false;
@@ -20,48 +22,59 @@ namespace InteractiveObjects
 
         public override void Interact()
         {
-            if (_isUsed) return;
+            if (_isUsed)
+            {
+                Debug.Log($"Станция {_stationType} уже используется.");
+                return;
+            }
 
-            // Проверяем, есть ли у игрока нужный предмет
-            if (PlayerInventory.Instance != null)
+            if (PlayerInventory.Instance == null) return;
+
+            // Проверяем, есть ли у игрока **один** из нужных предметов
+            string itemToUse = null;
+            foreach (string item in _requiredItems)
+            {
+                if (PlayerInventory.Instance.HasItem(item))
+                {
+                    itemToUse = item;
+                    break;
+                }
+            }
+
+            if (itemToUse != null)
             {
                 OnInteractionStarted();
-                foreach (item in _requiredItems)
-                {
-                    if (PlayerInventory.Instance.HasItem(item))
-                    {
-                        UseStation(item);
-                    }
-                }
-                _isUsed = true;
-                State = "Использована";
+                UseStation(itemToUse);
             }
             else
             {
-                Debug.Log($"Для использования нужен: {_requiredItems}");
-                // Можно показать сообщение игроку
+                Debug.Log($"Для использования станции {_stationType} нужен один из предметов: {string.Join(", ", _requiredItems)}");
             }
         }
 
         private void UseStation(string item)
         {
             // Игрок использует предмет на станции
-            PlayerInventory.Instance?.RemoveItem(item);
-            _requiredItemType.Remove(item)
-
-            // Показываем визуализацию предмета
-            if (item != null)
+            if (PlayerInventory.Instance.RemoveItem(item))
             {
-                item.SetActive(true);
-            }
+                _isUsed = true;
+                State = "Использована";
 
-            // Сообщаем TaskManager об использовании
-            if (TaskManager.Instance != null)
-            {
-                TaskManager.Instance.ReportStationUsed(_stationType, item, id);
-            }
+                // TODO: Добавить логику визуализации предмета
+                // if (_itemPlacementPoint != null)
+                // {
+                //     _placedItem = Instantiate(ItemPrefab, _itemPlacementPoint.position, Quaternion.identity);
+                // }
 
-            Debug.Log($"Станция {_stationType} использована с предметом {item}");
+                // Сообщаем TaskManager об использовании
+                if (TaskManager.Instance != null)
+                {
+                    // В реальной игре вам потребуется передавать ID станции
+                    //TaskManager.Instance.ReportStationUsed(_stationType, item, ID);
+                }
+
+                Debug.Log($"Станция {_stationType} использована с предметом {item}");
+            }
         }
 
         public void ResetStation()
@@ -69,8 +82,12 @@ namespace InteractiveObjects
             _isUsed = false;
             State = "Ожидает предмет";
 
-            if (_itemVisualization != null)
-                _itemVisualization.SetActive(false);
+            // TODO: Уничтожить или скрыть _placedItem
+            if (_placedItem != null)
+            {
+                Destroy(_placedItem);
+                _placedItem = null;
+            }
         }
     }
-}*/
+}
