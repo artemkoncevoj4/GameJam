@@ -120,6 +120,10 @@ namespace DialogueManager {
             if (continueText != null)
                 continueText.gameObject.SetActive(false);
             
+            if (dialogueText != null) 
+            {
+                dialogueText.text = ""; 
+            }
             // Устанавливаем имя
             nameText.text = dialogue.name;
 

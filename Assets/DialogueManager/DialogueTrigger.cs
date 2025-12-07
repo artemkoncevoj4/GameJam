@@ -6,23 +6,11 @@ namespace DialogueManager {
     public class DialogueTrigger : MonoBehaviour
     {
         public Dialogue dialogue;
-        private bool hasTriggered = false;
         
-        void Start()
-        {
-            Debug.Log("[DialogueTrigger] Start() called on " + gameObject.name);
-            
-            if (!hasTriggered)
-            {
-                Debug.Log("[DialogueTrigger] Triggering dialogue...");
-                TriggerDialogue();
-                hasTriggered = true;
-            }
-            else
-            {
-                Debug.Log("[DialogueTrigger] Dialogue already triggered, skipping");
-            }
-        }
+        // Переменная hasTriggered теперь не нужна, т.к. диалог не будет 
+        // запускаться автоматически, и нам не нужно проверять, был ли он запущен.
+        
+        // МЕТОД START() УДАЛЕН, чтобы диалог не запускался при загрузке сцены.
         
         public void TriggerDialogue()
         {
