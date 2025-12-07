@@ -5,8 +5,10 @@ using UnityEngine;
 public class Bunny : MonoBehaviour
 {
     [Header("Позиция появления")]
-    [SerializeField] private Transform _appearPoint; // Дверь или окно, куда прибегает заяц
-    
+    [SerializeField] private Transform _appearPoint_Window;
+    [SerializeField] private Transform _appearPoint_Door1;
+    [SerializeField] private Transform _appearPoint_Door2;// Дверь или окно, куда прибегает заяц
+
     [Header("Настройки поведения")]
     [SerializeField] private float _shoutDuration = 3f; // Сколько секунд заяц "кричит"
     [SerializeField] private float _peekChance = 0.6f; // Шанс подглядывания вместо крика
@@ -29,10 +31,10 @@ public class Bunny : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         
         SetVisible(false);
-        if (_appearPoint != null)
+        if (_appearPoint_Window != null)
         {
-            transform.position = _appearPoint.position;
-            transform.rotation = _appearPoint.rotation;
+            transform.position = _appearPoint_Window.position;
+            transform.rotation = _appearPoint_Window.rotation;
         }
     }
 
@@ -44,13 +46,26 @@ public class Bunny : MonoBehaviour
         SetVisible(true);
         
         bool willPeek = UnityEngine.Random.value < _peekChance;
+        bool whichDoor = UnityEngine.Random.value < 0.5f;
         
         if (willPeek)
         {
+            if (whichDoor)
+            {
+                transform.position = _appearPoint_Door1.position;
+                transform.rotation = _appearPoint_Door1.rotation;
+            }
+            else
+            {
+                transform.position = _appearPoint_Door2.position;
+                transform.rotation = _appearPoint_Door2.rotation;
+            }
             _currentBehavior = StartCoroutine(PeekBehavior());
         }
         else
         {
+            transform.position = _appearPoint_Window.position;
+            transform.rotation = _appearPoint_Window.rotation;
             _currentBehavior = StartCoroutine(ShoutBehavior());
         }
         Debug.Log($"Заяц появился! Поведение: {(willPeek ? "Подглядывает" : "Кричит")}");
@@ -217,14 +232,4 @@ public class Bunny : MonoBehaviour
     
     public bool IsActive => _isActive;
     
-    // Для отладки
-    void OnDrawGizmos()
-    {
-        if (_appearPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(_appearPoint.position, 0.3f);
-            Gizmos.DrawLine(transform.position, _appearPoint.position);
-        }
-    }
 }

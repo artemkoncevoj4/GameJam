@@ -35,10 +35,10 @@ public class SimpleStressIndicator : MonoBehaviour
         // Заполнение шкалы
         if (_fillBar != null)
         {
-            _fillBar.fillAmount = stressLevel;
+            _fillBar.fillAmount = stressLevel / 100;
 
             // Изменение цвета
-            Color stressColor = GetStressColor(stressLevel);
+            Color stressColor = GetStressColor(stressLevel / 100);
             _fillBar.color = stressColor;
         }
 
@@ -46,7 +46,7 @@ public class SimpleStressIndicator : MonoBehaviour
         if (_percentageText != null)
         {
             _percentageText.text = $"{Mathf.RoundToInt(stressLevel)}%";
-            _percentageText.color = GetStressColor(stressLevel);
+            _percentageText.color = GetStressColor(stressLevel / 100);
         }
 
         // Анимации

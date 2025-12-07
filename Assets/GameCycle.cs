@@ -107,7 +107,7 @@ public class GameCycle : MonoBehaviour
         if (!_isRabbitHere) 
         {
             UpdateRabbitTimer();
-            UpdateStress(0.1f);
+            UpdateStress(0.11f);
         }
         else
         {
@@ -183,7 +183,7 @@ public class GameCycle : MonoBehaviour
     {
         _stressLevel += Time.deltaTime * multiplier;
         OnStressLevelChanged?.Invoke(_stressLevel);
-        Debug.Log($"Stress Level {_stressLevel}");
+        //Debug.Log($"Stress Level {_stressLevel}");
     }
 
     public void AddStress(float stress)

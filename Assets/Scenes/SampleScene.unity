@@ -1300,7 +1300,7 @@ Transform:
   m_GameObject: {fileID: 657081056}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.93, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 0.965, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1558,6 +1558,7 @@ GameObject:
   - component: {fileID: 952822703}
   - component: {fileID: 952822705}
   - component: {fileID: 952822704}
+  - component: {fileID: 952822706}
   m_Layer: 5
   m_Name: StressBar_Panel
   m_TagString: Untagged
@@ -1624,6 +1625,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 952822702}
   m_CullTransparentMesh: 1
+--- !u!114 &952822706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952822702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 457839e7f5a0998449aead41c0b561c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleStressIndicator
+  _fillBar: {fileID: 582718652}
+  _percentageText: {fileID: 1974936151}
+  _animator: {fileID: 0}
 --- !u!1 &991583966
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,6 +1777,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1069717533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1069717534}
+  m_Layer: 0
+  m_Name: BunnyAppearPointDoor1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1069717534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1069717533}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 279, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1076645327
 GameObject:
   m_ObjectHideFlags: 0
@@ -2133,6 +2180,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1369001288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1369001289}
+  m_Layer: 0
+  m_Name: BunnyAppearPointDoor2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1369001289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369001288}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1465, y: 294, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1706604777
 GameObject:
   m_ObjectHideFlags: 0
@@ -2380,7 +2458,7 @@ Transform:
   m_GameObject: {fileID: 1794808917}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.8388, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 4.035835, y: 1.7729319, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2607,7 +2685,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99b1fd60d2f7b734cac5efcd70040bde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _appearPoint: {fileID: 2082918471}
+  _appearPoint_Window: {fileID: 2082918471}
+  _appearPoint_Door1: {fileID: 1069717534}
+  _appearPoint_Door2: {fileID: 1369001289}
   _shoutDuration: 3
   _peekChance: 0.6
   _peekDuration: 2
@@ -2973,7 +3053,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2082918471}
   m_Layer: 0
-  m_Name: BunnyAppearPoint
+  m_Name: BunnyAppearPointScream
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2988,7 +3068,7 @@ Transform:
   m_GameObject: {fileID: 2082918470}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 4.66, z: 0.9840171}
+  m_LocalPosition: {x: 734.5, y: 709, z: 0.9840171}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3006,3 +3086,5 @@ SceneRoots:
   - {fileID: 2082918471}
   - {fileID: 1092111834}
   - {fileID: 2061210130}
+  - {fileID: 1069717534}
+  - {fileID: 1369001289}
