@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 namespace TaskSystem
 {
     [System.Serializable]
-    public class DocumentRequirement // требования к документу
+    public class DocumentRequirement // С‚СЂРµР±РѕРІР°РЅРёСЏ Рє РґРѕРєСѓРјРµРЅС‚Сѓ
     {
         public string description;
         public InkColor requiredInkColor;
@@ -16,15 +16,15 @@ namespace TaskSystem
         public StampType requiredStampType;
         public bool isStamped;
         public bool isSigned;
-        public float timePenalty = 15f; // Штраф времени при неправильном выполнении
+        public float timePenalty = 15f; // РЁС‚СЂР°С„ РІСЂРµРјРµРЅРё РїСЂРё РЅРµРїСЂР°РІРёР»СЊРЅРѕРј РІС‹РїРѕР»РЅРµРЅРёРё
     }
 
-    public enum InkColor { Черные, Красные, Зеленые, Фиолетовые }
-    public enum SignaturePosition { Левый_нижний, Правый_нижний, Центр, Левая_сторона }
-    public enum PaperType { Бланк_формы_7_Б, Бланк_формы_АА_Я, Пергамент, Карточка }
-    public enum StampType { Одобрено, Отклонено, На_рассмотрении, Официальная_печать, Секретная_печать }
+    public enum InkColor { Р§РµСЂРЅС‹Рµ, РљСЂР°СЃРЅС‹Рµ, Р—РµР»РµРЅС‹Рµ, Р¤РёРѕР»РµС‚РѕРІС‹Рµ }
+    public enum SignaturePosition { Р›РµРІС‹Р№_РЅРёР¶РЅРёР№, РџСЂР°РІС‹Р№_РЅРёР¶РЅРёР№, Р¦РµРЅС‚СЂ, Р›РµРІР°СЏ_СЃС‚РѕСЂРѕРЅР° }
+    public enum PaperType { Р‘Р»Р°РЅРє_С„РѕСЂРјС‹_7_Р‘, Р‘Р»Р°РЅРє_С„РѕСЂРјС‹_РђРђ_РЇ, РџРµСЂРіР°РјРµРЅС‚, РљР°СЂС‚РѕС‡РєР° }
+    public enum StampType { РћРґРѕР±СЂРµРЅРѕ, РћС‚РєР»РѕРЅРµРЅРѕ, РќР°_СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё, РћС„РёС†РёР°Р»СЊРЅР°СЏ_РїРµС‡Р°С‚СЊ, РЎРµРєСЂРµС‚РЅР°СЏ_РїРµС‡Р°С‚СЊ }
 
-    public class BureaucraticTask // Хр-ки задания
+    public class BureaucraticTask // РҐСЂ-РєРё Р·Р°РґР°РЅРёСЏ
     {
         public int TaskID { get; private set; }
         public string Title { get; private set; }
@@ -37,7 +37,7 @@ namespace TaskSystem
         public bool IsCorrupted { get; private set; }
         public bool IsUrgent { get; private set; }
 
-        public BureaucraticTask(string title, DocumentRequirement req, float timeLimit, bool urgent = false) // Инициализация задания
+        public BureaucraticTask(string title, DocumentRequirement req, float timeLimit, bool urgent = false) // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р·Р°РґР°РЅРёСЏ
         {
             Title = title;
             Requirements = req;
@@ -47,7 +47,7 @@ namespace TaskSystem
             IsUrgent = urgent;
         }
 
-        public bool UpdateTimer(float deltaTime) // Изменение таймера задания
+        public bool UpdateTimer(float deltaTime) // РР·РјРµРЅРµРЅРёРµ С‚Р°Р№РјРµСЂР° Р·Р°РґР°РЅРёСЏ
         {
             if (IsCompleted || IsFailed) return false;
 
@@ -60,13 +60,13 @@ namespace TaskSystem
             return false;
         }
 
-        public void Corrupt() // Изменение задания
+        public void Corrupt() // РР·РјРµРЅРµРЅРёРµ Р·Р°РґР°РЅРёСЏ
         {
             if (IsCorrupted || IsCompleted) return;
 
             IsCorrupted = true;
 
-            // Случайно меняем одно или несколько требований
+            // РЎР»СѓС‡Р°Р№РЅРѕ РјРµРЅСЏРµРј РѕРґРЅРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРѕ С‚СЂРµР±РѕРІР°РЅРёР№
             int changes = Random.Range(1, 3);
             for (int i = 0; i < changes; i++)
             {
@@ -87,10 +87,10 @@ namespace TaskSystem
                 }
             }
 
-            Description = GenerateDescription(Requirements) + " (Требования изменены Кроликом!)";
+            Description = GenerateDescription(Requirements) + " (РўСЂРµР±РѕРІР°РЅРёСЏ РёР·РјРµРЅРµРЅС‹ РљСЂРѕР»РёРєРѕРј!)";
         }
 
-        public bool Validate(Document document) // Проверка документа на правльность
+        public bool Validate(Document document) // РџСЂРѕРІРµСЂРєР° РґРѕРєСѓРјРµРЅС‚Р° РЅР° РїСЂР°РІР»СЊРЅРѕСЃС‚СЊ
         {
             if (IsCompleted || IsFailed) return false;
 
@@ -106,28 +106,28 @@ namespace TaskSystem
             return isValid;
         }
 
-        public void Complete() // Выполнение задания
+        public void Complete() // Р’С‹РїРѕР»РЅРµРЅРёРµ Р·Р°РґР°РЅРёСЏ
         {
             IsCompleted = true;
             IsFailed = false;
         }
 
-        public void Fail() // Провал задания
+        public void Fail() // РџСЂРѕРІР°Р» Р·Р°РґР°РЅРёСЏ
         {
             IsFailed = true;
             IsCompleted = false;
         }
 
-        private string GenerateDescription(DocumentRequirement req) // Создание описания
+        private string GenerateDescription(DocumentRequirement req) // РЎРѕР·РґР°РЅРёРµ РѕРїРёСЃР°РЅРёСЏ
         {
-            return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
-                   $"Подпись: {req.requiredSignaturePos}. " +
-                   $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} " +
-                   $"Дедлайн: {TimeAssigned:F0} секунд.";
+            return $"Р—Р°РїРѕР»РЅРёС‚СЊ {req.requiredPaperType} {req.requiredInkColor} С‡РµСЂРЅРёР»Р°РјРё. " +
+                   $"РџРѕРґРїРёСЃСЊ: {req.requiredSignaturePos}. " +
+                   $"{(req.isStamped ? $"РЁС‚Р°РјРї: {req.requiredStampType}." : "Р‘РµР· С€С‚Р°РјРїР°.")} " +
+                   $"Р”РµРґР»Р°Р№РЅ: {TimeAssigned:F0} СЃРµРєСѓРЅРґ.";
         }
     }
 
-    public class Document // Документ
+    public class Document // Р”РѕРєСѓРјРµРЅС‚
     {
         public InkColor InkColor { get; set; }
         public SignaturePosition SignaturePos { get; set; }
@@ -142,35 +142,35 @@ public class TaskManager : MonoBehaviour
 {
     public static TaskManager Instance { get; private set; }
 
-    [Header("Настройки заданий")]
+    [Header("РќР°СЃС‚СЂРѕР№РєРё Р·Р°РґР°РЅРёР№")]
     [SerializeField] private float _baseTaskTime = 60f;
     [SerializeField] private float _timeReductionPerTask = 5f;
     [SerializeField] private float _minTaskTime = 20f;
     [SerializeField] private float _urgentTaskChance = 0.2f;
 
-    [Header("Предметы и станции")]
+    [Header("РџСЂРµРґРјРµС‚С‹ Рё СЃС‚Р°РЅС†РёРё")]
     [SerializeField] private List<string> _availableInkTypes = new List<string> { "ink_black", "ink_red", "ink_green", "ink_purple" };
     [SerializeField] private List<string> _availablePaperTypes = new List<string> { "form_7b", "form_aay", "parchment", "card" };
     [SerializeField] private List<string> _availableStampTypes = new List<string> { "stamp_approve", "stamp_reject", "stamp_review", "stamp_official", "stamp_secret" };
 
-    [Header("Рабочие станции")]
+    [Header("Р Р°Р±РѕС‡РёРµ СЃС‚Р°РЅС†РёРё")]
     [SerializeField] private List<InteractiveObjects.Workstation> _workstations = new List<InteractiveObjects.Workstation>();
 
-    // Текущее состояние
+    // РўРµРєСѓС‰РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ
     private TaskSystem.BureaucraticTask _currentTask = null;
     private TaskSystem.Document _currentDocument = null;
     private int _totalTasksCompleted = 0;
     private float _currentTaskTimeLimit;
     private bool _isTaskActive = false;
 
-    // События
+    // РЎРѕР±С‹С‚РёСЏ
     public event Action<TaskSystem.BureaucraticTask> OnNewTask;
     public event Action<TaskSystem.BureaucraticTask> OnTaskCompleted;
     public event Action<TaskSystem.BureaucraticTask> OnTaskFailed;
     public event Action<TaskSystem.BureaucraticTask> OnTaskCorrupted;
-    public event Action<float> OnTaskTimerUpdated; // Оставшееся время текущего задания
+    public event Action<float> OnTaskTimerUpdated; // РћСЃС‚Р°РІС€РµРµСЃСЏ РІСЂРµРјСЏ С‚РµРєСѓС‰РµРіРѕ Р·Р°РґР°РЅРёСЏ
 
-    void Awake() // Единственность TaskManager'a
+    void Awake() // Р•РґРёРЅСЃС‚РІРµРЅРЅРѕСЃС‚СЊ TaskManager'a
     {
         if (Instance != null && Instance != this)
         {
@@ -180,23 +180,23 @@ public class TaskManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start() // Начало игры
+    void Start() // РќР°С‡Р°Р»Рѕ РёРіСЂС‹
     {
-        // Подписка на события GameCycle
+        // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёСЏ GameCycle
         if (GameCycle.Instance != null)
         {
             GameCycle.Instance.OnRabbitActive += HandleRabbitInterference;
             GameCycle.Instance.StartGame();
         }
 
-        // Подписка на события инвентаря
+        // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёСЏ РёРЅРІРµРЅС‚Р°СЂСЏ
         if (PlayerInventory.Instance != null)
         {
             PlayerInventory.Instance.OnInventoryChanged += CheckTaskRequirements;
         }
     }
 
-    void OnDestroy() //Конец
+    void OnDestroy() //РљРѕРЅРµС†
     {
         if (GameCycle.Instance != null)
         {
@@ -209,28 +209,28 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    void Update() // Итерация цикла (OnTaskUpdated?)
+    void Update() // РС‚РµСЂР°С†РёСЏ С†РёРєР»Р° (OnTaskUpdated?)
     {
         if (GameCycle.Instance == null || GameCycle.Instance.CurrentState != GameCycle.GameState.Playing)
             return;
 
-        // Обновление таймера текущего задания
+        // РћР±РЅРѕРІР»РµРЅРёРµ С‚Р°Р№РјРµСЂР° С‚РµРєСѓС‰РµРіРѕ Р·Р°РґР°РЅРёСЏ
         if (_currentTask != null && !_currentTask.IsCompleted && !_currentTask.IsFailed)
         {
             if (_currentTask.UpdateTimer(Time.deltaTime))
             {
-                FailCurrentTask("Время вышло!");
+                FailCurrentTask("Р’СЂРµРјСЏ РІС‹С€Р»Рѕ!");
             }
 
             OnTaskTimerUpdated?.Invoke(_currentTask.TimeRemaining);
         }
     }
 
-    private void StartNewTask() // Создание задания
+    private void StartNewTask() // РЎРѕР·РґР°РЅРёРµ Р·Р°РґР°РЅРёСЏ
     {
         if (_isTaskActive)
         {
-            Debug.LogWarning("Попытка начать новое задание, когда текущее еще активно!");
+            Debug.LogWarning("РџРѕРїС‹С‚РєР° РЅР°С‡Р°С‚СЊ РЅРѕРІРѕРµ Р·Р°РґР°РЅРёРµ, РєРѕРіРґР° С‚РµРєСѓС‰РµРµ РµС‰Рµ Р°РєС‚РёРІРЅРѕ!");
             return;
         }
 
@@ -243,7 +243,7 @@ public class TaskManager : MonoBehaviour
         TaskSystem.DocumentRequirement req = GenerateRandomRequirements();
 
         _currentTask = new TaskSystem.BureaucraticTask(
-            isUrgent ? $"СРОЧНО: {GetRandomTaskTitle()}" : GetRandomTaskTitle(),
+            isUrgent ? $"РЎР РћР§РќРћ: {GetRandomTaskTitle()}" : GetRandomTaskTitle(),
             req,
             timeLimit,
             isUrgent
@@ -252,10 +252,10 @@ public class TaskManager : MonoBehaviour
         _isTaskActive = true;
         OnNewTask?.Invoke(_currentTask);
 
-        Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
+        Debug.Log($"<color=cyan>РќРѕРІРѕРµ Р·Р°РґР°РЅРёРµ: {_currentTask.Title}</color>");
         Debug.Log($"<color=white>{_currentTask.Description}</color>");
 
-        // Генерируем необходимые предметы в мире
+        // Р“РµРЅРµСЂРёСЂСѓРµРј РЅРµРѕР±С…РѕРґРёРјС‹Рµ РїСЂРµРґРјРµС‚С‹ РІ РјРёСЂРµ
         SpawnRequiredItems(req);
     }
 
@@ -263,57 +263,57 @@ public class TaskManager : MonoBehaviour
     {
         TaskSystem.DocumentRequirement req = new TaskSystem.DocumentRequirement();
 
-        // Случайные требования
+        // РЎР»СѓС‡Р°Р№РЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ
         req.requiredInkColor = (TaskSystem.InkColor)Random.Range(0, 4);
         req.requiredSignaturePos = (TaskSystem.SignaturePosition)Random.Range(0, 4);
         req.requiredPaperType = (TaskSystem.PaperType)Random.Range(0, 4);
         req.requiredStampType = (TaskSystem.StampType)Random.Range(0, 5);
-        req.isStamped = Random.value > 0.3f; // 70% шанс что нужен штамп
-        req.isSigned = Random.value > 0.1f; // 90% шанс что нужна подпись
+        req.isStamped = Random.value > 0.3f; // 70% С€Р°РЅСЃ С‡С‚Рѕ РЅСѓР¶РµРЅ С€С‚Р°РјРї
+        req.isSigned = Random.value > 0.1f; // 90% С€Р°РЅСЃ С‡С‚Рѕ РЅСѓР¶РЅР° РїРѕРґРїРёСЃСЊ
         req.timePenalty = 15f;
 
         return req;
-    } // Рандомные требования (дописать изменение штрафа)
+    } // Р Р°РЅРґРѕРјРЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ (РґРѕРїРёСЃР°С‚СЊ РёР·РјРµРЅРµРЅРёРµ С€С‚СЂР°С„Р°)
 
-    private string GetRandomTaskTitle() // Случайные названия
+    private string GetRandomTaskTitle() // РЎР»СѓС‡Р°Р№РЅС‹Рµ РЅР°Р·РІР°РЅРёСЏ
     {
         string[] titles = {
-            "Заполнить форму 7-Б",
-            "Подписать договор А-42",
-            "Заверить копию документа",
-            "Оформить разрешение 3-Г",
-            "Зарегистрировать обращение",
-            "Составить отчет по разделу 4",
-            "Утвердить смету расходов",
-            "Заполнить налоговую декларацию"
+            "Р—Р°РїРѕР»РЅРёС‚СЊ С„РѕСЂРјСѓ 7-Р‘",
+            "РџРѕРґРїРёСЃР°С‚СЊ РґРѕРіРѕРІРѕСЂ Рђ-42",
+            "Р—Р°РІРµСЂРёС‚СЊ РєРѕРїРёСЋ РґРѕРєСѓРјРµРЅС‚Р°",
+            "РћС„РѕСЂРјРёС‚СЊ СЂР°Р·СЂРµС€РµРЅРёРµ 3-Р“",
+            "Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ РѕР±СЂР°С‰РµРЅРёРµ",
+            "РЎРѕСЃС‚Р°РІРёС‚СЊ РѕС‚С‡РµС‚ РїРѕ СЂР°Р·РґРµР»Сѓ 4",
+            "РЈС‚РІРµСЂРґРёС‚СЊ СЃРјРµС‚Сѓ СЂР°СЃС…РѕРґРѕРІ",
+            "Р—Р°РїРѕР»РЅРёС‚СЊ РЅР°Р»РѕРіРѕРІСѓСЋ РґРµРєР»Р°СЂР°С†РёСЋ"
         };
         return titles[Random.Range(0, titles.Length)];
     }
 
-    private void SpawnRequiredItems(TaskSystem.DocumentRequirement req) // Спавн предметов для задания (пока пусто)
+    private void SpawnRequiredItems(TaskSystem.DocumentRequirement req) // РЎРїР°РІРЅ РїСЂРµРґРјРµС‚РѕРІ РґР»СЏ Р·Р°РґР°РЅРёСЏ (РїРѕРєР° РїСѓСЃС‚Рѕ)
     {
-        // Здесь должна быть логика спавна предметов в мире
-        // Например, создание нужных чернил, бумаги и штампа
+        // Р—РґРµСЃСЊ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Р»РѕРіРёРєР° СЃРїР°РІРЅР° РїСЂРµРґРјРµС‚РѕРІ РІ РјРёСЂРµ
+        // РќР°РїСЂРёРјРµСЂ, СЃРѕР·РґР°РЅРёРµ РЅСѓР¶РЅС‹С… С‡РµСЂРЅРёР», Р±СѓРјР°РіРё Рё С€С‚Р°РјРїР°
 
-        Debug.Log($"Для задания нужны: {req.requiredInkColor} чернила, {req.requiredPaperType}, {(req.isStamped ? $"штамп {req.requiredStampType}" : "штамп не нужен")}");
+        Debug.Log($"Р”Р»СЏ Р·Р°РґР°РЅРёСЏ РЅСѓР¶РЅС‹: {req.requiredInkColor} С‡РµСЂРЅРёР»Р°, {req.requiredPaperType}, {(req.isStamped ? $"С€С‚Р°РјРї {req.requiredStampType}" : "С€С‚Р°РјРї РЅРµ РЅСѓР¶РµРЅ")}");
     }
     /*
-    // Вызывается при взаимодействии с предметом
+    // Р’С‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРё СЃ РїСЂРµРґРјРµС‚РѕРј
     public void ReportItemCollected(string itemType, int itemID)
     {
-        Debug.Log($"Собран предмет: {itemType} (ID: {itemID})");
+        Debug.Log($"РЎРѕР±СЂР°РЅ РїСЂРµРґРјРµС‚: {itemType} (ID: {itemID})");
         CheckTaskRequirements();
     }
 
-    // Вызывается при использовании рабочей станции
+    // Р’С‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё СЂР°Р±РѕС‡РµР№ СЃС‚Р°РЅС†РёРё
     public void ReportStationUsed(string stationType, string itemType, int stationID)
     {
-        Debug.Log($"Станция {stationType} использована с предметом {itemType}");
+        Debug.Log($"РЎС‚Р°РЅС†РёСЏ {stationType} РёСЃРїРѕР»СЊР·РѕРІР°РЅР° СЃ РїСЂРµРґРјРµС‚РѕРј {itemType}");
 
-        // Проверяем, соответствует ли использование текущему заданию
+        // РџСЂРѕРІРµСЂСЏРµРј, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ Р»Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ С‚РµРєСѓС‰РµРјСѓ Р·Р°РґР°РЅРёСЋ
         if (_currentTask != null && !_currentTask.IsCompleted)
         {
-            // Создаем "документ" на основе использованных предметов
+            // РЎРѕР·РґР°РµРј "РґРѕРєСѓРјРµРЅС‚" РЅР° РѕСЃРЅРѕРІРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРЅС‹С… РїСЂРµРґРјРµС‚РѕРІ
             TaskSystem.Document doc = CreateDocumentFromUsage(stationType, itemType);
 
             if (_currentTask.Validate(doc))
@@ -322,11 +322,11 @@ public class TaskManager : MonoBehaviour
             }
             else
             {
-                // Неправильное использование - штраф
+                // РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ - С€С‚СЂР°С„
                 if (GameCycle.Instance != null)
                 {
                     GameCycle.Instance.AddStress(10f);
-                    Debug.Log("<color=orange>Неправильное использование предмета! +10 стресса</color>");
+                    Debug.Log("<color=orange>РќРµРїСЂР°РІРёР»СЊРЅРѕРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РїСЂРµРґРјРµС‚Р°! +10 СЃС‚СЂРµСЃСЃР°</color>");
                 }
             }
         }
@@ -336,36 +336,36 @@ public class TaskManager : MonoBehaviour
     {
         if (_currentDocument == null) return;
 
-        // Маппинг для чернил
+        // РњР°РїРїРёРЅРі РґР»СЏ С‡РµСЂРЅРёР»
         if (itemType.Contains("ink"))
         {
             _currentDocument.InkColor = itemType switch
             {
-                "ink_black" => TaskSystem.InkColor.Черные,
-                "ink_red" => TaskSystem.InkColor.Красные,
-                "ink_green" => TaskSystem.InkColor.Зеленые,
-                "ink_purple" => TaskSystem.InkColor.Фиолетовые,
+                "ink_black" => TaskSystem.InkColor.Р§РµСЂРЅС‹Рµ,
+                "ink_red" => TaskSystem.InkColor.РљСЂР°СЃРЅС‹Рµ,
+                "ink_green" => TaskSystem.InkColor.Р—РµР»РµРЅС‹Рµ,
+                "ink_purple" => TaskSystem.InkColor.Р¤РёРѕР»РµС‚РѕРІС‹Рµ,
                 _ => _currentDocument.InkColor
             };
         }
-        // Маппинг для бумаги (если станция используется для выбора бумаги)
+        // РњР°РїРїРёРЅРі РґР»СЏ Р±СѓРјР°РіРё (РµСЃР»Рё СЃС‚Р°РЅС†РёСЏ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РІС‹Р±РѕСЂР° Р±СѓРјР°РіРё)
         else if (itemType.Contains("form") || itemType.Contains("parchment") || itemType.Contains("card"))
         {
             _currentDocument.PaperType = itemType switch
             {
-                "form_7b" => TaskSystem.PaperType.Бланк_формы_7_Б,
-                "form_aay" => TaskSystem.PaperType.Бланк_формы_АА_Я,
-                "parchment" => TaskSystem.PaperType.Пергамент,
-                "card" => TaskSystem.PaperType.Карточка,
+                "form_7b" => TaskSystem.PaperType.Р‘Р»Р°РЅРє_С„РѕСЂРјС‹_7_Р‘,
+                "form_aay" => TaskSystem.PaperType.Р‘Р»Р°РЅРє_С„РѕСЂРјС‹_РђРђ_РЇ,
+                "parchment" => TaskSystem.PaperType.РџРµСЂРіР°РјРµРЅС‚,
+                "card" => TaskSystem.PaperType.РљР°СЂС‚РѕС‡РєР°,
                 _ => _currentDocument.PaperType
             };
         }
 
-        // Действия на станциях
+        // Р”РµР№СЃС‚РІРёСЏ РЅР° СЃС‚Р°РЅС†РёСЏС…
         if (stationType == "signing_desk")
         {
             _currentDocument.IsSigned = true;
-            // Здесь может быть логика выбора SignaturePos, пока берем по умолчанию
+            // Р—РґРµСЃСЊ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р»РѕРіРёРєР° РІС‹Р±РѕСЂР° SignaturePos, РїРѕРєР° Р±РµСЂРµРј РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
             _currentDocument.SignaturePos = _currentTask.Requirements.requiredSignaturePos;
         }
         else if (stationType.Contains("stamping_desk") && itemType.Contains("stamp"))
@@ -373,34 +373,34 @@ public class TaskManager : MonoBehaviour
             _currentDocument.IsStamped = true;
             _currentDocument.StampType = itemType switch
             {
-                "stamp_approve" => TaskSystem.StampType.Одобрено,
-                "stamp_reject" => TaskSystem.StampType.Отклонено,
-                "stamp_review" => TaskSystem.StampType.На_рассмотрении,
-                "stamp_official" => TaskSystem.StampType.Официальная_печать,
-                "stamp_secret" => TaskSystem.StampType.Секретная_печать,
+                "stamp_approve" => TaskSystem.StampType.РћРґРѕР±СЂРµРЅРѕ,
+                "stamp_reject" => TaskSystem.StampType.РћС‚РєР»РѕРЅРµРЅРѕ,
+                "stamp_review" => TaskSystem.StampType.РќР°_СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё,
+                "stamp_official" => TaskSystem.StampType.РћС„РёС†РёР°Р»СЊРЅР°СЏ_РїРµС‡Р°С‚СЊ,
+                "stamp_secret" => TaskSystem.StampType.РЎРµРєСЂРµС‚РЅР°СЏ_РїРµС‡Р°С‚СЊ,
                 _ => _currentDocument.StampType
             };
         }
 
-        Debug.Log($"<color=yellow>Документ обновлен: Чернила={_currentDocument.InkColor}, Подпись={_currentDocument.IsSigned}, Штамп={_currentDocument.IsStamped}</color>");
+        Debug.Log($"<color=yellow>Р”РѕРєСѓРјРµРЅС‚ РѕР±РЅРѕРІР»РµРЅ: Р§РµСЂРЅРёР»Р°={_currentDocument.InkColor}, РџРѕРґРїРёСЃСЊ={_currentDocument.IsSigned}, РЁС‚Р°РјРї={_currentDocument.IsStamped}</color>");
     }
 
     private void CheckTaskRequirements()
     {
-        // Проверяем, есть ли у игрока все необходимые предметы для текущего задания
-        // Это упрощенная проверка - в реальной игре нужно проверять точные требования
+        // РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё Сѓ РёРіСЂРѕРєР° РІСЃРµ РЅРµРѕР±С…РѕРґРёРјС‹Рµ РїСЂРµРґРјРµС‚С‹ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ Р·Р°РґР°РЅРёСЏ
+        // Р­С‚Рѕ СѓРїСЂРѕС‰РµРЅРЅР°СЏ РїСЂРѕРІРµСЂРєР° - РІ СЂРµР°Р»СЊРЅРѕР№ РёРіСЂРµ РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂСЏС‚СЊ С‚РѕС‡РЅС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ
 
         if (_currentTask == null || _currentTask.IsCompleted) return;
 
-        // Здесь можно добавить логику автоматической проверки готовности документа
-        // Например, если все предметы собраны и использованы на правильных станциях
+        // Р—РґРµСЃСЊ РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ Р»РѕРіРёРєСѓ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕР№ РїСЂРѕРІРµСЂРєРё РіРѕС‚РѕРІРЅРѕСЃС‚Рё РґРѕРєСѓРјРµРЅС‚Р°
+        // РќР°РїСЂРёРјРµСЂ, РµСЃР»Рё РІСЃРµ РїСЂРµРґРјРµС‚С‹ СЃРѕР±СЂР°РЅС‹ Рё РёСЃРїРѕР»СЊР·РѕРІР°РЅС‹ РЅР° РїСЂР°РІРёР»СЊРЅС‹С… СЃС‚Р°РЅС†РёСЏС…
     }
 
     public void SubmitDocument(TaskSystem.Document document)
     {
         if (_currentTask == null || _currentTask.IsCompleted || _currentTask.IsFailed)
         {
-            Debug.Log("Нет активного задания!");
+            Debug.Log("РќРµС‚ Р°РєС‚РёРІРЅРѕРіРѕ Р·Р°РґР°РЅРёСЏ!");
             return;
         }
 
@@ -410,7 +410,7 @@ public class TaskManager : MonoBehaviour
         }
         else
         {
-            FailCurrentTask("Неверно заполнен документ!");
+            FailCurrentTask("РќРµРІРµСЂРЅРѕ Р·Р°РїРѕР»РЅРµРЅ РґРѕРєСѓРјРµРЅС‚!");
         }
     }
 
@@ -423,13 +423,13 @@ public class TaskManager : MonoBehaviour
         OnTaskCompleted?.Invoke(_currentTask);
 
 
-        // Награда за выполнение
+        // РќР°РіСЂР°РґР° Р·Р° РІС‹РїРѕР»РЅРµРЅРёРµ
         if (GameCycle.Instance != null)
         {
             GameCycle.Instance.CompleteTask();
         }
 
-        // Новое задание
+        // РќРѕРІРѕРµ Р·Р°РґР°РЅРёРµ
         StartNewTask();
     }
 
@@ -439,15 +439,15 @@ public class TaskManager : MonoBehaviour
 
         OnTaskFailed?.Invoke(_currentTask);
 
-        Debug.Log($"<color=red>Задание провалено: {reason}</color>");
+        Debug.Log($"<color=red>Р—Р°РґР°РЅРёРµ РїСЂРѕРІР°Р»РµРЅРѕ: {reason}</color>");
 
-        // Штраф за провал
+        // РЁС‚СЂР°С„ Р·Р° РїСЂРѕРІР°Р»
         if (GameCycle.Instance != null)
         {
             GameCycle.Instance.FailTask(_currentTask.Requirements.timePenalty);
         }
 
-        // Новое задание (возможно, то же самое с новыми требованиями)
+        // РќРѕРІРѕРµ Р·Р°РґР°РЅРёРµ (РІРѕР·РјРѕР¶РЅРѕ, С‚Рѕ Р¶Рµ СЃР°РјРѕРµ СЃ РЅРѕРІС‹РјРё С‚СЂРµР±РѕРІР°РЅРёСЏРјРё)
         StartNewTask();
     }
 
@@ -458,10 +458,10 @@ public class TaskManager : MonoBehaviour
             _currentTask.Corrupt();
             OnTaskCorrupted?.Invoke(_currentTask);
 
-            Debug.Log("<color=red>Кролик изменил требования задания!</color>");
-            Debug.Log($"<color=yellow>Новые требования: {_currentTask.Description}</color>");
+            Debug.Log("<color=red>РљСЂРѕР»РёРє РёР·РјРµРЅРёР» С‚СЂРµР±РѕРІР°РЅРёСЏ Р·Р°РґР°РЅРёСЏ!</color>");
+            Debug.Log($"<color=yellow>РќРѕРІС‹Рµ С‚СЂРµР±РѕРІР°РЅРёСЏ: {_currentTask.Description}</color>");
 
-            // Штрафной стресс за вмешательство
+            // РЁС‚СЂР°С„РЅРѕР№ СЃС‚СЂРµСЃСЃ Р·Р° РІРјРµС€Р°С‚РµР»СЊСЃС‚РІРѕ
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.AddStress(5f);
@@ -469,7 +469,7 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    // Публичные методы для UI и других систем
+    // РџСѓР±Р»РёС‡РЅС‹Рµ РјРµС‚РѕРґС‹ РґР»СЏ UI Рё РґСЂСѓРіРёС… СЃРёСЃС‚РµРј
     public TaskSystem.BureaucraticTask GetCurrentTask()
     {
         return _currentTask;
@@ -488,11 +488,11 @@ public class TaskManager : MonoBehaviour
         {
             TaskSystem.DocumentRequirement req = _currentTask.Requirements;
 
-            items.Add($"Чернила: {req.requiredInkColor}");
-            items.Add($"Бумага: {req.requiredPaperType}");
-            items.Add($"Подпись: {req.requiredSignaturePos}");
+            items.Add($"Р§РµСЂРЅРёР»Р°: {req.requiredInkColor}");
+            items.Add($"Р‘СѓРјР°РіР°: {req.requiredPaperType}");
+            items.Add($"РџРѕРґРїРёСЃСЊ: {req.requiredSignaturePos}");
             if (req.isStamped)
-                items.Add($"Штамп: {req.requiredStampType}");
+                items.Add($"РЁС‚Р°РјРї: {req.requiredStampType}");
         }
 
         return items;
