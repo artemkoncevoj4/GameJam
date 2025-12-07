@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic; // Добавлено для List
+using System.Collections.Generic;
 
 namespace InteractiveObjects
 {
@@ -7,7 +7,6 @@ namespace InteractiveObjects
     {
         [Header("Настройки станции")]
         [SerializeField] private string _stationType = "desk"; // Тип станции
-        // Исправлено: List должен быть string, а не GameObject, чтобы работать с инвентарем
         [SerializeField] private List<string> _requiredItems = new List<string>();
         [SerializeField] private Transform _itemPlacementPoint; // Где разместить предмет
 

@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TaskSystem;
 using UnityEngine;
-using System;
 using Random = UnityEngine.Random;
 
 namespace TaskSystem
@@ -478,6 +479,16 @@ public class TaskManager : MonoBehaviour
     public int GetCompletedTasks()
     {
         return _totalTasksCompleted;
+    }
+
+    public string GetTaskTitle()
+    {
+        return _currentTask.Title
+    }
+
+    public string GetTaskDesription()
+    {
+        return _currentTask.Description
     }
 
     public List<string> GetRequiredItemsForCurrentTask()
