@@ -70,35 +70,34 @@ namespace DialogueManager {
                 continueText.gameObject.SetActive(false);
         }
         
-       void Update()
+        void Update()
         {
-            if (isDialogueActive && Input.GetKeyDown(KeyCode.Space))
+            if (isDialogueActive && Input.GetKeyDown(KeyCode.Space)) 
             {
                 if (isTyping)
                 {
-                    // 1. Пропускаем анимацию
+                    // [FIX 1] Если текст печатается, пропускаем печать до конца.
+                    // Останавливаем корутину, чтобы текст появился мгновенно
                     if (typeCoroutine != null)
+                    {
                         StopCoroutine(typeCoroutine);
-
-                    if (dialogueText != null)
-                        dialogueText.text = currentSentence;
+                    }
                     
+                    // Выводим весь текст сразу
+                    dialogueText.text = currentSentence; 
                     isTyping = false;
                     
+                    // Вызываем хук после завершения печати
+                    OnSentencePrinted();
+                    
+                    // Показываем индикатор продолжения (он будет скрыт на следующем шаге)
                     if (continueText != null)
-                        continueText.gameObject.SetActive(true); // Показываем индикатор
+                        continueText.gameObject.SetActive(true);
                 }
                 else
                 {
-                    // 2. Переходим к следующему предложению ИЛИ завершаем диалог
-                    if (sentences.Count == 0)
-                    {
-                        EndDialogue(); // Завершаем, если предложений нет
-                    }
-                    else
-                    {
-                        DisplayNextSentence(); // Иначе, показываем следующее
-                    }
+                    // [FIX 2] Если текст НЕ печатается, переходим к следующему предложению
+                    DisplayNextSentence(); 
                 }
             }
         }
@@ -124,6 +123,7 @@ namespace DialogueManager {
             // Показываем TextCloud, скрываем индикатор
             textCloud.SetActive(true);
             isDialogueActive = true;
+            
             if (continueText != null)
                 continueText.gameObject.SetActive(false);
             

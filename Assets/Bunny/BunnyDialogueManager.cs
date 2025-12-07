@@ -1,11 +1,9 @@
 using UnityEngine;
 using DialogueManager;
 
-// Наследуемся от базового DialogueManager
-// [ВНИМАНИЕ: Для работы требуется, чтобы DialogueManager.cs имел public virtual методы!]
 public class BunnyDialogueManager : DialogueManager.DialogueManager
 {
-   //! [Header("Настройки Зайца")]
+    private Bunny _activeBunny;
     // [Опционально] Если логика задания в Bunny.cs, здесь будет ссылка на него:
     // [SerializeField] private Bunny bunnyLogic; 
     
@@ -17,17 +15,22 @@ public class BunnyDialogueManager : DialogueManager.DialogueManager
     // (Этот метод нужно было добавить в DialogueManager.cs как 'protected virtual void OnSentencePrinted()')
     protected override void OnSentencePrinted()
     {
-        // Вызываем базовый метод
         base.OnSentencePrinted(); 
         
-        // Проверяем индекс предложения
-        // Индекс 1 - это второе предложение
-        if (CurrentSentenceIndex == 1) // Используем публичный геттер CurrentSentenceIndex
-        {
-            ApplyTaskLogic();
-        }
+        // Так как у нас всегда одно предложение, логика задания должна запускаться здесь
+        ApplyTaskLogic();
     }
-    
+    public void StartBunnyDialogue(Dialogue dialogue, Bunny bunny)
+    {
+        GameCycle.Instance.PauseGame();
+        
+        // 1. Сохраняем ссылку на Зайца, который инициировал диалог
+        _activeBunny = bunny; // Сохраняем ссылку на Зайца
+        
+        // **ВАЖНО:** Если логика задания должна сработать ДО того, как Заяц уйдёт,
+        // убедитесь, что ApplyTaskLogic() сработает на первом (и единственном) предложении.
+        base.StartDialogue(dialogue);
+    }
     // ========== ЛОГИКА ЗАДАНИЯ ==========
     
     // Метод, который выполняет основную логику назначения/порчи задания
@@ -64,4 +67,25 @@ public class BunnyDialogueManager : DialogueManager.DialogueManager
             Debug.LogWarning("TestTaskManager не найден!");
         }
     }
-}
+    public override void EndDialogue() 
+    {
+            base.EndDialogue(); // Закрывает UI и возобновляет время
+            
+            // [FIX] 1. Возобновляем игровое время
+            if (GameCycle.Instance != null)
+            {
+                GameCycle.Instance.ResumeGame();
+            }
+
+            // [FIX] 2. УВЕЛИЧИВАЕМ ИНДЕКС в Bunny.cs и проверяем, нужно ли уйти.
+            if (_activeBunny != null)
+            {
+                // Увеличиваем индекс, чтобы следующее появление начало со следующего предложения
+                _activeBunny.CurrentDialogueIndex++; // <-- Требуется публичный сеттер/метод в Bunny.cs
+                
+                // Если все предложения исчерпаны, Bunny.Leave() будет вызван при следующем вызове AssignOrModifyTask.
+            }
+            
+            _activeBunny = null; // Сброс ссылки
+    }
+    }

@@ -25,8 +25,17 @@ public class Bunny : MonoBehaviour
     private Coroutine _currentBehavior;
 
     private BunnyDialogueManager _bunnyDialogueManager;
+    [Header("Диалоги Зайца")] 
+    [SerializeField] private Dialogue _shoutDialogue;
+    // [НОВОЕ] Хранит индекс следующего предложения для _shoutDialogue
+    private int _currentDialogueIndex = 0;
     public bool IsActive => _isActive; // Публичный геттер для _isActive
     // Start is called before the first frame update
+    public int CurrentDialogueIndex 
+    { 
+        get => _currentDialogueIndex; 
+        set => _currentDialogueIndex = value; 
+    }
     void Start()
     {
         //_animator = GetComponent<Animator>();
@@ -116,10 +125,7 @@ public class Bunny : MonoBehaviour
         yield return new WaitForSeconds(_shoutDuration);
         
         // После крика - назначить новое задание или изменить текущее
-      //  AssignOrModifyTask();
-        
-        // Уходим
-        Leave();
+        AssignOrModifyTask();
     }
     
     private IEnumerator PeekBehavior()
@@ -152,30 +158,32 @@ public class Bunny : MonoBehaviour
     
    //* ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
     
-private void AssignOrModifyTask()
+    private void AssignOrModifyTask()
     {
-        if (_bunnyDialogueManager == null)
+        Dialogue dialogueData = _shoutDialogue; 
+        
+        // 1. Проверяем, есть ли следующее предложение
+        if (dialogueData == null || _currentDialogueIndex >= dialogueData.sentences.Length)
         {
-            Debug.LogError("BunnyDialogueManager не найден!");
+            Debug.Log("Bunny: Все реплики диалога исчерпаны. Заяц уходит насовсем.");
+            // Здесь можно вызвать более длительный уход или EndGame
+            Leave(); 
             return;
         }
-        
-        // 1. [FIXED] Создаем экземпляр класса Dialogue с помощью стандартного конструктора (new).
-        Dialogue dialogue = new Dialogue();
-        
-        // 2. Заполняем данными. Логика назначения/порчи задания будет в BunnyDialogueManager.
-        dialogue.name = "Заяц-Нарушитель";
-        dialogue.sentences = new string[] 
-        {
-            "У меня для тебя есть новое задание!", // Индекс 0
-            "Сейчас я решу: дать тебе его или испортить!", // Индекс 1 (Здесь сработает логика)
-            "Жду твоих действий..." // Индекс 2
-        };
 
-        if (!_bunnyDialogueManager.IsDialogueActive())
+        // 2. Создаем временный объект Dialogue только с одним текущим предложением
+        Dialogue singleSentenceDialogue = new Dialogue
         {
-            // Вызываем StartDialogue на ДОЧЕРНЕМ КЛАССЕ
-            _bunnyDialogueManager.StartDialogue(dialogue);
+            name = dialogueData.name,
+            sentences = new string[] { dialogueData.sentences[_currentDialogueIndex] }
+        };
+        
+        // 3. Запускаем диалог
+        if (_bunnyDialogueManager != null)
+        {
+            _bunnyDialogueManager.StartBunnyDialogue(singleSentenceDialogue, this);
+            // Индекс увеличится в BunnyDialogueManager.EndDialogue, 
+            // так как нам нужно знать, что предложение было успешно показано.
         }
     }
     
