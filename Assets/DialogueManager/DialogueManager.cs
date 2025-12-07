@@ -7,6 +7,8 @@ using TMPro; // Добавляем using для TextMeshPro
 namespace DialogueManager {
     public class DialogueManager : MonoBehaviour
     {
+
+
         // Ссылки на UI элементы
         public GameObject textCloud;
         public GameObject nameObject;
@@ -16,12 +18,16 @@ namespace DialogueManager {
         private TextMeshProUGUI nameText;
         private TextMeshProUGUI dialogueText;
         
-        private Queue<string> sentences; // Очередь для хранения предложений
+       private Queue<string> sentences;
         private string currentSentence;
         private Coroutine typeCoroutine;
 
         private bool isTyping = false;
         private bool isDialogueActive = false;
+        
+        // [NEW] Индекс текущего предложения. Доступен только для чтения (getter)
+        protected int _currentSentenceIndex = -1; 
+        public int CurrentSentenceIndex => _currentSentenceIndex; // Публичный геттер
         
         void Awake()
         {
@@ -97,7 +103,7 @@ namespace DialogueManager {
             }
         }
         
-        public void StartDialogue(Dialogue dialogue)
+        public virtual void StartDialogue(Dialogue dialogue)
         {
             Debug.Log("Начинаем диалог с " + dialogue.name);
             
@@ -113,7 +119,8 @@ namespace DialogueManager {
                 Debug.LogError("TextMeshProUGUI компоненты не найдены! Проверьте, что объекты Name и Dialogue имеют компонент TextMeshPro - Text");
                 return;
             }
-            
+
+
             // Показываем TextCloud, скрываем индикатор
             textCloud.SetActive(true);
             isDialogueActive = true;
@@ -134,26 +141,21 @@ namespace DialogueManager {
                 sentences.Enqueue(sentence);
             }
             
-            // Начинаем с первого предложения
+            _currentSentenceIndex = -1; // Сброс индекса перед началом
+            
             DisplayNextSentence();
         }
 
-        public void DisplayNextSentence()
+        public virtual void DisplayNextSentence()
         {
             // ПРОВЕРКА: Если предложений не осталось
-            if (sentences.Count == 0)
+           if (sentences.Count == 0)
             {
-                // Устанавливаем текст для завершения диалога
-                if (continueText != null)
-                {
-                    continueText.text = "Нажмите ПРОБЕЛ, чтобы закрыть диалог.";
-                    continueText.gameObject.SetActive(true);
-                }
-                
-                // EndDialogue() теперь вызывается через Update() после нажатия пробела
+                EndDialogue();
                 return;
             }
-            
+            // [MODIFIED] Увеличиваем индекс ПЕРЕД извлечением предложения
+            _currentSentenceIndex++;
             // Скрываем индикатор
             if (continueText != null)
                 continueText.gameObject.SetActive(false);
@@ -180,7 +182,8 @@ namespace DialogueManager {
             }
             
             isTyping = false;
-            
+            // [NEW HOOK] Вызываем хук после завершения печати
+            OnSentencePrinted();
             // Показываем индикатор, когда печать завершена
             if (continueText != null)
             {
@@ -198,12 +201,15 @@ namespace DialogueManager {
                 continueText.gameObject.SetActive(true);
             }
         }
-        
-        void EndDialogue()
+        protected virtual void OnSentencePrinted()
+        {
+            
+        }
+        public virtual void EndDialogue()
         {
             Debug.Log("Диалог завершен");
             isDialogueActive = false;
-            
+            _currentSentenceIndex = -1; // Сброс индекса
             if (textCloud != null)
                 textCloud.SetActive(false);
 

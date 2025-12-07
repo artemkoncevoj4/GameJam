@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DialogueManager;
 public class Bunny : MonoBehaviour
 {
     [Header("Позиция появления")]
@@ -23,18 +23,27 @@ public class Bunny : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private bool _isActive = false;
     private Coroutine _currentBehavior;
+
+    private BunnyDialogueManager _bunnyDialogueManager;
+    public bool IsActive => _isActive; // Публичный геттер для _isActive
     // Start is called before the first frame update
     void Start()
     {
         //_animator = GetComponent<Animator>();
         //_audioSource = GetComponent<AudioSource>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
         SetVisible(false);
         if (_appearPoint_Window != null)
         {
             transform.position = _appearPoint_Window.position;
             transform.rotation = _appearPoint_Window.rotation;
+        }
+
+        _bunnyDialogueManager = FindObjectOfType<BunnyDialogueManager>();
+        if (_bunnyDialogueManager == null)
+        {
+            Debug.LogError("BunnyDialogueManager не найден в сцене!");
         }
     }
 
@@ -107,7 +116,7 @@ public class Bunny : MonoBehaviour
         yield return new WaitForSeconds(_shoutDuration);
         
         // После крика - назначить новое задание или изменить текущее
-        AssignOrModifyTask();
+      //  AssignOrModifyTask();
         
         // Уходим
         Leave();
@@ -141,31 +150,33 @@ public class Bunny : MonoBehaviour
         Leave();
     }
     
-    // ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
+   //* ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
     
-    private void AssignOrModifyTask()
+private void AssignOrModifyTask()
     {
-        // Здесь заяц "кричит" - назначает или меняет задание
-        /*
-        if (TaskManager.Instance != null)
+        if (_bunnyDialogueManager == null)
         {
-            // Вариант 1: Назначить новое задание
-            if (CurrentTask == null)
-            {
-                TaskManager.Instance.AssignNewTask();
-            }
-
-            // Вариант 2: Испортить текущее задание (50% шанс)
-            if (UnityEngine.Random.value > 0.5f && CurrentTask != null)
-            {
-                TaskManager.Instance.CorruptCurrentTask();
-                Debug.Log("Заяц испортил задание!");
-            }
+            Debug.LogError("BunnyDialogueManager не найден!");
+            return;
         }
-        else
+        
+        // 1. [FIXED] Создаем экземпляр класса Dialogue с помощью стандартного конструктора (new).
+        Dialogue dialogue = new Dialogue();
+        
+        // 2. Заполняем данными. Логика назначения/порчи задания будет в BunnyDialogueManager.
+        dialogue.name = "Заяц-Нарушитель";
+        dialogue.sentences = new string[] 
         {
-            Debug.LogWarning("TaskManager не найден!");
-        }*/
+            "У меня для тебя есть новое задание!", // Индекс 0
+            "Сейчас я решу: дать тебе его или испортить!", // Индекс 1 (Здесь сработает логика)
+            "Жду твоих действий..." // Индекс 2
+        };
+
+        if (!_bunnyDialogueManager.IsDialogueActive())
+        {
+            // Вызываем StartDialogue на ДОЧЕРНЕМ КЛАССЕ
+            _bunnyDialogueManager.StartDialogue(dialogue);
+        }
     }
     
     private void TriggerChaosEffect()
@@ -227,9 +238,5 @@ public class Bunny : MonoBehaviour
     {
         SetVisible(false);
     }
-    
-    // ========== СВОЙСТВА ==========
-    
-    public bool IsActive => _isActive;
     
 }

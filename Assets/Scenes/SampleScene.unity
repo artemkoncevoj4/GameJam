@@ -153,8 +153,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -600}
-  m_SizeDelta: {x: 2000, y: 200}
+  m_AnchoredPosition: {x: 0, y: 241}
+  m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &99768781
 MonoBehaviour:
@@ -787,6 +787,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &576512574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 576512576}
+  - component: {fileID: 576512575}
+  m_Layer: 0
+  m_Name: Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &576512575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576512574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fec70580df85584c8af2ef5d25e44a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestTaskManager
+  taskCompletionTime: 10
+--- !u!4 &576512576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576512574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1256.2653, y: 600.5865, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &582718650
 GameObject:
   m_ObjectHideFlags: 0
@@ -896,8 +941,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -470}
-  m_SizeDelta: {x: 2000, y: 200}
+  m_AnchoredPosition: {x: 0, y: 241}
+  m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &589236352
 MonoBehaviour:
@@ -1032,8 +1077,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -660}
-  m_SizeDelta: {x: 2000, y: 200}
+  m_AnchoredPosition: {x: 0, y: 241}
+  m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &590998941
 MonoBehaviour:
@@ -2211,6 +2256,54 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1548564832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1548564834}
+  - component: {fileID: 1548564833}
+  m_Layer: 0
+  m_Name: BunnyDialogueManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1548564833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548564832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6598c66ab16802940af4e6ece98a39c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BunnyDialogueManager
+  textCloud: {fileID: 552245046}
+  nameObject: {fileID: 589236350}
+  dialogueObject: {fileID: 99768779}
+  continueText: {fileID: 590998941}
+--- !u!4 &1548564834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1548564832}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1256.2653, y: 600.5865, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1706604777
 GameObject:
   m_ObjectHideFlags: 0
@@ -2967,82 +3060,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1974936149}
   m_CullTransparentMesh: 1
---- !u!1 &2061210129
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2061210130}
-  - component: {fileID: 2061210132}
-  - component: {fileID: 2061210131}
-  m_Layer: 0
-  m_Name: DialogueSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2061210130
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061210129}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2061210131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061210129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e2c8ce8fdc367147a39fd52cbce9cec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager.DialogueTrigger
-  dialogue:
-    name: Bunny
-    sentences:
-    - "\u041F\u0440\u0438\u0432\u0435\u0442-\u043F\u0440\u0438\u0432\u0435\u0442!
-      \u0420\u0430\u0434 \u0442\u0435\u0431\u044F \u0432\u0438\u0434\u0435\u0442\u044C,
-      \u0437\u0434\u0435\u0441\u044C \u0442\u0430\u043A \u0434\u0430\u0432\u043D\u043E
-      \u043D\u0438\u043A\u0442\u043E \u043D\u0435 \u043F\u0440\u044B\u0433\u0430\u043B."
-    - "\u041C\u043E\u0436\u0435\u0448\u044C \u0437\u0432\u0430\u0442\u044C \u043C\u0435\u043D\u044F
-      \u0411\u0430\u043D\u043D\u0438, \u0438 \u043D\u0435 \u0441\u0442\u0435\u0441\u043D\u044F\u0439\u0441\u044F,
-      \u0435\u0441\u043B\u0438 \u0437\u0430\u0445\u043E\u0447\u0435\u0448\u044C \u043F\u043E\u0433\u043E\u0432\u043E\u0440\u0438\u0442\u044C."
-    - "\u041D\u0430\u0434\u0435\u044E\u0441\u044C, \u0442\u0435\u0431\u0435 \u0437\u0434\u0435\u0441\u044C
-      \u043F\u043E\u043D\u0440\u0430\u0432\u0438\u0442\u0441\u044F! \u041D\u0430\u0436\u0438\u043C\u0430\u0439
-      \u041F\u0420\u041E\u0411\u0415\u041B, \u0447\u0442\u043E\u0431\u044B \u043D\u0430\u0447\u0430\u0442\u044C
-      \u043D\u0430\u0448\u0435 \u043C\u0430\u043B\u0435\u043D\u044C\u043A\u043E\u0435
-      \u043F\u0440\u0438\u043A\u043B\u044E\u0447\u0435\u043D\u0438\u0435."
---- !u!114 &2061210132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061210129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8537863ac81c6f9429276da2dd2aeda5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager.DialogueManager
-  textCloud: {fileID: 552245046}
-  nameObject: {fileID: 589236350}
-  dialogueObject: {fileID: 99768779}
-  continueText: {fileID: 590998941}
 --- !u!1 &2082918470
 GameObject:
   m_ObjectHideFlags: 0
@@ -3085,6 +3102,7 @@ SceneRoots:
   - {fileID: 502585614}
   - {fileID: 2082918471}
   - {fileID: 1092111834}
-  - {fileID: 2061210130}
   - {fileID: 1069717534}
   - {fileID: 1369001289}
+  - {fileID: 576512576}
+  - {fileID: 1548564834}
