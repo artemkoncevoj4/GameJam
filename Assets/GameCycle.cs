@@ -11,17 +11,16 @@ public class GameCycle : MonoBehaviour
     [SerializeField] private int _tasksToWin = 10;
     [SerializeField] private float _maxRabbitSpawnInterval = 30f;
     [SerializeField] private float _minRabbitSpawnInterval = 8f;
+
     public event Action<int, int> OnProgressUpdated; // Прогресс: выполнено/всего
     public event Action<float> OnStressLevelChanged; // Изменение уровня стресса (0-100%)
     public event Action OnRabbitAppearing; // Кролик появляется (визуальный сигнал)
-    public event Action OnRabbitActive; // Кролик начал активное вмешательство
     public event Action OnRabbitLeaving; // Кролик уходит
     public event Action<GameResult> OnGameEnded; // Игра завершена (победа/поражение)
+    
     private GameState _currentState = GameState.Playing; // menu
     private float _timer;
     private float _rabbitTimer;
-    private float _taskTimer;
-    private float _timerInterval;
     private float _stressLevel = 0f;
     private int _completedTasks = 0;
     private bool _isRabbitHere = false;
@@ -94,7 +93,7 @@ public class GameCycle : MonoBehaviour
 
         if (!_isRabbitHere) 
         {
-            UpdateNoRabbitTimer();
+            UpdateRabbitSpawnTimer();
             UpdateStress(0.1f);
         }
         else
@@ -146,19 +145,20 @@ public class GameCycle : MonoBehaviour
         _rabbitInterval = _maxRabbitSpawnInterval;
         _rabbitTimer = 0f;
         _stressLevel = 0f;
-        _taskTimer = 0f;
         _timer = 0f;
         _completedTasks = 0;
         _isRabbitHere = false;
+
+        OnStressLevelChanged?.Invoke(_stressLevel);
+        OnProgressUpdated?.Invoke(_completedTasks, _tasksToWin);
     }
-    
+
     public void StartGame()
     {
         InitializeGame();
         _currentState = GameState.Playing;
         Time.timeScale = 1f;
         
-        OnProgressUpdated?.Invoke(_completedTasks, _tasksToWin);
         Debug.Log("Игра началась!");
     }
     
@@ -183,7 +183,7 @@ public class GameCycle : MonoBehaviour
         //Debug.Log($"<color=orange>Стресс увеличен на {stress:F1}. Текущий уровень: {_stressLevel:F1}</color>");
     }
 
-    private void UpdateNoRabbitTimer()
+    private void UpdateRabbitSpawnTimer()
     {
         _rabbitTimer += Time.deltaTime;
         if (_rabbitTimer >= _rabbitInterval)
@@ -202,6 +202,8 @@ public class GameCycle : MonoBehaviour
     
     private void RabbitAppear()
     {
+        if (_isRabbitHere) return;
+
         _isRabbitHere = true;
         _rabbitTimer = 0f;
         OnRabbitAppearing?.Invoke();
@@ -210,6 +212,8 @@ public class GameCycle : MonoBehaviour
     
     private void RabbitLeave()
     {
+        if (!_isRabbitHere) return;
+
         _isRabbitHere = false;
         _rabbitTimer = 0f;
         // Обновляем интервал для следующего появления
@@ -268,6 +272,4 @@ public class GameCycle : MonoBehaviour
     public int CompletedTasks => _completedTasks;
     public int TotalTasksToWin => _tasksToWin;
     public GameState CurrentState => _currentState;
-    public float RabbitCooldown => _rabbitTimer;
-    public float RabbitInterval => _rabbitInterval;
 }

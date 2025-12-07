@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TaskSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using Bunny;
 
 namespace TaskSystem
 {
@@ -95,14 +96,12 @@ namespace TaskSystem
         {
             if (IsCompleted || IsFailed) return false;
 
-            DocumentRequirement currentReq = Requirements;
-
             bool isValid =
-                document.InkColor == currentReq.requiredInkColor &&
-                document.SignaturePos == currentReq.requiredSignaturePos &&
-                document.PaperType == currentReq.requiredPaperType &&
-                document.IsSigned == currentReq.isSigned && 
-                (currentReq.isStamped ? (document.IsStamped && document.StampType == currentReq.requiredStampType) : !document.IsStamped);
+                document.InkColor == Requirements.requiredInkColor &&
+                document.SignaturePos == Requirements.requiredSignaturePos &&
+                document.PaperType == Requirements.requiredPaperType &&
+                document.IsSigned == Requirements.isSigned && 
+                (Requirements.isStamped ? (document.IsStamped && document.StampType == Requirements.requiredStampType) : !document.IsStamped);
 
             return isValid;
         }
@@ -183,11 +182,11 @@ public class TaskManager : MonoBehaviour
 
     void Start() // Начало игры
     {
+        _currentTaskTimeLimit = _baseTaskTime;
         // Подписка на события GameCycle
-        if (GameCycle.Instance != null)
+        if (Bunny.Bunny.Instance != null)
         {
-            GameCycle.Instance.OnRabbitActive += HandleRabbitInterference;
-            GameCycle.Instance.StartGame();
+            Bunny.Bunny.Instance.OnRabbitActive += HandleRabbitInterference;
         }
 
         // Подписка на события инвентаря
@@ -199,9 +198,9 @@ public class TaskManager : MonoBehaviour
 
     void OnDestroy() //Конец
     {
-        if (GameCycle.Instance != null)
+        if(Bunny.Bunny.Instance != null)
         {
-            GameCycle.Instance.OnRabbitActive -= HandleRabbitInterference;
+            Bunny.Bunny.Instance.OnRabbitActive -= HandleRabbitInterference;
         }
 
         if (PlayerInventory.Instance != null)
@@ -227,7 +226,7 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    private void StartNewTask() // Создание задания
+    public void StartNewTask() // Создание задания
     {
         if (_isTaskActive)
         {
@@ -249,6 +248,8 @@ public class TaskManager : MonoBehaviour
             timeLimit,
             isUrgent
         );
+
+        _currentTaskTimeLimit = Mathf.Max(_minTaskTime, _currentTaskTimeLimit - _timeReductionPerTask);
 
         _isTaskActive = true;
         OnNewTask?.Invoke(_currentTask);
@@ -386,6 +387,7 @@ public class TaskManager : MonoBehaviour
         Debug.Log($"<color=yellow>Документ обновлен: Чернила={_currentDocument.InkColor}, Подпись={_currentDocument.IsSigned}, Штамп={_currentDocument.IsStamped}</color>");
     }
 
+
     private void CheckTaskRequirements()
     {
         // Проверяем, есть ли у игрока все необходимые предметы для текущего задания
@@ -397,7 +399,7 @@ public class TaskManager : MonoBehaviour
         // Например, если все предметы собраны и использованы на правильных станциях
     }
 
-    public void SubmitDocument(TaskSystem.Document document)
+    public void SubmitDocument()
     {
         if (_currentTask == null || _currentTask.IsCompleted || _currentTask.IsFailed)
         {
@@ -405,7 +407,13 @@ public class TaskManager : MonoBehaviour
             return;
         }
 
-        if (_currentTask.Validate(document))
+        if (_currentDocument == null) // Добавил проверку на null
+        {
+            Debug.Log("Документ не создан!");
+            return;
+        }
+
+        if (_currentTask.Validate(_currentDocument))
         {
             CompleteCurrentTask();
         }
@@ -429,14 +437,16 @@ public class TaskManager : MonoBehaviour
         {
             GameCycle.Instance.CompleteTask();
         }
-
-        // Новое задание
-        StartNewTask();
+        if (Bunny.Bunny.Instance != null) // Добавил уведомление кролика
+        {
+            Bunny.Bunny.Instance.ChangeToNoTask();
+        }
     }
 
     private void FailCurrentTask(string reason)
     {
         _currentTask.Fail();
+        _isTaskActive = false;
 
         OnTaskFailed?.Invoke(_currentTask);
 
@@ -452,7 +462,7 @@ public class TaskManager : MonoBehaviour
         StartNewTask();
     }
 
-    private void HandleRabbitInterference()
+    public void HandleRabbitInterference()
     {
         if (_currentTask != null && !_currentTask.IsCompleted)
         {
@@ -483,12 +493,12 @@ public class TaskManager : MonoBehaviour
 
     public string GetTaskTitle()
     {
-        return _currentTask.Title;
+        return _currentTask?.Title;
     }
 
-    public string GetTaskDesription()
+    public string GetTaskDescription()
     {
-        return _currentTask.Description;
+        return _currentTask?.Description;
     }
 
     public List<string> GetRequiredItemsForCurrentTask()
@@ -508,4 +518,5 @@ public class TaskManager : MonoBehaviour
 
         return items;
     }
+    public bool IsTaskActive => _isTaskActive;
 }
