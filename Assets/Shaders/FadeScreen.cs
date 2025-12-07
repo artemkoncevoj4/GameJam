@@ -7,12 +7,22 @@ namespace Shaders
 {
     public class ScreenFad : MonoBehaviour
     {
+        public static ScreenFad Instance { get; private set; }
+
         [SerializeField] private Image fadeImage;
         [SerializeField] private float fadeDuration = 1f;
 
         void Awake()
         {
-
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+                return;
+            }
 
             if (fadeImage == null)
             {
@@ -23,16 +33,29 @@ namespace Shaders
             SetAlpha(0f);
         }
 
-        public IEnumerator FadeScreen()
+        public static void FadeScreen()
+        {
+            if (Instance != null)
+            {
+                Instance.StartCoroutine(Instance.FadeScreenCoroutine());
+            }
+            else
+            {
+                Debug.LogError("ScreenFader instance not found!");
+            }
+        }
+
+        private IEnumerator FadeScreenCoroutine()
         {
             Fade_in();
             yield return new WaitForSeconds(3f);
             Fade_out();
         }
 
+
         public void Fade_in()
         {
-            StartCoroutine(Fade(0.7f));
+            StartCoroutine(Fade(1f));
         }
 
         public void Fade_out()

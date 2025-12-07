@@ -29,8 +29,8 @@ namespace Bunny {
         private bool _isActive = false;
         private bool _isTaskPresent = false;
         private Coroutine _currentBehavior;
-        private ScreenFad screenFader;
         private BunnyDialogueManager _bunnyDialogueManager;
+        //private ScreenFad screenFader;
         [Header("Диалоги Зайца")] 
         [SerializeField] private Dialogue _shoutDialogue;
         // [НОВОЕ] Хранит индекс следующего предложения для _shoutDialogue
@@ -56,6 +56,11 @@ namespace Bunny {
 
         void Start()
         {
+            //screenFader = FindObjectOfType<ScreenFad>();
+            //if (screenFader == null)
+            //{
+            //    Debug.LogError("ScreenFad не найден в сцене!");
+            //}
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnRabbitAppearing += Appear;
@@ -306,25 +311,25 @@ namespace Bunny {
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
         
-            if (randomEffect < 0.2f)
+            if (randomEffect < 0f)
             {
                 Debug.Log("Хаос: Инверсия управления на 3 секунды!");
                 // Здесь можно вызвать инверсию управления у игрока
             }
-            else if (randomEffect < 0.4f)
+            else if (randomEffect < 0f)
             {
                 Debug.Log("Хаос: Временное замедление!");
                 // Замедлить время на 2 секунды
                 Time.timeScale = 0.5f;
                 Invoke(nameof(ResetTimeScale), 2f);
             }
-            else if (randomEffect < 0.6f)
+            else if (randomEffect < 0f)
             {
                 Debug.Log("Хаос: Плывет экран!");
             }
-            else if (randomEffect < 0.8f)
+            else if (randomEffect < 1f)
             {
-                screenFader.FadeScreen();
+                ScreenFad.FadeScreen();
                 Debug.Log("Хаос: экран потемнел!");
             }
             else
