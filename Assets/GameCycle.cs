@@ -142,7 +142,7 @@ public class GameCycle : MonoBehaviour
     
     private void InitializeGame()
     {
-        _rabbitInterval = _maxRabbitSpawnInterval;
+        _rabbitInterval = _minRabbitSpawnInterval;
         _rabbitTimer = 0f;
         _stressLevel = 0f;
         _timer = 0f;

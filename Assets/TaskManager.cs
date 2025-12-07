@@ -32,7 +32,6 @@ namespace TaskSystem
         public string Title { get; private set; }
         public string Description { get; private set; }
         public DocumentRequirement Requirements { get; private set; }
-        public float TimeAssigned { get; private set; }
         public float TimeRemaining { get; private set; }
         public bool IsCompleted { get; private set; }
         public bool IsFailed { get; private set; }
@@ -44,7 +43,6 @@ namespace TaskSystem
             Title = title;
             Requirements = req;
             Description = GenerateDescription(Requirements);
-            TimeAssigned = timeLimit;
             TimeRemaining = timeLimit;
             IsUrgent = urgent;
         }
@@ -120,10 +118,11 @@ namespace TaskSystem
 
         private string GenerateDescription(DocumentRequirement req) // Создание описания
         {
+            string time = TaskManager.Instance.ReturnTaskTime();
             return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
                    $"Подпись: {req.requiredSignaturePos}. " +
                    $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} " +
-                   $"Дедлайн: {TimeAssigned:F0} секунд.";
+                   $"Дедлайн: {time} секунд.";
         }
     }
 
@@ -169,7 +168,10 @@ public class TaskManager : MonoBehaviour
     public event Action<TaskSystem.BureaucraticTask> OnTaskFailed;
     public event Action<TaskSystem.BureaucraticTask> OnTaskCorrupted;
     public event Action<float> OnTaskTimerUpdated; // Оставшееся время текущего задания
-
+    public string ReturnTaskTime()
+    {
+        return Convert.ToString(_currentTaskTimeLimit);
+    }
     void Awake() // Единственность TaskManager'a
     {
         if (Instance != null && Instance != this)
@@ -277,7 +279,7 @@ public class TaskManager : MonoBehaviour
 
         Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
         Debug.Log($"<color=white>{_currentTask.Description}</color>");
-
+        Debug.Log($"время: {_currentTaskTimeLimit} ");
         // Генерируем необходимые предметы в мире
         SpawnRequiredItems(req);
     }
@@ -478,9 +480,6 @@ public class TaskManager : MonoBehaviour
         {
             GameCycle.Instance.FailTask(_currentTask.Requirements.timePenalty);
         }
-
-        // Новое задание (возможно, то же самое с новыми требованиями)
-        StartNewTask();
     }
 
     public void HandleRabbitInterference()

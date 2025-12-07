@@ -7,7 +7,6 @@ namespace Bunny
     public class BunnyDialogueManager : DialogueManager.DialogueManager
     {
         private global::Bunny.Bunny _activeBunny;
-        
         protected override void OnSentencePrinted()
         {
             base.OnSentencePrinted();
@@ -20,7 +19,7 @@ namespace Bunny
             if (GameCycle.Instance != null)
             {
                 Debug.Log("BunnyDialogueManager: Pausing game");
-                GameCycle.Instance.PauseGame();
+              //  GameCycle.Instance.PauseGame();
             }
             
             _activeBunny = bunny;
@@ -40,12 +39,6 @@ namespace Bunny
             Debug.Log("BunnyDialogueManager: EndDialogue called");
             
             base.EndDialogue();
-            
-            if (GameCycle.Instance != null)
-            {
-                Debug.Log("BunnyDialogueManager: Resuming game");
-                GameCycle.Instance.ResumeGame();
-            }
             
             if (_activeBunny != null)
             {
