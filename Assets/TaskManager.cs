@@ -178,24 +178,45 @@ public class TaskManager : MonoBehaviour
             return;
         }
         Instance = this;
+        
+        // Не уничтожаем при загрузке новой сцены
+        DontDestroyOnLoad(gameObject);
+        
+        Debug.Log("TaskManager: Awake called, Instance set");
     }
 
-    void Start() // Начало игры
+    void Start()
     {
+        Debug.Log("TaskManager: Start called");
+        
         _currentTaskTimeLimit = _baseTaskTime;
+        
         // Подписка на события GameCycle
-        if (Bunny.Bunny.Instance != null)
-        {
-            Bunny.Bunny.Instance.OnRabbitActive += HandleRabbitInterference;
-        }
-
+        // Используем безопасный поиск вместо прямой ссылки
+        StartCoroutine(FindBunnyAndSubscribe());
+        
         // Подписка на события инвентаря
         if (PlayerInventory.Instance != null)
         {
             PlayerInventory.Instance.OnInventoryChanged += CheckTaskRequirements;
         }
     }
-
+    private IEnumerator FindBunnyAndSubscribe()
+    {
+        // Ждем пока Bunny загрузится и инициализируется
+        yield return new WaitForSeconds(0.1f);
+        
+        var bunny = FindObjectOfType<Bunny.Bunny>();
+        if (bunny != null)
+        {
+            Debug.Log("TaskManager: Found Bunny, subscribing to events");
+            bunny.OnRabbitActive += HandleRabbitInterference;
+        }
+        else
+        {
+            Debug.LogWarning("TaskManager: Bunny not found in scene");
+        }
+    }
     void OnDestroy() //Конец
     {
         if(Bunny.Bunny.Instance != null)

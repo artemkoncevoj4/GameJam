@@ -57,13 +57,13 @@ namespace Bunny {
         {
             if (GameCycle.Instance != null)
             {
-                GameCycle.Instance.OnRabbitAppearing += Appear; // Подписал на события GameCycle
+                GameCycle.Instance.OnRabbitAppearing += Appear;
                 GameCycle.Instance.OnRabbitLeaving += Leave;
             }
-            if (TaskManager.Instance != null)
-            {
-                TaskManager.Instance.OnTaskCompleted += OnTaskCompletedHandler; // Изменил имя метода
-            }
+            
+            // Подписка на события TaskManager - отложим до его инициализации
+            StartCoroutine(SubscribeToTaskManagerEvents());
+            
             //_animator = GetComponent<Animator>();
             //_audioSource = GetComponent<AudioSource>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -80,6 +80,18 @@ namespace Bunny {
             {
                 Debug.LogError("BunnyDialogueManager не найден в сцене!");
             }
+        }
+        private IEnumerator SubscribeToTaskManagerEvents()
+        {
+            // Ждем пока TaskManager инициализируется
+            while (TaskManager.Instance == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                Debug.Log("Bunny: Waiting for TaskManager to initialize...");
+            }
+            
+            Debug.Log("Bunny: TaskManager found, subscribing to events");
+            TaskManager.Instance.OnTaskCompleted += OnTaskCompletedHandler;
         }
 
         void OnDestroy()
@@ -210,50 +222,73 @@ namespace Bunny {
 
         private void AssignOrModifyTask()
         {
-            if (TaskManager.Instance == null) return;
+            Debug.Log($"Bunny: AssignOrModifyTask called. _bunnyDialogueManager is {(_bunnyDialogueManager == null ? "null" : "not null")}");
+            
+            // Ждем TaskManager, если он еще не инициализирован
+            if (TaskManager.Instance == null) 
+            {
+                Debug.LogError("Bunny: TaskManager not found! Trying to find it...");
+                TaskManager taskManager = FindObjectOfType<TaskManager>();
+                if (taskManager == null)
+                {
+                    Debug.LogError("Bunny: TaskManager not found in scene! Cannot assign task.");
+                    Leave();
+                    return;
+                }
+                else
+                {
+                    Debug.Log("Bunny: Found TaskManager in scene");
+                }
+            }
 
             var currentTask = TaskManager.Instance.GetCurrentTask();
+            Debug.Log($"Bunny: Current task is {(currentTask == null ? "null" : currentTask.Title)}");
 
             if (currentTask == null)
             {
+                Debug.Log("Bunny: No current task, starting new task");
                 TaskManager.Instance.StartNewTask();
                 _isTaskPresent = true;
+                currentTask = TaskManager.Instance.GetCurrentTask();
             }
             else if (!currentTask.IsCorrupted)
             {
-                OnRabbitActive?.Invoke();
+                // Портим задание с вероятностью 50%
+                if (UnityEngine.Random.value > 0.5f)
+                {
+                    Debug.Log("Bunny: Corrupting current task");
+                    TaskManager.Instance.HandleRabbitInterference();
+                }
+                else
+                {
+                    Debug.Log("Заяц решил не трогать задание");
+                }
             }
             else
             {
                 Debug.Log("Задание уже изменено");
             }
-            if (_bunnyDialogueManager == null) return; // Проверка на Null
-        
-            string sentenceToStart = string.Empty;
-        
-            if (TestTaskManager.Instance != null)
+            
+            if (_bunnyDialogueManager == null) 
             {
-                // 1. [КЛЮЧЕВОЙ МОМЕНТ] Вызываем функцию у TaskManager для получения строки.
-                sentenceToStart = TaskManager.Instance.GetTaskDescription();
+                Debug.LogError("BunnyDialogueManager не найден!");
+                return;
             }
-
-            // 2. Проверяем, есть ли что говорить.
-            if (string.IsNullOrEmpty(sentenceToStart))
+            
+            // Получаем диалог с заданием
+            Dialogue taskDialogue = _bunnyDialogueManager.GetTaskDialogueForBunny(this);
+            
+            if (taskDialogue == null || taskDialogue.sentences.Length == 0)
             {
-                Debug.Log($"Bunny: Все реплики диалога исчерпаны (индекс {_currentDialogueIndex}). Заяц уходит.");
+                Debug.Log($"Bunny: Не удалось получить описание задания. Заяц уходит.");
                 Leave(); 
                 return;
             }
-
-            // 3. Создаем временный объект Dialogue только с одной текущей строкой.
-            Dialogue singleSentenceDialogue = new Dialogue
-            {
-                name = BunnyName, // Используем имя Зайца из старого объекта Dialogue
-                sentences = new string[] { sentenceToStart }
-            };
-        
-            // 4. Запускаем диалог
-            _bunnyDialogueManager.StartBunnyDialogue(singleSentenceDialogue, this);
+            
+            Debug.Log($"Bunny: Starting dialogue with: {taskDialogue.sentences[0]}");
+            
+            // Запускаем диалог
+            _bunnyDialogueManager.StartBunnyDialogue(taskDialogue, this);
         }
     
         private void TriggerChaosEffect()

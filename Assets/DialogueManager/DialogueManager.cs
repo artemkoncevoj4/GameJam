@@ -104,7 +104,8 @@ namespace DialogueManager {
         
         public virtual void StartDialogue(Dialogue dialogue)
         {
-            Debug.Log("Начинаем диалог с " + dialogue.name);
+            Debug.Log($"DialogueManager: StartDialogue called with {dialogue.name}");
+            Debug.Log($"DialogueManager: TextCloud is {textCloud}");
             
             // Проверяем ссылки
             if (textCloud == null)
@@ -115,14 +116,14 @@ namespace DialogueManager {
             
             if (nameText == null || dialogueText == null)
             {
-                Debug.LogError("TextMeshProUGUI компоненты не найдены! Проверьте, что объекты Name и Dialogue имеют компонент TextMeshPro - Text");
+                Debug.LogError("TextMeshProUGUI компоненты не найдены!");
                 return;
             }
-
-
+            
             // Показываем TextCloud, скрываем индикатор
             textCloud.SetActive(true);
             isDialogueActive = true;
+            Debug.Log($"DialogueManager: TextCloud set active, isDialogueActive = {isDialogueActive}");
 
             if (continueText != null)
                 continueText.gameObject.SetActive(false);
