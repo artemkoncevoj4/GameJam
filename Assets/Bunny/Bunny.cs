@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DialogueManager;
 using System;
+using Shaders;
 namespace Bunny {
     public class Bunny : MonoBehaviour
     {
@@ -305,21 +306,33 @@ namespace Bunny {
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
         
-            if (randomEffect < 0.25f)
+            if (randomEffect < 0.2f)
             {
                 Debug.Log("Хаос: Инверсия управления на 3 секунды!");
                 // Здесь можно вызвать инверсию управления у игрока
             }
-            else if (randomEffect < 0.5f)
+            else if (randomEffect < 0.4f)
             {
                 Debug.Log("Хаос: Временное замедление!");
                 // Замедлить время на 2 секунды
                 Time.timeScale = 0.5f;
                 Invoke(nameof(ResetTimeScale), 2f);
             }
-            else if (randomEffect < 0.75f)
+            else if (randomEffect < 0.6f)
             {
                 Debug.Log("Хаос: Плывет экран!");
+            }
+            else if (randomEffect < 0.8f)
+            {
+                ScreenFader screenFader = FindObjectOfType<ScreenFader>();
+                if (screenFader != null)
+                {
+                    StartCoroutine(screenFader.FadeScreenCoroutine());
+                }
+                else
+                {
+                    Debug.LogWarning("ScreenFader не найден в сцене!");
+                }
             }
             else
             {
