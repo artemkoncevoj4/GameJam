@@ -324,15 +324,7 @@ namespace Bunny {
             }
             else if (randomEffect < 0.8f)
             {
-                ScreenFader screenFader = FindObjectOfType<ScreenFader>();
-                if (screenFader != null)
-                {
-                    StartCoroutine(screenFader.FadeScreenCoroutine());
-                }
-                else
-                {
-                    Debug.LogWarning("ScreenFader не найден в сцене!");
-                }
+                 screenFader.FadeScreen();
             }
             else
             {
