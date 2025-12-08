@@ -7,7 +7,7 @@ namespace Player {
         public static PlayerInventory Instance { get; private set; }
 
         private List<string> _collectedItems = new List<string>();
-        [SerializeField] private int _maxItems = 3; // �������� ��������� �� ���
+        [SerializeField] private int _maxItems = 6; // �������� ��������� �� ���
         public event Action OnInventoryChanged;
 
         void Awake()
@@ -25,7 +25,7 @@ namespace Player {
             return _collectedItems.Contains(itemType);
         }
 
-        public bool AddItem(string itemType)
+        public bool AddItemToInventory(string itemType)
         {
             if (_collectedItems.Count >= _maxItems)
             {

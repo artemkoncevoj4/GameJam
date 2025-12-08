@@ -1,12 +1,12 @@
 using UnityEngine;
 using Player;
 using TaskSystem;
+using Player.Inventory;
 namespace InteractiveObjects
 {
     public class CollectibleItem : InteractObject
     {
         [Header("��������� ��������")]
-        [SerializeField] private string _itemType = "ink_black"; // ��� ��������
         [SerializeField] private AudioClip _pickupSound;
         [SerializeField] private GameObject _pickupEffect;
 
@@ -52,11 +52,22 @@ namespace InteractiveObjects
             }
         }
 
+        public void Pickup()
+        {
+            if (_isCollected) return;
+            AddItemToInventory(this.Type);
+        }
+
+        public void PassToTask()
+        {
+            if (!_isCollected) return;
+            if (this.Type);
+        }
+
         private void PlayPickupEffects()
         {
             if (_pickupSound != null)
             {
-                // �������������� ������� AudioSource
                 AudioSource.PlayClipAtPoint(_pickupSound, transform.position);
             }
 
@@ -66,7 +77,6 @@ namespace InteractiveObjects
             }
         }
 
-        // ��� �������
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;
