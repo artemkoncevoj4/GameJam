@@ -9,7 +9,7 @@ namespace ScreenEffects
         public static ScreenBlinker Instance { get; private set; }
 
         [Header("Blink Settings")]
-        [SerializeField] private Image blinkImage;
+        [SerializeField] private Image Image;
         [SerializeField] private float fadeDuration = 0.5f;
         [SerializeField] private float pauseDuration = 0.2f;
         [SerializeField] private int blinkCount = 3;
@@ -29,10 +29,10 @@ namespace ScreenEffects
                 return;
             }
 
-            if (blinkImage == null)
+            if (Image == null)
             {
-                blinkImage = GetComponent<Image>();
-                if (blinkImage == null)
+                Image = GetComponent<Image>();
+                if (Image == null)
                 {
                     Debug.LogError("ScreenBlinker: No Image component found!");
                     return;
@@ -72,8 +72,8 @@ namespace ScreenEffects
 
         private IEnumerator BlinkCoroutine()
         {
-            Color originalColor = blinkImage.color;
-            blinkImage.color = new Color(blinkColor.r, blinkColor.g, blinkColor.b, 0f);
+            Color originalColor = Image.color;
+            Image.color = new Color(blinkColor.r, blinkColor.g, blinkColor.b, 0f);
 
             for (int i = 0; i < blinkCount; i++)
             {
@@ -92,12 +92,12 @@ namespace ScreenEffects
             }
 
             // Return to original color
-            blinkImage.color = originalColor;
+            Image.color = originalColor;
         }
 
         private IEnumerator FadeToAlpha(float targetAlpha, float duration)
         {
-            float startAlpha = blinkImage.color.a;
+            float startAlpha = Image.color.a;
             float time = 0f;
 
             while (time < duration)
@@ -113,9 +113,9 @@ namespace ScreenEffects
 
         private void SetAlpha(float alpha)
         {
-            Color c = blinkImage.color;
+            Color c = Image.color;
             c.a = alpha;
-            blinkImage.color = c;
+            Image.color = c;
         }
 
         public void StopBlink()
