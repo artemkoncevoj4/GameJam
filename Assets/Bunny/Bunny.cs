@@ -5,7 +5,7 @@ using DialogueManager;
 using System;
 using Shaders;
 using TaskSystem;
-using ScreenEffects;
+using Shaders.ScreenEffects;
 namespace Bunny {
     public class Bunny : MonoBehaviour
     {

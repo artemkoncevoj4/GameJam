@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Collections; // Добавлено для работы с корутинами, если будете их использовать
+using System.Collections;
 
 namespace SampleScene {
     public class PauseMenu : MonoBehaviour
@@ -12,16 +12,20 @@ namespace SampleScene {
         [SerializeField] private GameObject _pauseMenuPanel;
         [SerializeField] private Button _resumeButton;
         [SerializeField] private Button _mainMenuButton;
+        [SerializeField] private Button _restartButton;
 
         [Header("Настройки")]
         [SerializeField] private string _mainMenuSceneName = "MainMenu";
         [SerializeField] private float _pauseBackgroundAlpha = 0.7f;
-
+        
+        private string _currentSceneName;
         private bool _isPaused = false;
         private Image _backgroundImage;
+        
         [Header("Анимация")]
         [SerializeField] private PauseMenuAnimator _menuAnimator;
         [SerializeField] private float _animationDelay = 0.3f;
+        
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -30,8 +34,13 @@ namespace SampleScene {
                 return;
             }
             Instance = this;
+            
             if (_menuAnimator == null)
-            _menuAnimator = GetComponentInChildren<PauseMenuAnimator>();
+                _menuAnimator = GetComponentInChildren<PauseMenuAnimator>();
+            
+            _currentSceneName = SceneManager.GetActiveScene().name;
+            
+            Debug.Log("PauseMenu Awake. Scene: " + _currentSceneName);
         }
 
         void Start()
@@ -39,17 +48,16 @@ namespace SampleScene {
             InitializeUI();
             SetupEventListeners();
             
-            // Скрываем меню при старте
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
+            
+            Debug.Log("PauseMenu Start. Buttons initialized.");
         }
 
         private void InitializeUI()
         {
-            // Находим или создаем необходимые компоненты
             if (_pauseMenuPanel != null)
             {
-                // Настраиваем полупрозрачный фон
                 _backgroundImage = _pauseMenuPanel.GetComponent<Image>();
                 if (_backgroundImage == null)
                 {
@@ -59,25 +67,52 @@ namespace SampleScene {
                 Color bgColor = Color.black;
                 bgColor.a = _pauseBackgroundAlpha;
                 _backgroundImage.color = bgColor;
-                
-                // Убедимся, что панель не блокирует клики на кнопки
                 _backgroundImage.raycastTarget = true;
             }
         }
 
         private void SetupEventListeners()
         {
+            Debug.Log("Setting up button listeners...");
+            
             if (_resumeButton != null)
+            {
                 _resumeButton.onClick.AddListener(ResumeGame);
+                Debug.Log("Resume button listener added.");
+            }
+            else
+            {
+                Debug.LogError("Resume button is not assigned!");
+            }
             
             if (_mainMenuButton != null)
+            {
                 _mainMenuButton.onClick.AddListener(GoToMainMenu);
+                Debug.Log("Main Menu button listener added.");
+            }
+            else
+            {
+                Debug.LogError("Main Menu button is not assigned!");
+            }
             
-            // Подписываемся на события GameCycle для синхронизации
-            // (Предполагается, что GameCycle.Instance существует)
+            if (_restartButton != null)
+            {
+                _restartButton.onClick.AddListener(RestartGame);
+                Debug.Log("Restart button listener added.");
+            }
+            else
+            {
+                Debug.LogError("Restart button is not assigned!");
+            }
+            
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnGameEnded += OnGameEnded;
+                Debug.Log("Subscribed to GameEnded event.");
+            }
+            else
+            {
+                Debug.LogError("GameCycle instance not found!");
             }
         }
 
@@ -95,26 +130,23 @@ namespace SampleScene {
             }
         }
 
-        // --- ИСПРАВЛЕННЫЙ МЕТОД PAUSEGAME ---
         public void PauseGame()
         {
             if (_isPaused) return;
             
             _isPaused = true;
-            Time.timeScale = 0f;
             
-            if (InputHandler.Instance != null)
-                InputHandler.Instance.DisableInput();
-            
+            // СНАЧАЛА ставим игру на паузу в GameCycle
             if (GameCycle.Instance != null)
                 GameCycle.Instance.PauseGame();
             
-            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: 
-            // Сначала включаем GameObject, чтобы Корутины могли запуститься!
+            // Затем выключаем инпуты и показываем меню
+            if (InputHandler.Instance != null)
+                InputHandler.Instance.DisableInput();
+            
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(true);
             
-            // Теперь вызываем анимацию на АКТИВНОМ объекте
             if (_menuAnimator != null)
                 _menuAnimator.ShowMenu();
         }
@@ -123,59 +155,88 @@ namespace SampleScene {
         {
             if (!_isPaused) return;
             
-            // Скрываем с анимацией
-            if (_menuAnimator != null)
-            {
-                _menuAnimator.HideMenu();
-                // Запускаем CompleteResume через задержку, чтобы анимация успела отработать
-                Invoke(nameof(CompleteResume), _animationDelay);
-            }
-            else
-            {
-                // Если аниматора нет, выполняем сразу
-                CompleteResume();
-            }
-        }
-        
-        // --- ИСПРАВЛЕННЫЙ МЕТОД COMPLETERESUME ---
-        private void CompleteResume()
-        {
+            // Сразу снимаем флаг паузы
             _isPaused = false;
-            Time.timeScale = 1f;
             
-            if (InputHandler.Instance != null)
-                InputHandler.Instance.EnableInput();
-            
+            // Сразу снимаем паузу в GameCycle
             if (GameCycle.Instance != null)
                 GameCycle.Instance.ResumeGame();
             
-            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: 
-            // Панель должна быть выключена всегда, когда меню скрыто, 
-            // независимо от того, использовалась анимация или нет.
-            // (Эта функция вызывается с задержкой, позволяя анимации завершиться)
+            // Сразу восстанавливаем инпуты
+            if (InputHandler.Instance != null)
+                InputHandler.Instance.EnableInput();
+            
+            // Скрываем меню с анимацией
+            if (_menuAnimator != null)
+            {
+                _menuAnimator.HideMenu();
+                Invoke(nameof(DisableMenuPanel), _animationDelay);
+            }
+            else
+            {
+                DisableMenuPanel();
+            }
+        }
+        
+        private void DisableMenuPanel()
+        {
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
         }
         
+        private void RestartGame()
+        {
+            Debug.Log("=== RESTART GAME CALLED ===");
+            Debug.Log("Current scene: " + _currentSceneName);
+            Debug.Log("Current timeScale: " + Time.timeScale);
+            Debug.Log("IsPaused: " + _isPaused);
+            
+            // Восстанавливаем нормальную скорость времени
+            Time.timeScale = 1f;
+            Debug.Log("Time.timeScale set to 1");
+            
+            // Снимаем все флаги паузы
+            _isPaused = false;
+            
+            // Отключаем меню, если оно активно
+            if (_pauseMenuPanel != null && _pauseMenuPanel.activeSelf)
+            {
+                _pauseMenuPanel.SetActive(false);
+                Debug.Log("Pause menu panel disabled.");
+            }
+            
+            // Сбрасываем состояние GameCycle
+            if (GameCycle.Instance != null)
+            {
+                // Если GameCycle имеет метод ResetGame, вызываем его
+                Debug.Log("GameCycle instance found. Starting new game...");
+                GameCycle.Instance.StartGame();
+            }
+            
+            // Получаем текущую сцену по индексу (более надежно)
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            Debug.Log("Loading scene with index: " + currentSceneIndex);
+            
+            // Загружаем сцену с опцией для сброса всех объектов
+            SceneManager.LoadScene(currentSceneIndex, LoadSceneMode.Single);
+            
+            Debug.Log("Scene load initiated.");
+        }
+
         private void GoToMainMenu()
         {
             Debug.Log("Going to main menu...");
             
             // Восстанавливаем нормальную скорость времени
             Time.timeScale = 1f;
-            
-            // Снимаем паузу перед выходом
-            ResumeGame();
+            _isPaused = false;
             
             // Загружаем главное меню
             SceneManager.LoadScene(_mainMenuSceneName);
-            
-            Debug.Log("Переход в главное меню");
         }
 
         private void OnGameEnded(GameCycle.GameResult result)
         {
-            // Если игра закончилась, отключаем меню паузы
             _isPaused = false;
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
@@ -183,14 +244,15 @@ namespace SampleScene {
 
         void OnDestroy()
         {
-            // Отписываемся от событий
             if (_resumeButton != null)
                 _resumeButton.onClick.RemoveListener(ResumeGame);
             
             if (_mainMenuButton != null)
                 _mainMenuButton.onClick.RemoveListener(GoToMainMenu);
             
-            // (Предполагается, что GameCycle.Instance существует)
+            if (_restartButton != null)
+                _restartButton.onClick.RemoveListener(RestartGame);
+            
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnGameEnded -= OnGameEnded;

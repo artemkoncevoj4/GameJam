@@ -17,7 +17,6 @@ public class GameCycle : MonoBehaviour
     public event Action OnRabbitAppearing; // Кролик появляется (визуальный сигнал)
     public event Action OnRabbitLeaving; // Кролик уходит
     public event Action<GameResult> OnGameEnded; // Игра завершена (победа/поражение)
-    
     private GameState _currentState = GameState.Playing; // menu
     private float _timer;
     private float _rabbitTimer;
@@ -248,11 +247,13 @@ public class GameCycle : MonoBehaviour
         if (_stressLevel >= 100f)
         {
             EndGame(GameResult.Defeat);
+            //TODO: Здесь вызвать функцию затемнения экрана и вызова главного меню без кнопки
+            Shaders.ScreenEffects.ScreenFader.Instance.StartFade();
+            PauseMenu.Instance.TogglePause();
             Debug.Log("Game Over (Heartatack)");
             return;
         }
     }
-
     private void EndGame(GameResult result)
     {
         if (_currentState == GameState.GameOver) return;
@@ -269,6 +270,7 @@ public class GameCycle : MonoBehaviour
             _ => "Игра завершена."
         };
         Debug.Log(resultText);
+
     }
     public bool IsRabbitHere => _isRabbitHere;
     public float StressLevel => _stressLevel;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ScreenEffects
+namespace Shaders.ScreenEffects
 {
     public class ScreenFadeManager : MonoBehaviour
     {

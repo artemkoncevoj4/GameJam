@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-namespace ScreenEffects
+namespace Shaders.ScreenEffects
 {
     public class ScreenBlinker : MonoBehaviour
     {
