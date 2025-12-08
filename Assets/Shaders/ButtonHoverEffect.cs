@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
-
+namespace Shaders {
 [RequireComponent(typeof(Button), typeof(Image))]
 public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -84,4 +84,5 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
             _buttonText.color = Color.white;
         }
     }
+}
 }

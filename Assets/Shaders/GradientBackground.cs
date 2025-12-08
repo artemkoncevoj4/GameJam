@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-
+namespace Shaders {
 [RequireComponent(typeof(Image))]
 public class GradientBackground : MonoBehaviour
 {
@@ -46,4 +46,5 @@ public class GradientBackground : MonoBehaviour
             _gradientMaterial.SetFloat("_GradientHeight", _gradientHeight);
         }
     }
+}
 }

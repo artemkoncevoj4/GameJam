@@ -5,6 +5,7 @@ using DialogueManager;
 using System;
 using Shaders;
 using TaskSystem;
+using ScreenEffects;
 namespace Bunny {
     public class Bunny : MonoBehaviour
     {
@@ -324,7 +325,7 @@ namespace Bunny {
             }
             else if (randomEffect < 0.8f)
             {
-                ScreenFad.FadeScreen();
+                ScreenBlinker.StartBlink();
                 Debug.Log("Хаос: экран потемнел!");
             }
             else
