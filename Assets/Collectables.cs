@@ -1,7 +1,6 @@
 using UnityEngine;
 using Player;
 using TaskSystem;
-using Player.Inventory;
 namespace InteractiveObjects
 {
     public class CollectibleItem : InteractObject
@@ -13,55 +12,55 @@ namespace InteractiveObjects
         private bool _isCollected = false;
 
 
-        public override void Interact()
-        {
-            if (_isCollected) return;
+        // public override void Interact()
+        // {
+        //     if (_isCollected) return;
 
-            Interact();
+        //     Interact();
 
-            if (PlayerInventory.Instance != null && PlayerInventory.Instance.AddItem(_itemType))
-            {
-                // �������� TaskManager � ������ �������� (��� ��������� ���������� ������)
-                if (TaskManager.Instance != null)
-                {
-                    // TaskManager.Instance.ReportItemCollected(_itemType, ID); // ID �� InteractObject
-                }
+        //     if (PlayerInventory.Instance != null && PlayerInventory.Instance.AddItem(_itemType))
+        //     {
+        //         // �������� TaskManager � ������ �������� (��� ��������� ���������� ������)
+        //         if (TaskManager.Instance != null)
+        //         {
+        //             // TaskManager.Instance.ReportItemCollected(_itemType, ID); // ID �� InteractObject
+        //         }
 
-                // ���������� � �������� �������
-                PlayPickupEffects();
+        //         // ���������� � �������� �������
+        //         PlayPickupEffects();
 
-                // ������ ������� ���������/����������
-                _isCollected = true;
+        //         // ������ ������� ���������/����������
+        //         _isCollected = true;
 
-                // ��������� ��������� � �������� (������������ �������)
-                var renderer = GetComponent<SpriteRenderer>();
-                if (renderer != null)
-                {
-                    renderer.enabled = false;
-                }
+        //         // ��������� ��������� � �������� (������������ �������)
+        //         var renderer = GetComponent<SpriteRenderer>();
+        //         if (renderer != null)
+        //         {
+        //             renderer.enabled = false;
+        //         }
 
-                // ������������ �� �����, ���� �� ����� ��������
-                gameObject.SetActive(false);
+        //         // ������������ �� �����, ���� �� ����� ��������
+        //         gameObject.SetActive(false);
 
-                Debug.Log($"������� {_itemType} ������ (ID: {ID})");
-            }
-            else
-            {
-                // �� ������� �������� ������� (��������� �����)
-                _isCollected = false;
-            }
-        }
+        //         Debug.Log($"������� {_itemType} ������ (ID: {ID})");
+        //     }
+        //     else
+        //     {
+        //         // �� ������� �������� ������� (��������� �����)
+        //         _isCollected = false;
+        //     }
+        // }
 
         public void Pickup()
         {
             if (_isCollected) return;
-            AddItemToInventory(this.Type);
+            PlayerInventory.Instance.AddItemToInventory(this.Type);
         }
 
-        public void PassToTask()
+        public void PassToTask(string type)
         {
             if (!_isCollected) return;
-            if (this.Type);
+            if (this.Type == type);
         }
 
         private void PlayPickupEffects()
