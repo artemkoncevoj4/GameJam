@@ -12,17 +12,12 @@ namespace InteractiveObjects
 
         private bool _isCollected = false;
 
-        protected override void Start()
-        {
-            base.Start();
-            State = "����� � �����";
-        }
 
         public override void Interact()
         {
             if (_isCollected) return;
 
-            OnInteractionStarted();
+            Interact();
 
             if (PlayerInventory.Instance != null && PlayerInventory.Instance.AddItem(_itemType))
             {
@@ -37,7 +32,6 @@ namespace InteractiveObjects
 
                 // ������ ������� ���������/����������
                 _isCollected = true;
-                State = "������";
 
                 // ��������� ��������� � �������� (������������ �������)
                 var renderer = GetComponent<SpriteRenderer>();
@@ -55,7 +49,6 @@ namespace InteractiveObjects
             {
                 // �� ������� �������� ������� (��������� �����)
                 _isCollected = false;
-                State = "����� � �����";
             }
         }
 

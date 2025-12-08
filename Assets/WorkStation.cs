@@ -14,12 +14,6 @@ namespace InteractiveObjects
         private bool _isUsed = false;
         private GameObject _placedItem;
 
-        protected override void Start()
-        {
-            base.Start();
-            State = "������� �������";
-        }
-
         public override void Interact()
         {
             if (_isUsed)
@@ -43,7 +37,7 @@ namespace InteractiveObjects
 
             if (itemToUse != null)
             {
-                OnInteractionStarted();
+                Interact();
                 UseStation(itemToUse);
             }
             else
@@ -58,7 +52,6 @@ namespace InteractiveObjects
             if (PlayerInventory.Instance.RemoveItem(item))
             {
                 _isUsed = true;
-                State = "������������";
 
                 // TODO: �������� ������ ������������ ��������
                 // if (_itemPlacementPoint != null)
@@ -80,7 +73,6 @@ namespace InteractiveObjects
         public void ResetStation()
         {
             _isUsed = false;
-            State = "������� �������";
 
             // TODO: ���������� ��� ������ _placedItem
             if (_placedItem != null)
