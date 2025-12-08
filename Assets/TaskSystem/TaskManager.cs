@@ -74,7 +74,7 @@ namespace TaskSystem {
         {
             yield return new WaitForSeconds(0.1f);
             
-            var bunny = FindObjectOfType<Bunny.Bunny>();
+            var bunny = FindAnyObjectByType<Bunny.Bunny>();
             if (bunny != null)
             {
                 Debug.Log("TaskManager: Found Bunny, subscribing to events");
@@ -181,6 +181,7 @@ namespace TaskSystem {
 
         private void SpawnRequiredItems(TaskSystem.DocumentRequirement req)
         {
+            
             Debug.Log($"Для задания нужны: {req.requiredInkColor} чернила, {req.requiredPaperType}, {(req.isStamped ? $"штамп {req.requiredStampType}" : "штамп не нужен")}");
         }
 

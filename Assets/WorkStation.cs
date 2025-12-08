@@ -6,10 +6,10 @@ namespace InteractiveObjects
 {
     public class Workstation : InteractObject
     {
-        [Header("��������� �������")]
-        [SerializeField] private string _stationType = "desk"; // ��� �������
+        [Header("Станция для предмета")]
+        [SerializeField] private string _stationType = "desk"; 
         [SerializeField] private List<string> _requiredItems = new List<string>();
-        [SerializeField] private Transform _itemPlacementPoint; // ��� ���������� �������
+        [SerializeField] private Transform _itemPlacementPoint; 
 
         private bool _isUsed = false;
         private GameObject _placedItem;
@@ -24,7 +24,6 @@ namespace InteractiveObjects
 
             if (PlayerInventory.Instance == null) return;
 
-            // ���������, ���� �� � ������ **����** �� ������ ���������
             string itemToUse = null;
             foreach (string item in _requiredItems)
             {

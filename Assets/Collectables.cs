@@ -5,7 +5,7 @@ namespace InteractiveObjects
 {
     public class CollectibleItem : InteractObject
     {
-        [Header("��������� ��������")]
+        [Header("Подбор предмета")]
         [SerializeField] private AudioClip _pickupSound;
         [SerializeField] private GameObject _pickupEffect;
 
@@ -57,10 +57,15 @@ namespace InteractiveObjects
             PlayerInventory.Instance.AddItemToInventory(this.Type);
         }
 
-        public void PassToTask(string type)
+        public bool PassToTask(string type)
         {
-            if (!_isCollected) return;
-            if (this.Type == type);
+            if (!_isCollected) return false;
+            if (this.Type == type)
+            {
+                PlayerInventory.Instance.RemoveItem(this.Type);
+                return true;
+            }
+            return false;
         }
 
         private void PlayPickupEffects()

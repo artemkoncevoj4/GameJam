@@ -94,6 +94,7 @@ namespace Bunny {
             
             Debug.Log("Bunny: TaskManager found, subscribing to events");
             TaskManager.Instance.OnTaskCompleted += OnTaskCompletedHandler;
+            TaskManager.Instance.OnTaskFailed += OnTaskCompletedHandler;
         }
 
         void OnDestroy()
@@ -106,7 +107,8 @@ namespace Bunny {
 
             if (TaskManager.Instance != null)
             {
-                TaskManager.Instance.OnTaskCompleted -= OnTaskCompletedHandler; // Отписка
+                TaskManager.Instance.OnTaskCompleted -= OnTaskCompletedHandler;
+                TaskManager.Instance.OnTaskFailed -= OnTaskCompletedHandler;
             }
         }
 
@@ -118,6 +120,7 @@ namespace Bunny {
             SetVisible(true);
         
             bool willPeek = _isTaskPresent ? UnityEngine.Random.value < _peekChance : false;
+            Debug.Log($"<color=red>Шанс пик {willPeek}</color>");
             bool whichDoor = UnityEngine.Random.value < 0.5f;
         
             if (willPeek)
@@ -230,7 +233,7 @@ namespace Bunny {
             if (TaskManager.Instance == null) 
             {
                 Debug.LogError("Bunny: TaskManager not found! Trying to find it...");
-                TaskManager taskManager = FindObjectOfType<TaskManager>();
+                TaskManager taskManager = FindAnyObjectByType<TaskManager>();
                 if (taskManager == null)
                 {
                     Debug.LogError("Bunny: TaskManager not found in scene! Cannot assign task.");
