@@ -345,7 +345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &391217272
 Transform:
   m_ObjectHideFlags: 0
@@ -355,15 +355,15 @@ Transform:
   m_GameObject: {fileID: 391217271}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
+  m_LocalPosition: {x: 0.00064372, y: 0.0014494, z: 0}
+  m_LocalScale: {x: 0.02833911, y: 0.02833911, z: 0.85017335}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 991583967}
   - {fileID: 562044456}
   - {fileID: 1211031968}
   - {fileID: 892616538}
-  m_Father: {fileID: 599674562}
+  m_Father: {fileID: 1754196039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414733878
 GameObject:
@@ -541,7 +541,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 362
+  orthographic size: 1000
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -677,8 +677,8 @@ Transform:
   m_GameObject: {fileID: 562044455}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -383.89, y: -24.655, z: 0}
-  m_LocalScale: {x: 37.49341, y: 562.4011, z: 37.49341}
+  m_LocalPosition: {x: -446.9886, y: -62.0121, z: 0}
+  m_LocalScale: {x: 40.97184, y: 631.0041, z: 37.49341}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 391217272}
@@ -940,7 +940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: -330}
+  m_AnchoredPosition: {x: 0, y: -330}
   m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &589236352
@@ -997,7 +997,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1099,8 +1099,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u041F\u0420\u041E\u0411\u0415\u041B
-    \u0447\u0442\u043E\u0431\u044B \u0441\u043A\u0440\u044B\u0442\u044C."
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1275,7 +1274,6 @@ RectTransform:
   m_Children:
   - {fileID: 552245047}
   - {fileID: 952822703}
-  - {fileID: 391217272}
   - {fileID: 1242049403}
   m_Father: {fileID: 1754196039}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1484,8 +1482,8 @@ Transform:
   m_GameObject: {fileID: 892616537}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.04, y: 189.81, z: 0}
-  m_LocalScale: {x: 937.33527, y: 37.49341, z: 37.49341}
+  m_LocalPosition: {x: -27.4581, y: 178.6261, z: 0}
+  m_LocalScale: {x: 1024.296, y: 42.06694, z: 37.49341}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 391217272}
@@ -1714,8 +1712,8 @@ Transform:
   m_GameObject: {fileID: 991583966}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.04, y: -196, z: 0}
-  m_LocalScale: {x: 937.33527, y: 37.49341, z: 37.49341}
+  m_LocalPosition: {x: -27.4581, y: -254.268, z: 0}
+  m_LocalScale: {x: 1024.296, y: 42.06694, z: 37.49341}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 391217272}
@@ -2080,8 +2078,8 @@ Transform:
   m_GameObject: {fileID: 1211031967}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 379.85, y: 24.835, z: 0}
-  m_LocalScale: {x: 37.49341, y: 562.4011, z: 37.49341}
+  m_LocalPosition: {x: 387.5704, y: -6.4824, z: 0}
+  m_LocalScale: {x: 40.97184, y: 631.0041, z: 37.49341}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 391217272}
@@ -2207,7 +2205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1242049403
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2554,6 +2552,7 @@ Transform:
   m_LocalScale: {x: 75, y: 75, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 391217272}
   - {fileID: 1794808918}
   - {fileID: 1974046310}
   - {fileID: 657081057}
@@ -2825,11 +2824,9 @@ MonoBehaviour:
   _peekDuration: 2
   _chaosEffect: {fileID: 0}
   _shoutDialogue:
-    name: "\"Bunny \u043D\u0430\u0437\u043D\u0430\u0447\u0438\u043B \u043D\u043E\u0432\u043E\u0435
-      \u0437\u0430\u0434\u0430\u043D\u0438\u0435.\""
+    name: '"Bunny"'
     sentences:
-    - "\u0417\u0430\u0434\u0430\u043D\u0438\u0435 1"
-    - "\u0417\u0430\u0434\u0430\u043D\u0438\u0435 2"
+    - "\u0442\u0435\u043A\u0441\u0442 \u0444\u0440\u0430\u0437\u044B"
 --- !u!114 &1860325123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2859,6 +2856,7 @@ MonoBehaviour:
   nameObject: {fileID: 589236350}
   dialogueObject: {fileID: 99768779}
   continueText: {fileID: 590998941}
+  _autoCloseDuration: 3
 --- !u!1 &1974046309
 GameObject:
   m_ObjectHideFlags: 0
