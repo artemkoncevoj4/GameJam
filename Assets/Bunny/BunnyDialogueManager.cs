@@ -16,16 +16,16 @@ namespace Bunny
         {
             Debug.Log($"BunnyDialogueManager: StartBunnyDialogue called with bunny {bunny}");
             
+            UseTimerForClosing = true;
             if (GameCycle.Instance != null)
             {
                 Debug.Log("BunnyDialogueManager: Pausing game");
-              //  GameCycle.Instance.PauseGame();
             }
             
             _activeBunny = bunny;
             
             // Показываем textCloud перед началом диалога
-            if (textCloud != null)
+           if (textCloud != null)
             {
                 textCloud.SetActive(true);
                 Debug.Log("BunnyDialogueManager: TextCloud activated");
@@ -38,6 +38,7 @@ namespace Bunny
         {
             Debug.Log("BunnyDialogueManager: EndDialogue called");
             
+            UseTimerForClosing = false;
             base.EndDialogue();
             
             if (_activeBunny != null)
@@ -80,13 +81,13 @@ namespace Bunny
             // Добавляем срочность, если задание срочное
             if (currentTask.IsUrgent)
             {
-                description = $"<color=red>СРОЧНО!</color>\n" + description;
+                description = $"<color=red>СРОЧНО!!!</color>\n" + description;
             }
             
             // Добавляем пометку об изменении, если задание испорчено
             if (currentTask.IsCorrupted)
             {
-                description = $"<color=yellow>⚠ ВНИМАНИЕ: Заяц изменил требования!</color>\n" + description;
+                description = $"<color=yellow>! ВНИМАНИЕ: Заяц изменил требования!</color>\n" + description;
             }
             
             Debug.Log($"BunnyDialogueManager: Task description: {description}");

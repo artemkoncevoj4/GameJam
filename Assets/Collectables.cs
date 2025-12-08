@@ -1,11 +1,12 @@
 using UnityEngine;
-
+using Player;
+using TaskSystem;
 namespace InteractiveObjects
 {
     public class CollectibleItem : InteractObject
     {
-        [Header("Настройки предмета")]
-        [SerializeField] private string _itemType = "ink_black"; // Тип предмета
+        [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+        [SerializeField] private string _itemType = "ink_black"; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         [SerializeField] private AudioClip _pickupSound;
         [SerializeField] private GameObject _pickupEffect;
 
@@ -14,7 +15,7 @@ namespace InteractiveObjects
         protected override void Start()
         {
             base.Start();
-            State = "Готов к сбору";
+            State = "пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ";
         }
 
         public override void Interact()
@@ -25,36 +26,36 @@ namespace InteractiveObjects
 
             if (PlayerInventory.Instance != null && PlayerInventory.Instance.AddItem(_itemType))
             {
-                // Сообщаем TaskManager о взятии предмета (для возможной внутренней логики)
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ TaskManager пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
                 if (TaskManager.Instance != null)
                 {
-                    // TaskManager.Instance.ReportItemCollected(_itemType, ID); // ID из InteractObject
+                    // TaskManager.Instance.ReportItemCollected(_itemType, ID); // ID пїЅпїЅ InteractObject
                 }
 
-                // Визуальные и звуковые эффекты
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 PlayPickupEffects();
 
-                // Делаем предмет невидимым/неактивным
+                // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ/пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 _isCollected = true;
-                State = "Собран";
+                State = "пїЅпїЅпїЅпїЅпїЅпїЅ";
 
-                // Отключаем коллайдер и рендерер (предполагаем наличие)
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
                 var renderer = GetComponent<SpriteRenderer>();
                 if (renderer != null)
                 {
                     renderer.enabled = false;
                 }
 
-                // Деактивируем на время, пока не будет респавна
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 gameObject.SetActive(false);
 
-                Debug.Log($"Предмет {_itemType} собран (ID: {ID})");
+                Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {_itemType} пїЅпїЅпїЅпїЅпїЅпїЅ (ID: {ID})");
             }
             else
             {
-                // Не удалось добавить предмет (инвентарь полон)
+                // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
                 _isCollected = false;
-                State = "Готов к сбору";
+                State = "пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ";
             }
         }
 
@@ -62,7 +63,7 @@ namespace InteractiveObjects
         {
             if (_pickupSound != null)
             {
-                // Предполагается наличие AudioSource
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ AudioSource
                 AudioSource.PlayClipAtPoint(_pickupSound, transform.position);
             }
 
@@ -72,7 +73,7 @@ namespace InteractiveObjects
             }
         }
 
-        // Для отладки
+        // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.green;

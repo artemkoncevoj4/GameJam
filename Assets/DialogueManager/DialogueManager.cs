@@ -14,21 +14,40 @@ namespace DialogueManager {
         public GameObject nameObject;
         public GameObject dialogueObject;
         public TextMeshProUGUI continueText; // Индикатор продолжения (должен быть назначен в Инспекторе)
+        public int CurrentSentenceIndex => _currentSentenceIndex; // Публичный геттер
 
         private TextMeshProUGUI nameText;
         private TextMeshProUGUI dialogueText;
-        
-       private Queue<string> sentences;
+        private Queue<string> sentences;
         private string currentSentence;
         private Coroutine typeCoroutine;
-
         private bool isTyping = false;
         private bool isDialogueActive = false;
-        
+
         // [NEW] Индекс текущего предложения. Доступен только для чтения (getter)
         protected int _currentSentenceIndex = -1; 
-        public int CurrentSentenceIndex => _currentSentenceIndex; // Публичный геттер
+
+        //* Работа с таймером и переключение между ПРОБЕЛ и таймер
+        protected bool _useTimerForClosing = false;
+
+        public bool UseTimerForClosing
+        {
+            get => _useTimerForClosing;
+            set => _useTimerForClosing = value;
+        }
         
+        [SerializeField] protected float _autoCloseDuration = 3f;
+        private float _currentTimer = 0f;
+        //*
+
+        //* ЕСЛИ МЫ ХОТИМ ЧТОБЫ ЗАДАНИЕ НЕ ЗАКРЫВАЛОСЬ
+        protected bool _isPermanentDisplay = false;
+        public bool IsPermanentDisplay
+        {
+            get => _isPermanentDisplay;
+            set => _isPermanentDisplay = value;
+        }
+        //*
         void Awake()
         {
             Debug.Log("=== DialogueManager Awake ===");
@@ -72,32 +91,50 @@ namespace DialogueManager {
         
         void Update()
         {
-            if (isDialogueActive && Input.GetKeyDown(KeyCode.Space)) 
+            if (!isDialogueActive) return;
+            if (_isPermanentDisplay) return;
+
+
+            if (!_useTimerForClosing)
             {
-                if (isTyping)
+                //* Логика закрытия по ПРОБЕЛУ
+                if (Input.GetKeyDown(KeyCode.Space)) 
                 {
-                    // [FIX 1] Если текст печатается, пропускаем печать до конца.
-                    // Останавливаем корутину, чтобы текст появился мгновенно
-                    if (typeCoroutine != null)
+                    if (isTyping)
                     {
-                        StopCoroutine(typeCoroutine);
+                        // Пропускаем печать до конца
+                        if (typeCoroutine != null)
+                        {
+                            StopCoroutine(typeCoroutine);
+                        }
+                        
+                        dialogueText.text = currentSentence; 
+                        isTyping = false;
+                        OnSentencePrinted();
+                        
+                        // Показываем индикатор (он будет скрыт на следующем шаге DisplayNextSentence)
+                        if (continueText != null && sentences.Count > 0)
+                            continueText.gameObject.SetActive(true);
+                        else
+                            CheckDialogueEnd(); // Проверяем, если это последнее предложение
                     }
-                    
-                    // Выводим весь текст сразу
-                    dialogueText.text = currentSentence; 
-                    isTyping = false;
-                    
-                    // Вызываем хук после завершения печати
-                    OnSentencePrinted();
-                    
-                    // Показываем индикатор продолжения (он будет скрыт на следующем шаге)
-                    if (continueText != null)
-                        continueText.gameObject.SetActive(true);
+                    else
+                    {
+                        // Переходим к следующему предложению
+                        DisplayNextSentence(); 
+                    }
                 }
-                else
+            }
+            else
+            {
+                //* Логика закрытия по ТАЙМЕРУ (только если печать завершена)
+                if (!isTyping)
                 {
-                    // [FIX 2] Если текст НЕ печатается, переходим к следующему предложению
-                    DisplayNextSentence(); 
+                    _currentTimer -= Time.deltaTime;
+                    if (_currentTimer <= 0)
+                    {
+                        DisplayNextSentence();
+                    }
                 }
             }
         }
@@ -108,62 +145,54 @@ namespace DialogueManager {
             Debug.Log($"DialogueManager: TextCloud is {textCloud}");
             
             // Проверяем ссылки
-            if (textCloud == null)
+            if (textCloud == null || nameText == null || dialogueText == null)
             {
-                Debug.LogError("TextCloud не установлен!");
+                Debug.LogError("DialogueManager: Не установлены все компоненты UI!");
                 return;
             }
-            
-            if (nameText == null || dialogueText == null)
-            {
-                Debug.LogError("TextMeshProUGUI компоненты не найдены!");
-                return;
-            }
-            
-            // Показываем TextCloud, скрываем индикатор
+
+            // Показываем TextCloud. Индикатор продолжения скрыт, если _useTimerForClosing = true.
             textCloud.SetActive(true);
             isDialogueActive = true;
-            Debug.Log($"DialogueManager: TextCloud set active, isDialogueActive = {isDialogueActive}");
 
-            if (continueText != null)
+            if (continueText != null && !_useTimerForClosing)
                 continueText.gameObject.SetActive(false);
             
             if (dialogueText != null) 
             {
                 dialogueText.text = ""; 
             }
-            // Устанавливаем имя
+
             nameText.text = dialogue.name;
 
-            // Очищаем и заполняем очередь
             sentences.Clear();
             foreach (string sentence in dialogue.sentences)
             {
                 sentences.Enqueue(sentence);
             }
             
-            _currentSentenceIndex = -1; // Сброс индекса перед началом
+            _currentSentenceIndex = -1; 
             
             DisplayNextSentence();
         }
 
-        public virtual void DisplayNextSentence()
+       public virtual void DisplayNextSentence()
         {
             // ПРОВЕРКА: Если предложений не осталось
            if (sentences.Count == 0)
-            {
-                EndDialogue();
+            {   
+                if(!_isPermanentDisplay)
+                    EndDialogue();
                 return;
             }
-            // [MODIFIED] Увеличиваем индекс ПЕРЕД извлечением предложения
+
             _currentSentenceIndex++;
-            // Скрываем индикатор
-            if (continueText != null)
+            // Скрываем индикатор только если мы не используем таймер
+            if (continueText != null && !_useTimerForClosing)
                 continueText.gameObject.SetActive(false);
 
             currentSentence = sentences.Dequeue();
             
-            // Запускаем печать текста
             if (typeCoroutine != null)
                 StopCoroutine(typeCoroutine);
 
@@ -178,28 +207,56 @@ namespace DialogueManager {
             // Печатаем по буквам
             foreach (char letter in sentence.ToCharArray())
             {
+                // Добавляем проверку на наличие компонентов и активности диалога
+                if (!isDialogueActive || dialogueText == null) break; 
                 dialogueText.text += letter;
                 yield return null;
             }
             
             isTyping = false;
-            // [NEW HOOK] Вызываем хук после завершения печати
             OnSentencePrinted();
-            // Показываем индикатор, когда печать завершена
-            if (continueText != null)
+
+            CheckDialogueEnd();
+        }
+        protected virtual void CheckDialogueEnd()
+        {
+            if (continueText == null) return;
+            if(_isPermanentDisplay)
             {
-                // Если это последнее предложение, текст будет "Нажмите ПРОБЕЛ, чтобы закрыть диалог."
-                // Иначе: "Нажмите ПРОБЕЛ для продолжения..."
-                if (sentences.Count == 0)
+                continueText.gameObject.SetActive(false);
+                return;
+            }
+            if (sentences.Count == 0)
+            {
+                // Последнее предложение
+                if (!_useTimerForClosing)
                 {
                     continueText.text = "Нажмите ПРОБЕЛ, чтобы закрыть диалог.";
+                    continueText.gameObject.SetActive(true);
                 }
                 else
                 {
-                    continueText.text = "Нажмите ПРОБЕЛ для продолжения...";
+                    // Если таймер, диалог закончится сам
+                    continueText.gameObject.SetActive(false);
+                    // Запускаем таймер на закрытие
+                    _currentTimer = _autoCloseDuration;
                 }
-                
-                continueText.gameObject.SetActive(true);
+            }
+            else
+            {
+                // Не последнее предложение
+                if (!_useTimerForClosing)
+                {
+                    continueText.text = "Нажмите ПРОБЕЛ для продолжения...";
+                    continueText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    // Если таймер, переходим к следующему предложению
+                    continueText.gameObject.SetActive(false);
+                    // Запускаем таймер на следующее предложение
+                    _currentTimer = _autoCloseDuration;
+                }
             }
         }
         protected virtual void OnSentencePrinted()
@@ -208,9 +265,14 @@ namespace DialogueManager {
         }
         public virtual void EndDialogue()
         {
+            if(_isPermanentDisplay)
+            {
+                Debug.LogWarning("Попытка закрыть постоянный диалог. Игнорируем");
+                return;
+            }
             Debug.Log("Диалог завершен");
             isDialogueActive = false;
-            _currentSentenceIndex = -1; // Сброс индекса
+            _currentSentenceIndex = -1; 
             if (textCloud != null)
                 textCloud.SetActive(false);
 

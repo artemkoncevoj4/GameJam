@@ -1,14 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using Player;
+using TaskSystem;
 namespace InteractiveObjects
 {
     public class Workstation : InteractObject
     {
-        [Header("Настройки станции")]
-        [SerializeField] private string _stationType = "desk"; // Тип станции
+        [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
+        [SerializeField] private string _stationType = "desk"; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         [SerializeField] private List<string> _requiredItems = new List<string>();
-        [SerializeField] private Transform _itemPlacementPoint; // Где разместить предмет
+        [SerializeField] private Transform _itemPlacementPoint; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
         private bool _isUsed = false;
         private GameObject _placedItem;
@@ -16,20 +17,20 @@ namespace InteractiveObjects
         protected override void Start()
         {
             base.Start();
-            State = "Ожидает предмет";
+            State = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ";
         }
 
         public override void Interact()
         {
             if (_isUsed)
             {
-                Debug.Log($"Станция {_stationType} уже используется.");
+                Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {_stationType} пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
                 return;
             }
 
             if (PlayerInventory.Instance == null) return;
 
-            // Проверяем, есть ли у игрока **один** из нужных предметов
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ **пїЅпїЅпїЅпїЅ** пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             string itemToUse = null;
             foreach (string item in _requiredItems)
             {
@@ -47,41 +48,41 @@ namespace InteractiveObjects
             }
             else
             {
-                Debug.Log($"Для использования станции {_stationType} нужен один из предметов: {string.Join(", ", _requiredItems)}");
+                Debug.Log($"пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {_stationType} пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {string.Join(", ", _requiredItems)}");
             }
         }
 
         private void UseStation(string item)
         {
-            // Игрок использует предмет на станции
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (PlayerInventory.Instance.RemoveItem(item))
             {
                 _isUsed = true;
-                State = "Использована";
+                State = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ";
 
-                // TODO: Добавить логику визуализации предмета
+                // TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 // if (_itemPlacementPoint != null)
                 // {
                 //     _placedItem = Instantiate(ItemPrefab, _itemPlacementPoint.position, Quaternion.identity);
                 // }
 
-                // Сообщаем TaskManager об использовании
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ TaskManager пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if (TaskManager.Instance != null)
                 {
-                    // В реальной игре вам потребуется передавать ID станции
+                    // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ ID пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     //TaskManager.Instance.ReportStationUsed(_stationType, item, ID);
                 }
 
-                Debug.Log($"Станция {_stationType} использована с предметом {item}");
+                Debug.Log($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅ {_stationType} пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ {item}");
             }
         }
 
         public void ResetStation()
         {
             _isUsed = false;
-            State = "Ожидает предмет";
+            State = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ";
 
-            // TODO: Уничтожить или скрыть _placedItem
+            // TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ _placedItem
             if (_placedItem != null)
             {
                 Destroy(_placedItem);

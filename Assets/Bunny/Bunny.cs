@@ -4,6 +4,7 @@ using UnityEngine;
 using DialogueManager;
 using System;
 using Shaders;
+using TaskSystem;
 namespace Bunny {
     public class Bunny : MonoBehaviour
     {
