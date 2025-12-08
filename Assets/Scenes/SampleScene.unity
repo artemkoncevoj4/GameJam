@@ -3068,7 +3068,6 @@ GameObject:
   - component: {fileID: 1242049403}
   - component: {fileID: 1242049406}
   - component: {fileID: 1242049405}
-  - component: {fileID: 1242049407}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -3133,23 +3132,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1242049402}
   m_CullTransparentMesh: 1
---- !u!114 &1242049407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1242049402}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScreenEffects.ScreenBlinker
-  blinkImage: {fileID: 0}
-  fadeDuration: 0.5
-  pauseDuration: 0.2
-  blinkCount: 3
-  blinkColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1369001288
 GameObject:
   m_ObjectHideFlags: 0
@@ -3261,11 +3243,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenFad
-  blinkImage: {fileID: 0}
+  Image: {fileID: 1242049405}
   fadeDuration: 1
   pauseDuration: 0.2
   blinkCount: 3
-  blinkColor: {r: 1, g: 0, b: 0, a: 1}
+  blinkColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!4 &1673671405
 Transform:
   m_ObjectHideFlags: 0
