@@ -1,60 +1,92 @@
 using UnityEngine;
+using System.Collections;
 
 namespace SampleScene
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class PauseMenuAnimator : MonoBehaviour
     {
-        [SerializeField] private Animator _animator;
-        [SerializeField] private CanvasGroup _canvasGroup;
+        [Header("Настройки анимации")]
+        [SerializeField] private float _animationSpeed = 10f;
+        [SerializeField] private float _startScale = 0.9f; // Немного уменьшено при старте
         
-        private static readonly int ShowTrigger = Animator.StringToHash("Show");
-        private static readonly int HideTrigger = Animator.StringToHash("Hide");
+        private CanvasGroup _canvasGroup;
+        private Coroutine _currentAnimation;
         
         void Awake()
         {
-            if (_animator == null)
-                _animator = GetComponent<Animator>();
+            _canvasGroup = GetComponent<CanvasGroup>();
             
-            if (_canvasGroup == null)
-                _canvasGroup = GetComponent<CanvasGroup>();
+            // На старте сразу скрываем меню, чтобы не мелькало
+            if (_canvasGroup != null)
+            {
+                _canvasGroup.alpha = 0;
+                _canvasGroup.interactable = false;
+                _canvasGroup.blocksRaycasts = false;
+            }
+            // Сбрасываем масштаб
+            transform.localScale = Vector3.one * _startScale;
         }
         
         public void ShowMenu()
         {
-            if (_animator != null)
-            {
-                _animator.SetTrigger(ShowTrigger);
-            }
+            // Прерываем предыдущую анимацию, если она была
+            if (_currentAnimation != null) StopCoroutine(_currentAnimation);
             
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.alpha = 1;
-                _canvasGroup.interactable = true;
-                _canvasGroup.blocksRaycasts = true;
-            }
+            // Включаем взаимодействие
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
+            
+            // Запускаем анимацию появления
+            _currentAnimation = StartCoroutine(AnimateFade(1f, 1f));
         }
         
         public void HideMenu()
         {
-            if (_animator != null)
+            if (_currentAnimation != null) StopCoroutine(_currentAnimation);
+            
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
+            
+            // Запускаем анимацию исчезновения (альфа в 0, масштаб обратно в 0.9)
+            _currentAnimation = StartCoroutine(AnimateFade(0f, _startScale));
+        }
+        
+        // Универсальная корутина для плавного изменения
+        private IEnumerator AnimateFade(float targetAlpha, float targetScale)
+        {
+            // Пока текущие значения не станут почти равны целевым
+            while (Mathf.Abs(_canvasGroup.alpha - targetAlpha) > 0.01f)
             {
-                _animator.SetTrigger(HideTrigger);
+                // Используем unscaledDeltaTime, так как игра на паузе!
+                float step = Time.unscaledDeltaTime * _animationSpeed;
+                
+                // Плавное изменение прозрачности
+                _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, targetAlpha, step);
+                
+                // Плавное изменение масштаба (эффект Pop-up)
+                float newScale = Mathf.Lerp(transform.localScale.x, targetScale, step);
+                transform.localScale = Vector3.one * newScale;
+                
+                yield return null;
             }
             
-            if (_canvasGroup != null)
+            // Жестко ставим финальные значения в конце
+            _canvasGroup.alpha = targetAlpha;
+            transform.localScale = Vector3.one * targetScale;
+            
+            // Если мы скрывали меню, сообщаем, что закончили
+            if (targetAlpha == 0)
             {
-                _canvasGroup.interactable = false;
-                _canvasGroup.blocksRaycasts = false;
+                OnHideAnimationComplete();
             }
         }
         
-        // Вызывается в конце анимации скрытия
         public void OnHideAnimationComplete()
         {
-            if (_canvasGroup != null)
-            {
-                _canvasGroup.alpha = 0;
-            }
+            _canvasGroup.alpha = 0;
+            // Можно добавить выключение объекта, если нужно, 
+            // но PauseMenu.cs сам это сделает через 0.3 сек.
         }
     }
 }

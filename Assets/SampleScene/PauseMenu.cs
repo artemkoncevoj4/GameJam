@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections; // Добавлено для работы с корутинами, если будете их использовать
+
 namespace SampleScene {
     public class PauseMenu : MonoBehaviour
     {
@@ -72,6 +74,7 @@ namespace SampleScene {
                 _mainMenuButton.onClick.AddListener(GoToMainMenu);
             
             // Подписываемся на события GameCycle для синхронизации
+            // (Предполагается, что GameCycle.Instance существует)
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnGameEnded += OnGameEnded;
@@ -92,7 +95,8 @@ namespace SampleScene {
             }
         }
 
-         public void PauseGame()
+        // --- ИСПРАВЛЕННЫЙ МЕТОД PAUSEGAME ---
+        public void PauseGame()
         {
             if (_isPaused) return;
             
@@ -105,11 +109,14 @@ namespace SampleScene {
             if (GameCycle.Instance != null)
                 GameCycle.Instance.PauseGame();
             
-            // Показываем с анимацией
+            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: 
+            // Сначала включаем GameObject, чтобы Корутины могли запуститься!
+            if (_pauseMenuPanel != null)
+                _pauseMenuPanel.SetActive(true);
+            
+            // Теперь вызываем анимацию на АКТИВНОМ объекте
             if (_menuAnimator != null)
                 _menuAnimator.ShowMenu();
-            else if (_pauseMenuPanel != null)
-                _pauseMenuPanel.SetActive(true);
         }
 
         public void ResumeGame()
@@ -120,13 +127,17 @@ namespace SampleScene {
             if (_menuAnimator != null)
             {
                 _menuAnimator.HideMenu();
+                // Запускаем CompleteResume через задержку, чтобы анимация успела отработать
                 Invoke(nameof(CompleteResume), _animationDelay);
             }
             else
             {
+                // Если аниматора нет, выполняем сразу
                 CompleteResume();
             }
         }
+        
+        // --- ИСПРАВЛЕННЫЙ МЕТОД COMPLETERESUME ---
         private void CompleteResume()
         {
             _isPaused = false;
@@ -138,9 +149,14 @@ namespace SampleScene {
             if (GameCycle.Instance != null)
                 GameCycle.Instance.ResumeGame();
             
-            if (_menuAnimator == null && _pauseMenuPanel != null)
+            // КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: 
+            // Панель должна быть выключена всегда, когда меню скрыто, 
+            // независимо от того, использовалась анимация или нет.
+            // (Эта функция вызывается с задержкой, позволяя анимации завершиться)
+            if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
         }
+        
         private void GoToMainMenu()
         {
             Debug.Log("Going to main menu...");
@@ -174,6 +190,7 @@ namespace SampleScene {
             if (_mainMenuButton != null)
                 _mainMenuButton.onClick.RemoveListener(GoToMainMenu);
             
+            // (Предполагается, что GameCycle.Instance существует)
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnGameEnded -= OnGameEnded;

@@ -7,6 +7,7 @@ Shader "UI/Gradient"
         _TopColor ("Top Color", Color) = (1,1,1,1)
         _BottomColor ("Bottom Color", Color) = (0,0,0,1)
         _GradientHeight ("Gradient Height", Range(0,1)) = 0.5
+        
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -14,6 +15,7 @@ Shader "UI/Gradient"
         _StencilReadMask ("Stencil Read Mask", Float) = 255
         _ColorMask ("Color Mask", Float) = 15
     }
+    
     SubShader
     {
         Tags
@@ -24,6 +26,7 @@ Shader "UI/Gradient"
             "PreviewType"="Plane"
             "CanUseSpriteAtlas"="True"
         }
+        
         Stencil
         {
             Ref [_Stencil]
@@ -32,12 +35,14 @@ Shader "UI/Gradient"
             ReadMask [_StencilReadMask]
             WriteMask [_StencilWriteMask]
         }
+        
         Cull Off
         Lighting Off
         ZWrite Off
         ZTest [unity_GUIZTestMode]
         Blend SrcAlpha OneMinusSrcAlpha
         ColorMask [_ColorMask]
+        
         Pass
         {
             CGPROGRAM
@@ -45,12 +50,14 @@ Shader "UI/Gradient"
             #pragma fragment frag
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
+            
             struct appdata_t
             {
                 float4 vertex   : POSITION;
                 float4 color    : COLOR;
                 float2 texcoord : TEXCOORD0;
             };
+            
             struct v2f
             {
                 float4 vertex   : SV_POSITION;
@@ -58,10 +65,13 @@ Shader "UI/Gradient"
                 float2 texcoord  : TEXCOORD0;
                 float4 worldPosition : TEXCOORD1;
             };
+            
             fixed4 _Color;
             fixed4 _TopColor;
             fixed4 _BottomColor;
             float _GradientHeight;
+            sampler2D _MainTex;
+            
             v2f vert(appdata_t IN)
             {
                 v2f OUT;
@@ -71,7 +81,7 @@ Shader "UI/Gradient"
                 OUT.color = IN.color * _Color;
                 return OUT;
             }
-            sampler2D _MainTex;
+            
             fixed4 frag(v2f IN) : SV_Target
             {
                 // Вычисляем градиент на основе вертикальной позиции
