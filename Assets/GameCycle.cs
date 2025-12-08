@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System;
 using Random = UnityEngine.Random;
-
+using SampleScene;
 public class GameCycle : MonoBehaviour
 {
     public static GameCycle Instance { get; private set; }
@@ -81,6 +81,9 @@ public class GameCycle : MonoBehaviour
     
     void Update()
     {
+        if (PauseMenu.Instance != null && PauseMenu.Instance.IsPaused)
+            return;
+        
         if (_currentState != GameState.Playing) return;
         
         GameCycleUpdate();

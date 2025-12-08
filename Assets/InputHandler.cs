@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+using SampleScene;
 public class InputHandler : MonoBehaviour
 {
     public static InputHandler Instance { get; private set; }
@@ -31,13 +31,38 @@ public class InputHandler : MonoBehaviour
         if (!_inputEnabled) return;
         
         // Основные игровые действия
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             OnInteractPressed?.Invoke();
         }
         
+        // Обработка паузы - ИСПРАВЛЕННАЯ ЛОГИКА
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Debug.Log("ESC pressed");
+            
+            // Попробуем найти меню паузы, если оно еще не инициализировано
+            if (PauseMenu.Instance == null)
+            {
+                Debug.LogWarning("PauseMenu.Instance is null, trying to find it...");
+                PauseMenu pauseMenu = FindObjectOfType<PauseMenu>();
+                if (pauseMenu != null)
+                {
+                    Debug.Log("Found PauseMenu in scene: " + pauseMenu.gameObject.name);
+                }
+            }
+            
+            if (PauseMenu.Instance != null)
+            {
+                Debug.Log("Calling PauseMenu.Instance.TogglePause()");
+                PauseMenu.Instance.TogglePause();
+            }
+            else
+            {
+                Debug.LogError("PauseMenu.Instance is null! Cannot pause game.");
+            }
+            
+            // Также вызываем событие для других систем
             OnPausePressed?.Invoke();
         }
         
@@ -55,26 +80,7 @@ public class InputHandler : MonoBehaviour
     
     public void EnableInput() => _inputEnabled = true;
     public void DisableInput() => _inputEnabled = false;
-    // Start is called before the first frame updat
-    /*
-    void Start()
-    {
-        
-    }
-    S
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (CurrentState == GameState.Playing)
-            {
-                PauseGame();
-            }
-            else
-            {
-                ResumeGame();
-            }
-            Debug.Log("Game paused");
-        }
-    }*/
+    
+    // Публичные геттеры для проверки состояния
+    public bool IsInputEnabled => _inputEnabled;
 }
