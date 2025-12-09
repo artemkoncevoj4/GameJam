@@ -75,7 +75,7 @@ namespace Shaders.ScreenEffects
                 return;
             }
             //* Новая версия, с интенсивностью
-            screenBlinker.Blink(duration, count, color, 0.7f);
+            screenBlinker.Blink(duration, count, color); 
             Debug.Log($"<color=green>ScreenFadeManager: Запуск BlinkScreen. Длительность: {duration:F2}, Кол-во: {count}.</color>");
         }
             
