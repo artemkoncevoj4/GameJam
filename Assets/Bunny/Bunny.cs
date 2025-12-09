@@ -331,12 +331,11 @@ namespace Bunny {
             var currentTask = TaskManager.Instance.GetCurrentTask();
             Debug.Log($"Bunny: Current task is {(currentTask == null ? "null" : currentTask.Title)}");
 
-            if (currentTask == null)
+            if (_isTaskPresent == false)
             {
                 Debug.Log("Bunny: No current task, starting new task");
                 TaskManager.Instance.StartNewTask();
                 _isTaskPresent = true;
-                currentTask = TaskManager.Instance.GetCurrentTask();
                 
                 // Показываем диалог только при создании нового задания
                 ShowTaskDialogue();
