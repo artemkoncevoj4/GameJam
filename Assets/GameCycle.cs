@@ -97,7 +97,7 @@ public class GameCycle : MonoBehaviour
     
     private void TogglePause()
     {
-        Debug.Log($"TogglePause вызван. Текущее состояние: {_currentState}");
+        Debug.Log($"<color=cyan>TogglePause вызван. Текущее состояние: {_currentState}</color>");
         if (_currentState == GameState.Playing)
         {
             PauseGame();
@@ -154,7 +154,7 @@ public class GameCycle : MonoBehaviour
         _currentState = GameState.Playing;
         Time.timeScale = 1f;
         
-        Debug.Log("Игра началась!");
+        Debug.Log("<color=white>Игра началась!</color>");
     }
     
     private void UpdateTimer()
@@ -201,7 +201,7 @@ public class GameCycle : MonoBehaviour
         _isRabbitHere = true;
         _rabbitTimer = 0f;
         OnRabbitAppearing?.Invoke();
-        Debug.Log("Кролик появился!");
+        Debug.Log("<color=white>Кролик появился</color>");
     }
     
     private void RabbitLeave()
@@ -212,7 +212,7 @@ public class GameCycle : MonoBehaviour
         _rabbitTimer = 0f;
         _rabbitInterval = Random.Range(_minRabbitSpawnInterval, _maxRabbitSpawnInterval);
         OnRabbitLeaving?.Invoke();
-        Debug.Log("Кролик ушёл");
+        Debug.Log("<color=white>Кролик ушёл</color>");
     }
 
     public void CompleteTask()
@@ -242,7 +242,7 @@ public class GameCycle : MonoBehaviour
     
     private IEnumerator DefeatSequence()
     {
-        Debug.Log("Starting defeat sequence...");
+        Debug.Log("<color=cyan>Starting defeat sequence...</color>");
         
         _currentState = GameState.GameOver;
         
@@ -282,7 +282,7 @@ public class GameCycle : MonoBehaviour
 
     private IEnumerator VictorySequence()
     {
-        Debug.Log("Starting victory sequence...");
+        Debug.Log("<color=cyan>Starting victory sequence...</color>");
         
         _currentState = GameState.GameOver;
         

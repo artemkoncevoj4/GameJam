@@ -34,7 +34,7 @@ namespace UI
                 _taskDisplay.ForceUpdate();
             }
             
-            Debug.Log("TaskUIManager: UI принудительно обновлен");
+            Debug.Log("<color=green>TaskUIManager: UI принудительно обновлен</color>");
         }
         
         // [!] Метод для вызова из Bunny после создания задания

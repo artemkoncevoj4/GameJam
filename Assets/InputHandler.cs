@@ -54,7 +54,7 @@ public class InputHandler : MonoBehaviour
             
             if (PauseMenu.Instance != null)
             {
-                Debug.Log("Calling PauseMenu.Instance.TogglePause()");
+                Debug.Log("<color=cyan>Calling PauseMenu.Instance.TogglePause()</color>");
                 PauseMenu.Instance.TogglePause();
             }
             else

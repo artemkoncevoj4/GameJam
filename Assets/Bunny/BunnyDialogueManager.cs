@@ -20,7 +20,7 @@ namespace Bunny
         
         public void StartBunnyDialogue(Dialogue dialogue, global::Bunny.Bunny bunny)
         {
-            Debug.Log($"BunnyDialogueManager: StartBunnyDialogue called with bunny {bunny}");
+            Debug.Log($"<color=green>BunnyDialogueManager: StartBunnyDialogue called with bunny {bunny}</color>");
             
             UseTimerForClosing = true;
             
@@ -134,12 +134,12 @@ namespace Bunny
             }
             
             var currentTask = TaskManager.Instance.GetCurrentTask();
-            Debug.Log($"BunnyDialogueManager: Current task is {(currentTask == null ? "null" : currentTask.Title)}");
+            Debug.Log($"<color=cyan>BunnyDialogueManager: Current task is {(currentTask == null ? "null" : currentTask.Title)}</color>");
             
             // Если задания нет, создаем новое
             if (currentTask == null)
             {
-                Debug.Log("BunnyDialogueManager: No current task, returning default message");
+                Debug.Log("<color=red>BunnyDialogueManager: No current task, returning default message</color>");
                 return "Новое задание создается...";
             }
             
@@ -160,7 +160,7 @@ namespace Bunny
                 shortDescription = $"ВНИМАНИЕ: Заяц изменил требования! {shortDescription}";
             }
             
-            Debug.Log($"BunnyDialogueManager: Task description: {shortDescription}");
+            Debug.Log($"<color=white>BunnyDialogueManager: Task description: {shortDescription}</color>");
             return shortDescription;
         }
 

@@ -56,7 +56,7 @@ namespace InteractiveObjects
             {
                 _objectDatabase.Remove(id);
                 Destroy(obj.gameObject);
-                Debug.Log($"Объект '{obj.Name}' (ID: {id}) удален.");
+                Debug.Log($"<color=green>Объект '{obj.Name}' (ID: {id}) удален.</color>");
                 return true;
             }
             Debug.LogWarning($"<color=red>Не удалось найти объект с ID {id} для удаления.</color>");

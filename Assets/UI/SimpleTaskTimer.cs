@@ -113,7 +113,7 @@ namespace UI
                 {
                     _timerText.gameObject.SetActive(true);
                     UpdateTimerDisplay(currentTask.TimeRemaining);
-                    Debug.Log("SimpleTaskTimer: Нашел активное задание при старте");
+                    Debug.Log("<color=green>SimpleTaskTimer: Нашел активное задание при старте</color>");
                 }
             }
         }
@@ -126,7 +126,7 @@ namespace UI
             {
                 _timerText.gameObject.SetActive(true);
                 UpdateTimerDisplay(task.TimeRemaining);
-                Debug.Log($"SimpleTaskTimer: Новое задание, время: {task.TimeRemaining}");
+                Debug.Log($"<color=green>SimpleTaskTimer: Новое задание, время: {task.TimeRemaining}</color>");
             }
         }
 
@@ -145,7 +145,7 @@ namespace UI
             if (_timerText != null)
             {
                 _timerText.gameObject.SetActive(false);
-                Debug.Log("SimpleTaskTimer: Задание завершено, скрываю таймер");
+                Debug.Log("<color=cyan>SimpleTaskTimer: Задание завершено, скрываю таймер</color>");
             }
         }
 
@@ -156,7 +156,7 @@ namespace UI
             if (_timerText != null)
             {
                 _timerText.gameObject.SetActive(false);
-                Debug.Log("SimpleTaskTimer: Задание провалено, скрываю таймер");
+                Debug.Log("<color=cyan>SimpleTaskTimer: Задание провалено, скрываю таймер</color>");
             }
         }
 
@@ -166,7 +166,7 @@ namespace UI
             if (_hasActiveTask && _timerText != null && task != null)
             {
                 UpdateTimerDisplay(task.TimeRemaining);
-                Debug.Log("SimpleTaskTimer: Задание изменено, обновляю таймер");
+                Debug.Log("<color=cyan>SimpleTaskTimer: Задание изменено, обновляю таймер</color>");
             }
         }
 

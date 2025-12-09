@@ -51,12 +51,12 @@ namespace TaskSystem {
             }
             Instance = this;
             
-            Debug.Log("TaskManager: Awake called, Instance set");
+            Debug.Log("<color=green>TaskManager: Awake called, Instance set</color>");
         }
 
         void Start()
         {
-            Debug.Log("TaskManager: Start called");
+            Debug.Log("<color=green>TaskManager: Start called</color>");
             
             _currentTaskTimeLimit = _baseTaskTime;
             
@@ -146,7 +146,7 @@ namespace TaskSystem {
 
             Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
             Debug.Log($"<color=white>{_currentTask.Description}</color>");
-            Debug.Log($"время: {_currentTaskTimeLimit} ");
+            Debug.Log($"<color=white>время: {_currentTaskTimeLimit} </color>");
             // [!] ВАЖНО: Принудительно обновляем UI
             StartCoroutine(ForceUIUpdate());
         }
@@ -256,13 +256,13 @@ namespace TaskSystem {
         {
             if (_currentTask == null || _currentTask.IsCompleted || _currentTask.IsFailed)
             {
-                Debug.Log("Нет активного задания!");
+                Debug.Log("<color=red>Нет активного задания!</color>");
                 return;
             }
 
             if (_currentDocument == null)
             {
-                Debug.Log("Документ не создан!");
+                Debug.Log("<color=red>Документ не создан!</color>");
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace TaskSystem {
             }
             else
             {
-                FailCurrentTask("Неверно заполнен документ!");
+                FailCurrentTask("<color=red>Неверно заполнен документ!</color>");
             }
         }
 
@@ -301,7 +301,7 @@ namespace TaskSystem {
 
             OnTaskFailed?.Invoke(_currentTask);
 
-            Debug.Log($"<color=white>Задание провалено: {reason}</color>");
+            Debug.Log($"<color=red>Задание провалено: {reason}</color>");
 
             if (GameCycle.Instance != null)
             {
@@ -316,8 +316,8 @@ namespace TaskSystem {
                 _currentTask.Corrupt();
                 OnTaskCorrupted?.Invoke(_currentTask);
 
-                Debug.Log("<color=white>Кролик изменил требования задания!</color>");
-                Debug.Log($"<color=yellow>Новые требования: {_currentTask.Description}</color>");
+                Debug.Log("<color=yellow>Кролик изменил требования задания!</color>");
+                Debug.Log($"<color=white>Новые требования: {_currentTask.Description}</color>");
 
                 if (GameCycle.Instance != null)
                 {

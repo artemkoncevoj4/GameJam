@@ -176,7 +176,7 @@ namespace SampleScene {
         /// </summary>
         public void ShowGameOverMenu()
         {
-            Debug.Log("<color=cyan>ShowGameOverMenu called</color>");
+            Debug.Log("<color=white>ShowGameOverMenu called</color>");
             _isPaused = true;
             _isGameOver = true;
             
@@ -214,7 +214,7 @@ namespace SampleScene {
         /// </summary>
         public void ShowVictoryMenu()
         {
-            Debug.Log("<color=cyan>ShowVictoryMenu called</color>");
+            Debug.Log("<color=white>ShowVictoryMenu called</color>");
             _isPaused = true;
             _isGameOver = true;
             
@@ -356,7 +356,7 @@ namespace SampleScene {
         }
         private void OnGameEnded(GameCycle.GameResult result)
         {
-            Debug.Log($"PauseMenu: Game ended with result {result}");
+            Debug.Log($"<color=cyan>PauseMenu: Game ended with result {result}</color>");
             // Не обрабатываем здесь, так как мы показываем меню в GameCycle
         }
 

@@ -141,8 +141,8 @@ namespace DialogueManager {
         
         public virtual void StartDialogue(Dialogue dialogue)
         {
-            Debug.Log($"DialogueManager: StartDialogue called with {dialogue.name}");
-            Debug.Log($"DialogueManager: TextCloud is {textCloud}");
+            Debug.Log($"<color=green>DialogueManager: StartDialogue called with {dialogue.name}</color>");
+            Debug.Log($"<color=green>DialogueManager: TextCloud is {textCloud}</color>");
             
             // Проверяем ссылки
             if (textCloud == null || nameText == null || dialogueText == null)
@@ -270,7 +270,7 @@ namespace DialogueManager {
                 Debug.LogWarning("<color=yellow>Попытка закрыть постоянный диалог. Игнорируем</color>");
                 return;
             }
-            Debug.Log("Диалог завершен");
+            Debug.Log("<color=green>Диалог завершен</color>");
             isDialogueActive = false;
             _currentSentenceIndex = -1; 
             if (textCloud != null)

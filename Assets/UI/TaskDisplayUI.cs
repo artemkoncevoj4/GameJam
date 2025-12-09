@@ -142,7 +142,7 @@ namespace UI
         private void OnNewTask(BureaucraticTask task)
         {
             ShowTask(task);
-            Debug.Log($"TaskDisplayUI: Новое задание получено: {task.Title}");
+            Debug.Log($"<color=green>TaskDisplayUI: Новое задание получено: {task.Title}</color>");
         }
         
         private void OnTaskCompleted(BureaucraticTask task)
@@ -202,7 +202,7 @@ namespace UI
                 StartGlowEffect();
             }
             
-            Debug.Log($"TaskDisplayUI: Показываю задание: {task.Title}");
+            Debug.Log($"<color=green>TaskDisplayUI: Показываю задание: {task.Title}</color>");
         }
         
         private void HideTask()
@@ -221,7 +221,7 @@ namespace UI
             StopPulseEffect();
             
             _isVisible = false;
-            Debug.Log("TaskDisplayUI: Скрываю задание");
+            Debug.Log("<color=yellow>TaskDisplayUI: Скрываю задание</color>");
         }
         
         private void UpdateTaskDisplay(BureaucraticTask task)

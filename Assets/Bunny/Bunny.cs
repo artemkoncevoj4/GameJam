@@ -155,7 +155,7 @@ namespace Bunny {
             SetVisible(true);
         
             bool willPeek = _isTaskPresent ? UnityEngine.Random.value < _peekChance : false;
-            Debug.Log($"<color=blue>Шанс пик {willPeek}</color>");
+            Debug.Log($"<color=white>Шанс пик {willPeek}</color>");
             bool whichDoor = UnityEngine.Random.value < 0.5f;
         
             if (willPeek)
@@ -178,7 +178,7 @@ namespace Bunny {
                 transform.rotation = _appearPoint_Window.rotation;
                 _currentBehavior = StartCoroutine(ShoutBehavior());
             }
-            Debug.Log($"Заяц появился! Поведение: {(willPeek ? "Подглядывает" : "Кричит")}");
+            Debug.Log($"<color=cyan>Заяц появился! Поведение: {(willPeek ? "Подглядывает" : "Кричит")}</color>");
         }
     
         public void Leave()
@@ -201,7 +201,7 @@ namespace Bunny {
             // Скрыть через секунду (или после завершения анимации)
             SetVisible(false);
 
-            Debug.Log("Заяц ушёл");
+            Debug.Log("<color=cyan>Заяц ушёл</color>");
         }
         private IEnumerator ShoutBehavior()
         {
@@ -338,7 +338,7 @@ namespace Bunny {
             // Ждем TaskManager, если он еще не инициализирован
             if (TaskManager.Instance == null) 
             {
-                Debug.LogError("<color=cyan>Bunny: TaskManager not found! Trying to find it...</color>");
+                Debug.LogError("<color=red>Bunny: TaskManager not found! Trying to find it...</color>");
                 TaskManager taskManager = FindAnyObjectByType<TaskManager>();
                 if (taskManager == null)
                 {
@@ -353,7 +353,7 @@ namespace Bunny {
             }
 
             var currentTask = TaskManager.Instance.GetCurrentTask();
-            Debug.Log($"Bunny: Current task is {(currentTask == null ? "null" : currentTask.Title)}");
+            Debug.Log($"<color=cyan>Bunny: Current task is {(currentTask == null ? "null" : currentTask.Title)}</color>");
 
             if (_isTaskPresent == false)
             {
@@ -370,7 +370,7 @@ namespace Bunny {
                 // Портим задание с вероятностью 30%
                 if (UnityEngine.Random.value > 0.7f)  // 30% chance
                 {
-                    Debug.Log("Bunny: Corrupting current task");
+                    Debug.Log("<color=cyan>Bunny: Corrupting current task</color>");
                     TaskManager.Instance.HandleRabbitInterference();
                     
                     // Показываем диалог только при изменении задания
@@ -378,7 +378,7 @@ namespace Bunny {
                 }
                 else
                 {
-                    Debug.Log("Заяц решил не трогать задание");
+                    Debug.Log("<color=cyan>Заяц решил не трогать задание</color>");
                     // Не показываем диалог, просто уходим
                     Leave();
                     return;
@@ -386,12 +386,11 @@ namespace Bunny {
             }
             else
             {
-                Debug.Log("Задание уже изменено ранее");
                 
                 // Если задание уже изменено, с шансом 50% заяц подглядывает вместо ухода
                 if (UnityEngine.Random.value < 0.5f)
                 {
-                    Debug.Log("Bunny: Задание уже изменено ранее, заяц подглядывает");
+                    Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц подглядывает</color>");
                     // Прерываем текущее поведение (если есть)
                     if (_currentBehavior != null)
                     {
@@ -415,7 +414,7 @@ namespace Bunny {
                 }
                 else
                 {
-                    Debug.Log("Bunny: Задание уже изменено ранее, заяц просто уходит");
+                    Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц просто уходит</color>");
                     // Просто уходим, не показывая диалог
                     Leave();
                     return;
@@ -472,7 +471,7 @@ namespace Bunny {
                 return;
             }
             
-            Debug.Log($"Bunny: Starting dialogue with: {taskDialogue.sentences[0]}");
+            Debug.Log($"<color=green>Bunny: Starting dialogue with: {taskDialogue.sentences[0]}</color>");
             
             // [!] ОБНОВЛЯЕМ UI перед показом диалога
             UpdateTaskUI();
@@ -513,20 +512,20 @@ namespace Bunny {
             
             if (randomEffect < 0.10f) // 10% шанс - инверсия управления
             {
-                Debug.Log("Хаос: Инверсия управления на 3 секунды!");
+                Debug.Log("<color=white>Хаос: Инверсия управления на 3 секунды!</color>");
                 // Здесь можно вызвать инверсию управления у игрока
                 // Например: PlayerController.Instance.InvertControls(3f);
             }
             else if (randomEffect < 0.20f) // 10% шанс - замедление времени
             {
-                Debug.Log("Хаос: Временное замедление!");
+                Debug.Log("<color=white>Хаос: Временное замедление!</color>");
                 // Замедлить время на 2 секунды
                 Time.timeScale = 0.5f;
                 Invoke(nameof(ResetTimeScale), 2f);
             }
             else if (randomEffect < 0.35f) // 15% шанс - тряска экрана
             {
-                Debug.Log("Хаос: Плывет экран!");
+                Debug.Log("<color=white>Хаос: Плывет экран!</color>");
                 if (_cachedScreenShake != null)
                 {
                     _cachedScreenShake.Start_shaking();
@@ -534,13 +533,13 @@ namespace Bunny {
             }
             else if (randomEffect < 0.50f) // 15% шанс - затемнение экрана
             {
-                Debug.Log("Хаос: экран потемнел!");
+                Debug.Log("<color=white>Хаос: экран потемнел!</color>");
                 // Вызываем затемнение через ScreenFader
                 StartCoroutine(QuickDarkenAndLighten());
             }
             else if (randomEffect < 0.65f) // 15% шанс - FireText
             {
-                Debug.Log("Хаос: FireText эффект!");
+                Debug.Log("<color=white>Хаос: FireText эффект!</color>");
                 if (_cachedFireText != null)
                 {
                     _cachedFireText.Fire();
@@ -548,7 +547,7 @@ namespace Bunny {
             }
             else if (randomEffect < 0.80f) // 15% шанс - мигание (ScreenFliskers)
             {
-                Debug.Log("Хаос: Мигание экрана!");
+                Debug.Log("<color=white>Хаос: Мигание экрана!</color>");
                 if (_cachedScreenFliskers != null)
                 {
                     _cachedScreenFliskers.Start_flickers();
@@ -556,7 +555,7 @@ namespace Bunny {
             }
             else if (randomEffect < 0.90f) // 10% шанс - ScreenBlinker
             {
-                Debug.Log("Хаос: Эффект сердцебиения!");
+                Debug.Log("<color=white>Хаос: Эффект сердцебиения!</color>");
                 // Используем ScreenBlinker с эффектом сердцебиения
                 if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
                 {
@@ -569,7 +568,7 @@ namespace Bunny {
             }
             else // 10% шанс - звуковой эффект
             {
-                Debug.Log("Хаос: Случайный звуковой эффект!");
+                Debug.Log("<color=white>Хаос: Случайный звуковой эффект!</color>");
                 // Воспроизвести странный звук
                 // Например: AudioManager.Instance.PlayRandomChaosSound();
             }
@@ -577,7 +576,7 @@ namespace Bunny {
             // [!] ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ С ШАНСОМ 30%
             if (UnityEngine.Random.value < 0.3f) // 30% шанс на дополнительный эффект
             {
-                Debug.Log("Дополнительный эффект хаоса!");
+                Debug.Log("<color=white>Дополнительный эффект хаоса!</color>");
                 float extraEffect = UnityEngine.Random.value;
                 
                 if (extraEffect < 0.5f) // 50% из 30% - ScreenShake
@@ -586,7 +585,7 @@ namespace Bunny {
                     if (extraShake != null)
                     {
                         extraShake.Start_shaking();
-                        Debug.Log("Хаос: Дополнительная тряска экрана!");
+                        Debug.Log("<color=white>Хаос: Дополнительная тряска экрана!</color>");
                     }
                 }
                 else // 50% из 30% - FireText
@@ -595,7 +594,7 @@ namespace Bunny {
                     if (extraFireText != null)
                     {
                         extraFireText.Fire();
-                        Debug.Log("Хаос: Дополнительный FireText!");
+                        Debug.Log("<color=white>Хаос: Дополнительный FireText!</color>");
                     }
                 }
             }
