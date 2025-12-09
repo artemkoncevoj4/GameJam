@@ -10,7 +10,11 @@ namespace Bunny {
     public class Bunny : MonoBehaviour
     {
         public static Bunny Instance { get; private set; } // Добавил статический экземпляр
-
+        [Header("Эффекты экрана")]
+        // Кэшированные ссылки на эффекты
+        private Screen_Shake _cachedScreenShake;
+        private Fire_text _cachedFireText;
+        private ScreenFliskers _cachedScreenFliskers;
         [Header("Позиция появления")]
         [SerializeField] private Transform _appearPoint_Window;
         [SerializeField] private Transform _appearPoint_Door1;
@@ -69,7 +73,14 @@ namespace Bunny {
             //_animator = GetComponent<Animator>();
             //_audioSource = GetComponent<AudioSource>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-
+            _cachedScreenShake = FindAnyObjectByType<Screen_Shake>();
+            _cachedFireText = FindAnyObjectByType<Fire_text>();
+            _cachedScreenFliskers = FindAnyObjectByType<ScreenFliskers>();
+            
+            // Логирование найденных эффектов
+            if (_cachedScreenShake != null) Debug.Log("Screen_Shake найден и кэширован");
+            if (_cachedFireText != null) Debug.Log("Fire_text найден и кэширован");
+            if (_cachedScreenFliskers != null) Debug.Log("ScreenFliskers найден и кэширован");
             SetVisible(false);
             if (_appearPoint_Window != null)
             {
@@ -417,54 +428,107 @@ namespace Bunny {
         {
             // Подглядывание вызывает хаос
             Debug.Log("Заяц подглядывает и вызывает хаос!");
-        
+            
             // 1. Увеличить стресс
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.AddStress(4f);
             }
-        
+            
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
-        
-            if (randomEffect < 0.15f) //! было 0.2f
+            
+            if (randomEffect < 0.10f) // 10% шанс - инверсия управления
             {
                 Debug.Log("Хаос: Инверсия управления на 3 секунды!");
                 // Здесь можно вызвать инверсию управления у игрока
+                // Например: PlayerController.Instance.InvertControls(3f);
             }
-            else if (randomEffect < 0.3f) //! было 0.4
+            else if (randomEffect < 0.20f) // 10% шанс - замедление времени
             {
                 Debug.Log("Хаос: Временное замедление!");
                 // Замедлить время на 2 секунды
                 Time.timeScale = 0.5f;
                 Invoke(nameof(ResetTimeScale), 2f);
             }
-            else if (randomEffect < 0.45f) //! было 0.6
+            else if (randomEffect < 0.35f) // 15% шанс - тряска экрана
             {
                 Debug.Log("Хаос: Плывет экран!");
+                if (_cachedScreenShake != null)
+                {
+                    _cachedScreenShake.Start_shaking();
+                }
             }
-            else if (randomEffect < 0.85f) //! было 0.8 (now 40%)
+            else if (randomEffect < 0.50f) // 15% шанс - затемнение экрана
             {
+                Debug.Log("Хаос: экран потемнел!");
+                // Вызываем затемнение через ScreenFader
+                StartCoroutine(QuickDarkenAndLighten());
+            }
+            else if (randomEffect < 0.65f) // 15% шанс - FireText
+            {
+                Debug.Log("Хаос: FireText эффект!");
+                if (_cachedFireText != null)
+                {
+                    _cachedFireText.Fire();
+                }
+            }
+            else if (randomEffect < 0.80f) // 15% шанс - мигание (ScreenFliskers)
+            {
+                Debug.Log("Хаос: Мигание экрана!");
+                if (_cachedScreenFliskers != null)
+                {
+                    _cachedScreenFliskers.Start_flickers();
+                }
+            }
+            else if (randomEffect < 0.90f) // 10% шанс - ScreenBlinker
+            {
+                Debug.Log("Хаос: Эффект сердцебиения!");
+                // Используем ScreenBlinker с эффектом сердцебиения
                 if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
                 {
-                    // Черный цвет, 0.3 секунды на фазу, 2 мигания
-                    //Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.3f, 2, Color.black);
-                    StartCoroutine(QuickDarkenAndLighten()); //! ПРОБЛЕМА НЕ РЕШЕНА
-                    Debug.Log("эффект хаоса был запущен успешно");
+                    Shaders.ScreenEffects.ScreenBlinker.Instance.HeartbeatEffect(0.3f, 2, 0.15f);
                 }
                 else
                 {
-                    Debug.Log("Не получилось включить затемнение");
+                    Debug.LogWarning("ScreenBlinker.Instance не найден!");
                 }
-                Debug.Log("Хаос: экран потемнел!");
-
             }
-            else //! Шанс 15%
+            else // 10% шанс - звуковой эффект
             {
                 Debug.Log("Хаос: Случайный звуковой эффект!");
                 // Воспроизвести странный звук
+                // Например: AudioManager.Instance.PlayRandomChaosSound();
+            }
+            
+            // [!] ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ С ШАНСОМ 30%
+            if (UnityEngine.Random.value < 0.3f) // 30% шанс на дополнительный эффект
+            {
+                Debug.Log("Дополнительный эффект хаоса!");
+                float extraEffect = UnityEngine.Random.value;
+                
+                if (extraEffect < 0.5f) // 50% из 30% - ScreenShake
+                {
+                    Screen_Shake extraShake = FindAnyObjectByType<Screen_Shake>();
+                    if (extraShake != null)
+                    {
+                        extraShake.Start_shaking();
+                        Debug.Log("Хаос: Дополнительная тряска экрана!");
+                    }
+                }
+                else // 50% из 30% - FireText
+                {
+                    Fire_text extraFireText = FindAnyObjectByType<Fire_text>();
+                    if (extraFireText != null)
+                    {
+                        extraFireText.Fire();
+                        Debug.Log("Хаос: Дополнительный FireText!");
+                    }
+                }
             }
         }
+
+        // Обновленная корутина для затемнения экрана
         private IEnumerator QuickDarkenAndLighten()
         {
             if (Shaders.ScreenEffects.ScreenFader.Instance == null) yield break;
@@ -476,6 +540,7 @@ namespace Bunny {
             // Осветление обратно (0.2 секунды)
             Shaders.ScreenEffects.ScreenFader.Instance.StartFade(0f, 0.2f);
         }
+
         private void ResetTimeScale()
         {
             Time.timeScale = 1f;
