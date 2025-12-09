@@ -8,19 +8,11 @@ namespace Bunny
     public class BunnyDialogueManager : DialogueManager.DialogueManager
     {
         private global::Bunny.Bunny _activeBunny;
-        private Coroutine _timerUpdateCoroutine;
-        private BureaucraticTask _currentDisplayedTask;
         private bool _isTaskDialogue = false;
         
         protected override void OnSentencePrinted()
         {
             base.OnSentencePrinted();
-            
-            // [!] Запускаем обновление времени ТОЛЬКО ПОСЛЕ того, как текст напечатан
-            if (_isTaskDialogue && _currentDisplayedTask != null)
-            {
-                StartTaskTimerUpdates();
-            }
         }
         
         public void StartBunnyDialogue(Dialogue dialogue, global::Bunny.Bunny bunny)
@@ -32,19 +24,6 @@ namespace Bunny
             _activeBunny = bunny;
             _isTaskDialogue = true;
             
-            // [!] Получаем задание ДО начала диалога
-            if (TaskManager.Instance != null)
-            {
-                _currentDisplayedTask = TaskManager.Instance.GetCurrentTask();
-                
-                // [!] Если задания нет, создаем новое
-                if (_currentDisplayedTask == null)
-                {
-                    TaskManager.Instance.StartNewTask();
-                    _currentDisplayedTask = TaskManager.Instance.GetCurrentTask();
-                }
-            }
-            
             // Показываем textCloud перед началом диалога
             if (textCloud != null)
             {
@@ -54,23 +33,11 @@ namespace Bunny
             
             base.StartDialogue(dialogue);
             
-            // [!] НЕ запускаем обновление времени здесь - дождемся окончания печати текста
-            // [!] Подписываемся на события завершения задания для автоматического закрытия
+            // Подписываемся на события завершения задания для автоматического закрытия
             if (TaskManager.Instance != null)
             {
                 TaskManager.Instance.OnTaskCompleted += OnTaskEnded;
                 TaskManager.Instance.OnTaskFailed += OnTaskEnded;
-                TaskManager.Instance.OnTaskCorrupted += OnTaskCorruptedHandler;
-            }
-        }
-        
-        // [!] Обработчик изменения задания
-        private void OnTaskCorruptedHandler(BureaucraticTask task)
-        {
-            // Обновляем отображаемое задание
-            if (TaskManager.Instance != null)
-            {
-                _currentDisplayedTask = TaskManager.Instance.GetCurrentTask();
             }
         }
         
@@ -81,15 +48,11 @@ namespace Bunny
             UseTimerForClosing = false;
             _isTaskDialogue = false;
             
-            // [!] Останавливаем обновление времени
-            StopTaskTimerUpdates();
-            
-            // [!] Отписываемся от событий завершения задания
+            // Отписываемся от событий завершения задания
             if (TaskManager.Instance != null)
             {
                 TaskManager.Instance.OnTaskCompleted -= OnTaskEnded;
                 TaskManager.Instance.OnTaskFailed -= OnTaskEnded;
-                TaskManager.Instance.OnTaskCorrupted -= OnTaskCorruptedHandler;
             }
             
             base.EndDialogue();
@@ -99,10 +62,9 @@ namespace Bunny
                 _activeBunny.CurrentDialogueIndex++;
                 _activeBunny = null;
             }
-            _currentDisplayedTask = null;
         }
         
-        // [!] Обработчик завершения задания (успешного или проваленного)
+        // Обработчик завершения задания (успешного или проваленного)
         private void OnTaskEnded(BureaucraticTask task)
         {
             Debug.Log($"BunnyDialogueManager: Задание завершено ({task?.Title}), закрываю диалог");
@@ -114,7 +76,7 @@ namespace Bunny
             }
         }
         
-        // [!] Переопределяем CheckDialogueEnd для увеличения времени отображения
+        // Переопределяем CheckDialogueEnd для увеличения времени отображения
         protected override void CheckDialogueEnd()
         {
             if (continueText == null) return;
@@ -135,9 +97,9 @@ namespace Bunny
                 }
                 else
                 {
-                    // [!] Увеличиваем время отображения до 60 секунд вместо 10
+                    // Увеличиваем время отображения до 10 секунд
                     continueText.gameObject.SetActive(false);
-                    _currentTimer = 10f; // [!] Увеличенное время
+                    _currentTimer = 10f;
                 }
             }
             else
@@ -150,59 +112,10 @@ namespace Bunny
                 }
                 else
                 {
-                    // [!] Увеличиваем время отображения до 60 секунд вместо 10
+                    // Увеличиваем время отображения до 10 секунд
                     continueText.gameObject.SetActive(false);
-                    _currentTimer = 10f; // [!] Увеличенное время
+                    _currentTimer = 10f;
                 }
-            }
-        }
-        
-        // [!] Новый метод для обновления времени задания
-        private void StartTaskTimerUpdates()
-        {
-            StopTaskTimerUpdates();
-            
-            if (_currentDisplayedTask != null)
-            {
-                _timerUpdateCoroutine = StartCoroutine(UpdateTaskTimerRoutine());
-            }
-        }
-        
-        // [!] Остановка обновления времени
-        private void StopTaskTimerUpdates()
-        {
-            if (_timerUpdateCoroutine != null)
-            {
-                StopCoroutine(_timerUpdateCoroutine);
-                _timerUpdateCoroutine = null;
-            }
-        }
-        
-        // [!] Корутина для обновления времени
-        private IEnumerator UpdateTaskTimerRoutine()
-        {
-            while (_currentDisplayedTask != null && 
-                   !_currentDisplayedTask.IsCompleted && 
-                   !_currentDisplayedTask.IsFailed)
-            {
-                // [!] Обновляем описание задания с текущим временем
-                UpdateDialogueWithCurrentTime();
-                yield return new WaitForSeconds(1f); // Обновляем каждую секунду
-            }
-        }
-        
-        // [!] Обновление диалога с актуальным временем
-        private void UpdateDialogueWithCurrentTime()
-        {
-            if (_currentDisplayedTask == null || dialogueText == null) return;
-            
-            // [!] Форматируем текст с текущим временем
-            string descriptionWithTime = GetTaskDescriptionWithTime(_currentDisplayedTask);
-            
-            // [!] Обновляем текст только если он изменился
-            if (dialogueText.text != descriptionWithTime)
-            {
-                dialogueText.text = descriptionWithTime;
             }
         }
         
@@ -233,8 +146,8 @@ namespace Bunny
                 }
             }
             
-            // [!] Получаем описание задания БЕЗ времени (время добавится позже)
-            string description = GetTaskDescriptionWithoutTime(currentTask);
+            // Получаем описание задания с фиксированным временем
+            string description = GetTaskDescriptionWithFixedTime(currentTask);
             
             // Добавляем срочность, если задание срочное
             if (currentTask.IsUrgent)
@@ -252,28 +165,19 @@ namespace Bunny
             return description;
         }
         
-        // [!] Новый метод: получает описание задания БЕЗ времени
-        private string GetTaskDescriptionWithoutTime(BureaucraticTask task)
+        // Метод: получает описание задания с фиксированным временем (не обновляется)
+        private string GetTaskDescriptionWithFixedTime(BureaucraticTask task)
         {
             if (task == null) return "Задание не найдено";
             
-            // [!] Возвращаем только базовое описание без времени
-            return task.Description;
-        }
-        
-        // [!] Метод: получает описание задания С временем
-        private string GetTaskDescriptionWithTime(BureaucraticTask task)
-        {
-            if (task == null) return "Задание не найдено";
-            
-            // [!] Форматируем оставшееся время
+            // Форматируем начальное время задания (фиксированное, не обновляется)
             string timeText = FormatTime(task.TimeRemaining);
             
-            // [!] Берем базовое описание из задания и добавляем текущее время
+            // Берем базовое описание из задания и добавляем фиксированное время
             return $"{task.Description}Дедлайн: {timeText}";
         }
         
-        // [!] Метод форматирования времени
+        // Метод форматирования времени
         private string FormatTime(float timeInSeconds)
         {
             if (timeInSeconds <= 0) return "Время вышло!";
