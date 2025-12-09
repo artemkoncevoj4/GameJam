@@ -45,7 +45,7 @@ public class InputHandler : MonoBehaviour
             if (PauseMenu.Instance == null)
             {
                 Debug.LogWarning("PauseMenu.Instance is null, trying to find it...");
-                PauseMenu pauseMenu = FindObjectOfType<PauseMenu>();
+                PauseMenu pauseMenu = FindAnyObjectByType<PauseMenu>();
                 if (pauseMenu != null)
                 {
                     Debug.Log("Found PauseMenu in scene: " + pauseMenu.gameObject.name);

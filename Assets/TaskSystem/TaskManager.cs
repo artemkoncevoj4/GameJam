@@ -117,13 +117,6 @@ namespace TaskSystem {
                 }
             }
         }
-        public void ForceUpdateTimerUI()
-        {
-            if (_currentTask != null && !_currentTask.IsCompleted && !_currentTask.IsFailed)
-            {
-                OnTaskTimerUpdated?.Invoke(_currentTask.TimeRemaining);
-            }
-        }
         public void StartNewTask()
         {
             if (_isTaskActive)
@@ -146,7 +139,7 @@ namespace TaskSystem {
                 isUrgent
             );
 
-            _currentTaskTimeLimit = Mathf.Max(_minTaskTime, _currentTaskTimeLimit - _timeReductionPerTask);
+            _currentTaskTimeLimit = Mathf.Max(_minTaskTime, Random.Range(_currentTaskTimeLimit - 2 * _timeReductionPerTask, _currentTaskTimeLimit - _timeReductionPerTask));
 
             _isTaskActive = true;
             OnNewTask?.Invoke(_currentTask);
@@ -154,8 +147,6 @@ namespace TaskSystem {
             Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
             Debug.Log($"<color=white>{_currentTask.Description}</color>");
             Debug.Log($"время: {_currentTaskTimeLimit} ");
-            
-            SpawnRequiredItems(req);
         }
 
         private TaskSystem.DocumentRequirement GenerateRandomRequirements()
@@ -188,11 +179,6 @@ namespace TaskSystem {
             return titles[Random.Range(0, titles.Length)];
         }
 
-        private void SpawnRequiredItems(TaskSystem.DocumentRequirement req)
-        {
-            
-            Debug.Log($"Для задания нужны: {req.requiredInkColor} чернила, {req.requiredPaperType}, {(req.isStamped ? $"штамп {req.requiredStampType}" : "штамп не нужен")}");
-        }
 
         private void UpdateDocumentFromUsage(string stationType, string itemType)
         {
