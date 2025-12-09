@@ -35,7 +35,7 @@ namespace UI
                     {
                         _timerText.gameObject.SetActive(true);
                         UpdateTimerDisplay(task.TimeRemaining);
-                        Debug.Log("SimpleTaskTimer: Таймер принудительно запущен");
+                        Debug.Log("<color=green>SimpleTaskTimer: Таймер принудительно запущен</color>");
                     }
                 }
             }
@@ -81,7 +81,7 @@ namespace UI
             TaskManager.Instance.OnTaskCorrupted += OnTaskCorrupted;
             
             _isSubscribed = true;
-            Debug.Log("SimpleTaskTimer: Подписался на события");
+            Debug.Log("<color=green>SimpleTaskTimer: Подписался на события</color>");
             
             // Проверяем, нет ли уже активного задания
             CheckForExistingTask();
@@ -98,7 +98,7 @@ namespace UI
             TaskManager.Instance.OnTaskCorrupted -= OnTaskCorrupted;
             
             _isSubscribed = false;
-            Debug.Log("SimpleTaskTimer: Отписался от событий");
+            Debug.Log("<color=yellow>SimpleTaskTimer: Отписался от событий</color>");
         }
 
         private void CheckForExistingTask()

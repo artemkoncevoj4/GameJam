@@ -56,7 +56,7 @@ public class PlayerInteraction : MonoBehaviour
         // 2. Проверяем нажатие клавиши взаимодействия
         if (Input.GetKeyDown(interactionKey) && currentNearestObject != null)
         {
-            Debug.Log($"<color=red>Nearest object: {currentNearestObject}</color=red>");
+            Debug.Log($"<color=white>Nearest object: {currentNearestObject}</color=red>");
             InteractWithCurrentObject();
         }
     }

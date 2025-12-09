@@ -50,7 +50,7 @@ namespace DialogueManager {
         //*
         void Awake()
         {
-            Debug.Log("=== DialogueManager Awake ===");
+            Debug.Log("<color=cyan>=== DialogueManager Awake ===</color>");
 
             // Инициализация очереди
             sentences = new Queue<string>();
@@ -60,29 +60,29 @@ namespace DialogueManager {
             {
                 nameText = nameObject.GetComponent<TextMeshProUGUI>();
                 if (nameText == null)
-                    Debug.LogError("Name object не имеет компонента TextMeshProUGUI!");
+                    Debug.LogError("<color=red>Name object не имеет компонента TextMeshProUGUI!</color>");
                 else
-                    Debug.Log("Name TextMeshProUGUI найден");
+                    Debug.Log("<color=green>Name TextMeshProUGUI найден</color>");
             }
             
             if (dialogueObject != null)
             {
                 dialogueText = dialogueObject.GetComponent<TextMeshProUGUI>();
                 if (dialogueText == null)
-                    Debug.LogError("Dialogue object не имеет компонента TextMeshProUGUI!");
+                    Debug.LogError("<color=red>Dialogue object не имеет компонента TextMeshProUGUI!</color>");
                 else
-                    Debug.Log("Dialogue TextMeshProUGUI найден");
+                    Debug.Log("<color=green>Dialogue TextMeshProUGUI найден</color>");
             }
             
             // Скрываем TextCloud и индикатор
             if (textCloud != null)
             {
                 textCloud.SetActive(false);
-                Debug.Log("TextCloud скрыт");
+                Debug.Log("<color=cyan>TextCloud скрыт</color>");
             }
             else
             {
-                Debug.LogError("TextCloud не установлен!");
+                Debug.LogError("<color=red>TextCloud не установлен!</color>");
             }
 
             if (continueText != null)
@@ -147,7 +147,7 @@ namespace DialogueManager {
             // Проверяем ссылки
             if (textCloud == null || nameText == null || dialogueText == null)
             {
-                Debug.LogError("DialogueManager: Не установлены все компоненты UI!");
+                Debug.LogError("<color=red>DialogueManager: Не установлены все компоненты UI!</color>");
                 return;
             }
 
@@ -267,7 +267,7 @@ namespace DialogueManager {
         {
             if(_isPermanentDisplay)
             {
-                Debug.LogWarning("Попытка закрыть постоянный диалог. Игнорируем");
+                Debug.LogWarning("<color=yellow>Попытка закрыть постоянный диалог. Игнорируем</color>");
                 return;
             }
             Debug.Log("Диалог завершен");

@@ -75,12 +75,12 @@ namespace TaskSystem {
             var bunny = FindAnyObjectByType<Bunny.Bunny>();
             if (bunny != null)
             {
-                Debug.Log("TaskManager: Found Bunny, subscribing to events");
+                Debug.Log("<color=green>TaskManager: Found Bunny, subscribing to events</color>");
                 bunny.OnRabbitActive += HandleRabbitInterference;
             }
             else
             {
-                Debug.LogWarning("TaskManager: Bunny not found in scene");
+                Debug.LogWarning("<color=red>TaskManager: Bunny not found in scene</color>");
             }
         }
 
@@ -121,7 +121,7 @@ namespace TaskSystem {
         {
             if (_isTaskActive)
             {
-                Debug.LogWarning("Попытка начать новое задание, когда текущее еще активно!");
+                Debug.LogWarning("<color=yellow>Попытка начать новое задание, когда текущее еще активно!</color>");
                 return;
             }
 
@@ -161,7 +161,7 @@ namespace TaskSystem {
                 OnTaskTimerUpdated.Invoke(_currentTask.TimeRemaining);
             }
             
-            Debug.Log("TaskManager: UI обновлен после создания задания");
+            Debug.Log("<color=cyan>TaskManager: UI обновлен после создания задания</color>");
         }
 
         private TaskSystem.DocumentRequirement GenerateRandomRequirements()
@@ -301,7 +301,7 @@ namespace TaskSystem {
 
             OnTaskFailed?.Invoke(_currentTask);
 
-            Debug.Log($"<color=red>Задание провалено: {reason}</color>");
+            Debug.Log($"<color=white>Задание провалено: {reason}</color>");
 
             if (GameCycle.Instance != null)
             {
@@ -316,7 +316,7 @@ namespace TaskSystem {
                 _currentTask.Corrupt();
                 OnTaskCorrupted?.Invoke(_currentTask);
 
-                Debug.Log("<color=red>Кролик изменил требования задания!</color>");
+                Debug.Log("<color=white>Кролик изменил требования задания!</color>");
                 Debug.Log($"<color=yellow>Новые требования: {_currentTask.Description}</color>");
 
                 if (GameCycle.Instance != null)

@@ -24,7 +24,7 @@ public class GradientBackground : MonoBehaviour
     
     if (gradientShader == null)
     {
-        Debug.LogError("Shader 'UI/Gradient' not found. Make sure the shader file is in the project.");
+        Debug.LogError("<color=red>Shader 'UI/Gradient' not found. Make sure the shader file is in the project.</color>");
         return;
     }
     // Создаем материал из найденного шейдера

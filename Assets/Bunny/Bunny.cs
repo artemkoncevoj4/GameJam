@@ -80,9 +80,9 @@ namespace Bunny {
             _cachedScreenFliskers = FindObjectInScene<ScreenFliskers>();
             
             // Логирование найденных эффектов
-            Debug.Log($"<color=red>Screen_Shake: {(_cachedScreenShake != null ? "найден" : "не найден</color>")}");
-            Debug.Log($"<color=red>Fire_text: {(_cachedFireText != null ? "найден" : "не найден</color>")}");
-            Debug.Log($"<color=red>ScreenFliskers: {(_cachedScreenFliskers != null ? "найден" : "не найден</color>")}");
+            Debug.Log($"Screen_Shake: {(_cachedScreenShake != null ? "<color=green>найден</color>" : "<color=red>не найден</color>")}");
+            Debug.Log($"Fire_text: {(_cachedFireText != null ? "<color=green>найден</color>" : "<color=red>не найден</color>")}");
+            Debug.Log($"ScreenFliskers: {(_cachedScreenFliskers != null ? "<color=green>найден</color>" : "<color=red>не найден</color>")}");
 
 
             SetVisible(false);
@@ -124,7 +124,7 @@ namespace Bunny {
             while (TaskManager.Instance == null)
             {
                 yield return new WaitForSeconds(0.1f);
-                Debug.Log("<color=green>Bunny: Waiting for TaskManager to initialize...</color>");
+                Debug.Log("<color=cyan>Bunny: Waiting for TaskManager to initialize...</color>");
             }
             
             Debug.Log("<color=green>Bunny: TaskManager found, subscribing to events</color>");
@@ -155,7 +155,7 @@ namespace Bunny {
             SetVisible(true);
         
             bool willPeek = _isTaskPresent ? UnityEngine.Random.value < _peekChance : false;
-            Debug.Log($"<color=red>Шанс пик {willPeek}</color>");
+            Debug.Log($"<color=blue>Шанс пик {willPeek}</color>");
             bool whichDoor = UnityEngine.Random.value < 0.5f;
         
             if (willPeek)
@@ -338,17 +338,17 @@ namespace Bunny {
             // Ждем TaskManager, если он еще не инициализирован
             if (TaskManager.Instance == null) 
             {
-                Debug.LogError("Bunny: TaskManager not found! Trying to find it...");
+                Debug.LogError("<color=cyan>Bunny: TaskManager not found! Trying to find it...</color>");
                 TaskManager taskManager = FindAnyObjectByType<TaskManager>();
                 if (taskManager == null)
                 {
-                    Debug.LogError("Bunny: TaskManager not found in scene! Cannot assign task.");
+                    Debug.LogError("<color=red>Bunny: TaskManager not found in scene! Cannot assign task.</color>");
                     Leave();
                     return;
                 }
                 else
                 {
-                    Debug.Log("Bunny: Found TaskManager in scene");
+                    Debug.Log("<color=green>Bunny: Found TaskManager in scene</color>");
                 }
             }
 
@@ -457,7 +457,7 @@ namespace Bunny {
         {
             if (_bunnyDialogueManager == null) 
             {
-                Debug.LogError("BunnyDialogueManager не найден!");
+                Debug.LogError("<color=red>BunnyDialogueManager не найден!</color>");
                 Leave();
                 return;
             }
@@ -467,7 +467,7 @@ namespace Bunny {
             
             if (taskDialogue == null || taskDialogue.sentences.Length == 0)
             {
-                Debug.Log($"Bunny: Не удалось получить описание задания. Заяц уходит.");
+                Debug.Log($"<color=red>Bunny: Не удалось получить описание задания. Заяц уходит.</color>");
                 Leave(); 
                 return;
             }
@@ -564,7 +564,7 @@ namespace Bunny {
                 }
                 else
                 {
-                    Debug.LogWarning("ScreenBlinker.Instance не найден!");
+                    Debug.LogWarning("<color=red>ScreenBlinker.Instance не найден!</color>");
                 }
             }
             else // 10% шанс - звуковой эффект

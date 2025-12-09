@@ -19,21 +19,21 @@ namespace DialogueManager {
             
             if (manager != null)
             {
-                Debug.Log("[DialogueTrigger] DialogueManager found: " + manager.gameObject.name);
+                Debug.Log("<color=green>[DialogueTrigger] DialogueManager found: </color>" + manager.gameObject.name);
                 
                 if (!manager.IsDialogueActive())
                 {
-                    Debug.Log("[DialogueTrigger] Starting dialogue...");
+                    Debug.Log("<color=cyan>[DialogueTrigger] Starting dialogue...</color>");
                     manager.StartDialogue(dialogue);
                 }
                 else
                 {
-                    Debug.LogWarning("[DialogueTrigger] Dialogue is already active, cannot start new one");
+                    Debug.LogWarning("<color=red>[DialogueTrigger] Dialogue is already active, cannot start new one</color>");
                 }
             }
             else
             {
-                Debug.LogError("[DialogueTrigger] DialogueManager not found in scene!");
+                Debug.LogError("<color=red>[DialogueTrigger] DialogueManager not found in scene!</color>");
             }
         }
     }

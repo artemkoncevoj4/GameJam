@@ -34,7 +34,7 @@ namespace Shaders.ScreenEffects
                 Image = GetComponent<Image>();
                 if (Image == null)
                 {
-                    Debug.LogError("ScreenBlinker: No Image component found!");
+                    Debug.LogError("<color=red>ScreenBlinker: No Image component found!</color>");
                     return;
                 }
             }
@@ -50,7 +50,7 @@ namespace Shaders.ScreenEffects
             }
             else
             {
-                Debug.LogError("ScreenBlinker instance not found!");
+                Debug.LogError("<color=red>ScreenBlinker instance not found!</color>");
             }
         }
 

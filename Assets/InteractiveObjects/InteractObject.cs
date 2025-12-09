@@ -39,12 +39,12 @@ namespace InteractiveObjects
             if (!_objectDatabase.ContainsKey(ID))
             {
                 _objectDatabase.Add(ID, this);
-                Debug.Log($"Объект '{Name}' зарегистрирован с ID: {ID}");
+                Debug.Log($"<color=green>Объект '{Name}' зарегистрирован с ID: {ID}</color>");
             }
 
             if (_jsonData == null)
             {
-                Debug.LogWarning($"Для объекта {gameObject.name} не найдены данные в JSON (ID: {_itemDataId})");
+                Debug.LogWarning($"<color=red>Для объекта {gameObject.name} не найдены данные в JSON (ID: {_itemDataId})</color>");
             }
         }
 
@@ -59,7 +59,7 @@ namespace InteractiveObjects
                 Debug.Log($"Объект '{obj.Name}' (ID: {id}) удален.");
                 return true;
             }
-            Debug.LogWarning($"Не удалось найти объект с ID {id} для удаления.");
+            Debug.LogWarning($"<color=red>Не удалось найти объект с ID {id} для удаления.</color>");
             return false;
         }
 
@@ -71,7 +71,7 @@ namespace InteractiveObjects
         // ..
         public virtual void Interact()
         {
-            Debug.Log($"Взаимодействие с объектом: {Name} (ID: {ID})");
+            Debug.Log($"<color=cyan>Взаимодействие с объектом: {Name} (ID: {ID})</color>");
         }
 
         void OnDestroy()
@@ -79,7 +79,7 @@ namespace InteractiveObjects
             if (_objectDatabase.ContainsKey(ID))
             {
                 _objectDatabase.Remove(ID);
-                Debug.Log($"Объект {Name} удален из базы данных");
+                Debug.Log($"<color=cyan>Объект {Name} удален из базы данных</color>");
             }
         }
 

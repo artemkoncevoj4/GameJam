@@ -51,7 +51,7 @@ namespace Shaders.ScreenEffects
                 fadeImage = GetComponent<Image>();
                 if (fadeImage == null)
                 {
-                    Debug.LogError("ScreenFader: No Image component found!");
+                    Debug.LogError("<color=red>ScreenFader: No Image component found!</color>");
                     return;
                 }
             }

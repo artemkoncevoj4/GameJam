@@ -31,7 +31,7 @@ namespace Bunny
             if (textCloud != null)
             {
                 textCloud.SetActive(true);
-                Debug.Log("BunnyDialogueManager: TextCloud activated");
+                Debug.Log("<color=green>BunnyDialogueManager: TextCloud activated</color>");
             }
             
             base.StartDialogue(dialogue);
@@ -46,7 +46,7 @@ namespace Bunny
         
         public override void EndDialogue()
         {
-            Debug.Log("BunnyDialogueManager: EndDialogue called");
+            Debug.Log("<color=cyan>BunnyDialogueManager: EndDialogue called</color>");
             
             UseTimerForClosing = false;
             _isTaskDialogue = false;
@@ -70,7 +70,7 @@ namespace Bunny
         // Обработчик завершения задания (успешного или проваленного)
         private void OnTaskEnded(BureaucraticTask task)
         {
-            Debug.Log($"BunnyDialogueManager: Задание завершено ({task?.Title}), закрываю диалог");
+            Debug.Log($"<color=green>BunnyDialogueManager: Задание завершено ({task?.Title}), закрываю диалог</color>");
             
             // Если диалог еще активен, закрываем его
             if (IsDialogueActive())
@@ -125,11 +125,11 @@ namespace Bunny
         // ========== ЛОГИКА ОТОБРАЖЕНИЯ ЗАДАНИЯ ==========
         public string GetTaskDescriptionForDialogue()
         {
-            Debug.Log("BunnyDialogueManager: GetTaskDescriptionForDialogue called");
+            Debug.Log("<color=cyan>BunnyDialogueManager: GetTaskDescriptionForDialogue called</color>");
             
             if (TaskManager.Instance == null)
             {
-                Debug.LogWarning("TaskManager не найден!");
+                Debug.LogWarning("<color=red>TaskManager не найден!</color>");
                 return "Ошибка: система заданий не найдена";
             }
             
@@ -179,7 +179,7 @@ namespace Bunny
         // Метод для Bunny.cs для получения диалога с заданием
         public Dialogue GetTaskDialogueForBunny(global::Bunny.Bunny bunny)
         {
-            Debug.Log($"BunnyDialogueManager: GetTaskDialogueForBunny called for {bunny.BunnyName}");
+            Debug.Log($"<color=green>BunnyDialogueManager: GetTaskDialogueForBunny called for {bunny.BunnyName}</color>");
             
             string taskDescription = GetTaskDescriptionForDialogue();
             
@@ -197,7 +197,7 @@ namespace Bunny
                 sentences = new string[] { tauntingPhrase }
             };
             
-            Debug.Log($"BunnyDialogueManager: Created dialogue with sentence: {tauntingPhrase}");
+            Debug.Log($"<color=green>BunnyDialogueManager: Created dialogue with sentence: {tauntingPhrase}</color>");
             return dialogue;
         }
 

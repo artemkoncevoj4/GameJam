@@ -11,7 +11,7 @@ namespace MainMenu{
       // Эта функция закрывает игру
       public void QuitGame()
       {
-          Debug.Log("Игра закрылась!"); 
+          Debug.Log("<color=yellow>Игра закрылась!</color>"); 
           Application.Quit();
       }
   }

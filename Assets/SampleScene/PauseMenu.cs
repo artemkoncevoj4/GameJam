@@ -131,7 +131,7 @@ namespace SampleScene {
         {
             if (_isPaused || _isGameOver) return;
             
-            Debug.Log("PauseGame called");
+            Debug.Log("<color=cyan>PauseGame called</color>");
             _isPaused = true;
             // Ставим игру на паузу в GameCycle
             if (GameCycle.Instance != null)
@@ -176,7 +176,7 @@ namespace SampleScene {
         /// </summary>
         public void ShowGameOverMenu()
         {
-            Debug.Log("ShowGameOverMenu called");
+            Debug.Log("<color=cyan>ShowGameOverMenu called</color>");
             _isPaused = true;
             _isGameOver = true;
             
@@ -214,7 +214,7 @@ namespace SampleScene {
         /// </summary>
         public void ShowVictoryMenu()
         {
-            Debug.Log("ShowVictoryMenu called");
+            Debug.Log("<color=cyan>ShowVictoryMenu called</color>");
             _isPaused = true;
             _isGameOver = true;
             
@@ -248,7 +248,7 @@ namespace SampleScene {
         {
             if (!_isPaused || _isGameOver) return;
             
-            Debug.Log("ResumeGame called");
+            Debug.Log("<color=cyan>ResumeGame called</color>");
             
             // Снимаем флаг паузы
             _isPaused = false;
@@ -277,7 +277,7 @@ namespace SampleScene {
         
         private void DisableMenuPanel()
         {
-            Debug.Log("DisableMenuPanel called");
+            Debug.Log("<color=cyan>DisableMenuPanel called</color>");
             
             // Скрываем панель
             if (_pauseMenuPanel != null)
@@ -308,7 +308,7 @@ namespace SampleScene {
         
         private void RestartGame()
         {
-            Debug.Log("=== RESTART GAME ===");
+            Debug.Log("<color=yellow>=== RESTART GAME ===</color>");
             
             // Восстанавливаем нормальную скорость времени
             Time.timeScale = 1f;
@@ -319,7 +319,7 @@ namespace SampleScene {
 
         private void GoToMainMenu()
         {
-            Debug.Log("Going to main menu...");
+            Debug.Log("<color=yellow>Going to main menu...</color>");
             
             // Восстанавливаем нормальную скорость времени
             Time.timeScale = 1f;

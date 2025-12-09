@@ -32,7 +32,7 @@ public class ItemDatabase : MonoBehaviour
         
         if (jsonFile == null)
         {
-            Debug.LogError("Файл items_database.json не найден в папке Resources!");
+            Debug.LogError("<color=red>Файл items_database.json не найден в папке Resources!</color>");
             return;
         }
         
@@ -59,7 +59,7 @@ public class ItemDatabase : MonoBehaviour
             itemsByCategory[category.name] = categoryItems;
         }
         
-        Debug.Log($"База загружена. Категорий: {itemsByCategory.Count}, Предметов: {itemsById.Count}");
+        Debug.Log($"<color=green>База загружена. Категорий: {itemsByCategory.Count}, Предметов: {itemsById.Count}</color>");
     }
     
     // === ПРОСТЫЕ МЕТОДЫ ДОСТУПА ===

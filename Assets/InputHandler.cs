@@ -44,11 +44,11 @@ public class InputHandler : MonoBehaviour
             // Попробуем найти меню паузы, если оно еще не инициализировано
             if (PauseMenu.Instance == null)
             {
-                Debug.LogWarning("PauseMenu.Instance is null, trying to find it...");
+                Debug.LogWarning("<color=yellow>PauseMenu.Instance is null, trying to find it...</color>");
                 PauseMenu pauseMenu = FindAnyObjectByType<PauseMenu>();
                 if (pauseMenu != null)
                 {
-                    Debug.Log("Found PauseMenu in scene: " + pauseMenu.gameObject.name);
+                    Debug.Log("<color=green>Found PauseMenu in scene: </color>" + pauseMenu.gameObject.name);
                 }
             }
             
@@ -59,7 +59,7 @@ public class InputHandler : MonoBehaviour
             }
             else
             {
-                Debug.LogError("PauseMenu.Instance is null! Cannot pause game.");
+                Debug.LogError("<color=red>PauseMenu.Instance is null! Cannot pause game.</color>");
             }
             
             // Также вызываем событие для других систем
