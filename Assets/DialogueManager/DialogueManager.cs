@@ -17,8 +17,8 @@ namespace DialogueManager {
         public int CurrentSentenceIndex => _currentSentenceIndex; // Публичный геттер
 
         private TextMeshProUGUI nameText;
-        private TextMeshProUGUI dialogueText;
-        private Queue<string> sentences;
+        public TextMeshProUGUI dialogueText;
+        public Queue<string> sentences;
         private string currentSentence;
         private Coroutine typeCoroutine;
         private bool isTyping = false;
@@ -36,8 +36,8 @@ namespace DialogueManager {
             set => _useTimerForClosing = value;
         }
         
-        [SerializeField] protected float _autoCloseDuration = 5f;
-        private float _currentTimer = 0f;
+        [SerializeField] protected float _autoCloseDuration = 100f;
+        public float _currentTimer = 0f;
         //*
 
         //* ЕСЛИ МЫ ХОТИМ ЧТОБЫ ЗАДАНИЕ НЕ ЗАКРЫВАЛОСЬ

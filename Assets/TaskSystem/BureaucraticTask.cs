@@ -13,7 +13,7 @@ namespace TaskSystem
         public bool IsFailed { get; private set; }
         public bool IsCorrupted { get; private set; }
         public bool IsUrgent { get; private set; }
-
+        private bool _isSubscribed = false;
         public BureaucraticTask(string title, DocumentRequirement req, float timeLimit, bool urgent = false)
         {
             Title = title;
@@ -92,12 +92,10 @@ namespace TaskSystem
         }
 
         private string GenerateDescription(DocumentRequirement req)
-        {
-            string time = TaskManager.Instance.ReturnTaskTime();
+        {   
             return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
                    $"Подпись: {req.requiredSignaturePos}. " +
-                   $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} " +
-                   $"Дедлайн: {time} секунд.";
+                   $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} ";
         }
     }
 }
