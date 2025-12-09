@@ -19,12 +19,33 @@ public class PlayerInteraction : MonoBehaviour
     private CircleCollider2D triggerCollider;
     public Action OnObjectInteraction;
 
-    void Start()
+    void Awake()
     {
-        // Настраиваем триггер-коллайдер автоматически
-        CircleCollider2D triggerCollider = gameObject.AddComponent<CircleCollider2D>();
+        SetupTriggerCollider();
+    }
+
+    void SetupTriggerCollider()
+    {
+        // Удаляем старые коллайдеры если есть
+        var oldColliders = GetComponents<Collider>();
+        foreach (var col in oldColliders)
+        {
+            if (col.isTrigger) Destroy(col);
+        }
+
+        // Создаем и настраиваем 2D коллайдер
+        triggerCollider = gameObject.AddComponent<CircleCollider2D>();
         triggerCollider.isTrigger = true;
         triggerCollider.radius = interactionRadius;
+        
+        // Добавляем Rigidbody2D для работы триггеров
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.gravityScale = 0;
+        }
     }
 
     void Update()
@@ -129,6 +150,40 @@ public class PlayerInteraction : MonoBehaviour
         if (workstation != null)
         {
             workstation.UseStation(); 
+            OnObjectInteraction?.Invoke();
+            return;
         }
+    }
+     void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Interactive") && !objectsInRange.Contains(other.gameObject))
+        {
+            objectsInRange.Add(other.gameObject);
+            Debug.Log($"Объект вошел в зону: {other.name}");
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Interactive"))
+        {
+            GameObject exitedObject = other.gameObject;
+            objectsInRange.Remove(exitedObject);
+
+            if (exitedObject == currentNearestObject)
+            {
+                RestoreMaterials(exitedObject);
+                currentNearestObject = null;
+            }
+
+            originalMaterials.Remove(exitedObject);
+            Debug.Log($"Объект вышел из зоны: {other.name}");
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
 }

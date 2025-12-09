@@ -7,7 +7,6 @@ namespace InteractiveObjects
 {
     public abstract class Workstation : InteractObject
     {
-        
 
         public void UseStation()
         {

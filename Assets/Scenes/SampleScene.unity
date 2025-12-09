@@ -4882,6 +4882,7 @@ GameObject:
   - component: {fileID: 1706604779}
   - component: {fileID: 1706604781}
   - component: {fileID: 1706604782}
+  - component: {fileID: 1706604783}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -5039,6 +5040,23 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 2.67, y: 1}
   m_Direction: 0
+--- !u!114 &1706604783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706604777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df3732605c6ad474395eb7e94c2dff57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  interactionRadius: 2
+  interactionKey: 101
+  highlightMaterial: {fileID: 0}
+  currentNearestObject: {fileID: 0}
+  objectsInRange: []
 --- !u!1 &1754196037
 GameObject:
   m_ObjectHideFlags: 0
@@ -5109,7 +5127,7 @@ GameObject:
   - component: {fileID: 1757639909}
   m_Layer: 0
   m_Name: StampTable
-  m_TagString: Untagged
+  m_TagString: Interactive
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5146,6 +5164,7 @@ MonoBehaviour:
   _visualObject: {fileID: 0}
   _stampParticleEffect: {fileID: 0}
   _stampSound: {fileID: 0}
+  documentModel: {fileID: 0}
 --- !u!212 &1757639908
 SpriteRenderer:
   m_ObjectHideFlags: 0

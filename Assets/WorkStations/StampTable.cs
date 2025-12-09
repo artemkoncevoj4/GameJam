@@ -10,9 +10,20 @@ namespace InteractiveObjects
         [Header("Stamp Table Settings")]
         [SerializeField] private ParticleSystem _stampParticleEffect; // Визуальный эффект
         [SerializeField] private AudioClip _stampSound; // Звук штампа
-        
+        [SerializeField] private GameObject documentModel;
         
         private bool _isDoucmenPresent = false;
+        private Document currentDocument;
+
+        public string GetInteractionHint()
+        {
+            return "Нажмите E для использования штампа";
+        }
+
+        public bool CanInteract()
+        {
+            return true;
+        }
         
         // Переопределяем метод UseStation для конкретной логики штампа
         public new void UseStation()
@@ -34,12 +45,13 @@ namespace InteractiveObjects
             StampType stampType = StampType.Одобрено; //!   Change later
             StampDocument(_currentDocument, stampType);
             Debug.Log($"Теперь нажмите E еще раз для штамповки документа");
+            ResetTable();
         }
         
         // Штамповка документа
-        private void StampDocument(Document _currentDocument, StampType stampType)
+        private void StampDocument(Document document, StampType stampType)
         {
-            Debug.Log($"StampTable: Stamping document {_currentDocument}");
+            Debug.Log($"StampTable: Stamping document {document}");
             
             // Визуальные эффекты
             if (_stampParticleEffect != null)
@@ -50,9 +62,19 @@ namespace InteractiveObjects
                 AudioSource.PlayClipAtPoint(_stampSound, transform.position);
             
             // Выдаем штампованный документ
-            _currentDocument.IsStamped = true;
-            _currentDocument.StampType = stampType;
-            
+            document.IsStamped = true;
+            document.StampType = stampType;
+
+            Debug.Log($"Документ {document} был штампован с типом {stampType}");
         }
+        
+        private void ResetTable()
+        {
+            currentDocument = null;
+            
+            if (documentModel != null)
+                documentModel.SetActive(false);
+        }
+
     }
 }
