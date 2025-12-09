@@ -74,7 +74,8 @@ namespace Shaders.ScreenEffects
                 Debug.LogError("<color=red>ScreenFadeManager: BlinkScreen(params) НЕ ЗАПУЩЕН! Ссылка на ScreenBlinker не назначена в Инспекторе!</color>");
                 return;
             }
-            screenBlinker.Blink(duration, count, color);
+            //* Новая версия, с интенсивностью
+            screenBlinker.Blink(duration, count, color, 0.7f);
             Debug.Log($"<color=green>ScreenFadeManager: Запуск BlinkScreen. Длительность: {duration:F2}, Кол-во: {count}.</color>");
         }
             

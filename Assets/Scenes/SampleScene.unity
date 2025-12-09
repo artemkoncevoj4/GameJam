@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenEffects.ScreenFadeManager
   screenFader: {fileID: 840777775}
-  screenBlinker: {fileID: 1369132725}
+  screenBlinker: {fileID: 0}
 --- !u!4 &31754588
 Transform:
   m_ObjectHideFlags: 0
@@ -784,14 +784,14 @@ RectTransform:
   m_GameObject: {fileID: 179492032}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2697898, y: 1.2697898, z: 1.2697897}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 234819185}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 26.75542, y: -75.57015}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 2704.5, y: 1691.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &180590354
@@ -2098,6 +2098,7 @@ MonoBehaviour:
   _visualObject: {fileID: 0}
   _paperSound: {fileID: 0}
   documentModel: {fileID: 0}
+  _movementEmpty: {fileID: 0}
 --- !u!212 &538486503
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5287,6 +5288,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240009750}
   m_CullTransparentMesh: 1
+--- !u!1 &1303015914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1303015916}
+  - component: {fileID: 1303015915}
+  m_Layer: 0
+  m_Name: ScreenBlinker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1303015915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303015914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenBlinker
+  blinkImage: {fileID: 179492034}
+  vignetteMaterial: {fileID: 2100000, guid: 10da1d6a37cf4894a88de48e0f0980df, type: 2}
+  fadeDuration: 0.5
+  blinkCount: 3
+  blinkColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  maxVignetteIntensity: 0.7
+--- !u!4 &1303015916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303015914}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1346897786
 GameObject:
   m_ObjectHideFlags: 0
@@ -5404,54 +5455,6 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1465, y: 294, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1369132724
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1369132726}
-  - component: {fileID: 1369132725}
-  m_Layer: 0
-  m_Name: ScreenBlinker
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1369132725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369132724}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScreenBlinker
-  blinkImage: {fileID: 179492034}
-  fadeDuration: 0.5
-  blinkCount: 3
-  blinkColor: {r: 1, g: 0, b: 0, a: 1}
---- !u!4 &1369132726
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369132724}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6067,6 +6070,7 @@ MonoBehaviour:
   _stampParticleEffect: {fileID: 0}
   _stampSound: {fileID: 0}
   documentModel: {fileID: 0}
+  _movementEmpty: {fileID: 0}
 --- !u!212 &1757639908
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7018,8 +7022,8 @@ SceneRoots:
   - {fileID: 504664146}
   - {fileID: 1111304516}
   - {fileID: 757479455}
-  - {fileID: 1369132726}
   - {fileID: 31754588}
   - {fileID: 840777776}
   - {fileID: 406756837}
   - {fileID: 32123052}
+  - {fileID: 1303015916}

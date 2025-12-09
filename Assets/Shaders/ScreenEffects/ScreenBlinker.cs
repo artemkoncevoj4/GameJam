@@ -4,25 +4,56 @@ using System.Collections;
 
 public class ScreenBlinker : MonoBehaviour
 {
+    // ⚠️ Убедитесь, что вы перетащили компонент Image сюда в Инспекторе
     [SerializeField] private Image blinkImage;
+    // ⚠️ Назначьте сюда ваш Material (RadialVignetteMaterial)
+    [SerializeField] private Material vignetteMaterial; 
+    
+    // Имя свойства в шейдере для управления интенсивностью
+    private const string ALPHA_PROPERTY_NAME = "_AlphaMultiplier"; 
+    // Имя свойства в шейдере для управления цветом
+    private const string COLOR_PROPERTY_NAME = "_VignetteColor"; 
+
+    [Header("Настройки мигания")]
     [SerializeField] private float fadeDuration = 0.5f;
     [SerializeField] private int blinkCount = 3;
-    [SerializeField] private Color blinkColor = Color.red;
+    // Менее яркий, приглушенный красный
+    [SerializeField] private Color blinkColor = new Color(0.8f, 0.2f, 0.2f); 
+    [SerializeField] private float maxVignetteIntensity = 0.7f; // Максимальная интенсивность (Max Alpha Multiplier)
 
-   void Awake()
+    private Material runtimeMaterial; // Инстанс материала для безопасного изменения
+
+    void Awake()
     {
         if (blinkImage == null)
         {
             blinkImage = GetComponent<Image>();
             if (blinkImage == null)
             {
-                Debug.LogError("<color=red>ScreenBlinker: Image component is missing! Невозможно работать без Image!</color>");
+                Debug.LogError("<color=red>ScreenBlinker: Image component is missing!</color>");
                 return;
             }
-            Debug.LogWarning("<color=yellow>ScreenBlinker: blinkImage не был назначен вручную. Использование найденного GetComponent<Image>().</color>");
         }
-        SetAlpha(0f);
-        Debug.Log("<color=green>ScreenBlinker: Компонент инициализирован. Alpha сброшена к 0.</color>");
+
+        if (vignetteMaterial == null)
+        {
+            Debug.LogError("<color=red>ScreenBlinker: vignetteMaterial не назначен! Назначьте ваш RadialVignetteMaterial!</color>");
+            return;
+        }
+        
+        // 1. Создаем инстанс материала, чтобы не менять оригинальный ассет
+        runtimeMaterial = new Material(vignetteMaterial);
+        // 2. Назначаем инстанс на UI Image
+        blinkImage.material = runtimeMaterial;
+        
+        // 3. Устанавливаем цвет и сбрасываем интенсивность
+        runtimeMaterial.SetColor(COLOR_PROPERTY_NAME, blinkColor); 
+        SetAlphaMultiplier(0f);
+        
+        // Скрываем стандартный цвет Image, чтобы не мешал шейдеру
+        blinkImage.color = Color.white; 
+        
+        Debug.Log("<color=green>ScreenBlinker: Инициализация завершена. Использование шейдера виньетки.</color>");
     }
 
     /// <summary>
@@ -31,22 +62,20 @@ public class ScreenBlinker : MonoBehaviour
     public void BlinkScreen()
     {
         StopAllCoroutines();
-        StartCoroutine(BlinkCoroutine(fadeDuration, blinkCount, blinkColor));
+        StartCoroutine(BlinkCoroutine(fadeDuration, blinkCount, blinkColor, maxVignetteIntensity));
     }
-
-    // --- Методы для ScreenFadeManager ---
 
     /// <summary>
     /// Запускает мигание с кастомными параметрами.
     /// </summary>
-    public void Blink(float duration, int count, Color color)
+    public void Blink(float duration, int count, Color color, float maxIntensity)
     {
         StopAllCoroutines();
-        StartCoroutine(BlinkCoroutine(duration, count, color));
+        StartCoroutine(BlinkCoroutine(duration, count, color, maxIntensity));
     }
 
     /// <summary>
-    /// Эффект сердцебиения (пульсация прозрачности).
+    /// Эффект сердцебиения (пульсация интенсивности виньетки).
     /// </summary>
     public void HeartbeatEffect(float intensity, int pulses, float pulseSpeed)
     {
@@ -54,77 +83,69 @@ public class ScreenBlinker : MonoBehaviour
         StartCoroutine(HeartbeatCoroutine(intensity, pulses, pulseSpeed));
     }
 
-    private IEnumerator BlinkCoroutine(float duration, int count, Color color)
+    private IEnumerator BlinkCoroutine(float duration, int count, Color color, float maxIntensity)
     {
-        if (!gameObject.activeSelf) gameObject.SetActive(true);
-        Color originalColor = blinkImage.color;
-        blinkImage.color = new Color(color.r, color.g, color.b, 0f);
-        Debug.Log("<color=green>BlinkCoroutine запущена</color>");
+        runtimeMaterial.SetColor(COLOR_PROPERTY_NAME, color);
+
         for (int i = 0; i < count; i++)
         {
-            // Fade in (почти непрозрачный)
-            yield return FadeToAlpha(0.7f, duration);
-            
-            // Fade out
-            yield return FadeToAlpha(0f, duration);
+            yield return FadeToAlphaMultiplier(maxIntensity, duration);
+            yield return FadeToAlphaMultiplier(0f, duration);
         }
 
-        // Возврат к оригинальной прозрачности и цвету
-        SetAlpha(0f);
-        blinkImage.color = originalColor;
+        SetAlphaMultiplier(0f);
     }
 
-    private IEnumerator HeartbeatCoroutine(float maxAlpha, int pulses, float speed)
+    private IEnumerator HeartbeatCoroutine(float maxIntensity, int pulses, float speed)
     {
-        Color originalColor = blinkImage.color;
-        // Для сердцебиения часто используют красный оттенок текущего image, или переданный цвет.
-        // Здесь используем текущий цвет image, но управляем альфой.
+        runtimeMaterial.SetColor(COLOR_PROPERTY_NAME, blinkColor);
         
         for (int i = 0; i < pulses; i++)
         {
-            // Удар (появление)
-            yield return FadeToAlpha(maxAlpha, speed);
-            // Затухание
-            yield return FadeToAlpha(0f, speed);
-            // Пауза между ударами
+            yield return FadeToAlphaMultiplier(maxIntensity, speed);
+            yield return FadeToAlphaMultiplier(0f, speed);
             yield return new WaitForSecondsRealtime(speed * 0.5f);
         }
 
-        SetAlpha(0f);
-        blinkImage.color = originalColor;
+        SetAlphaMultiplier(0f);
     }
 
-    private IEnumerator FadeToAlpha(float targetAlpha, float duration)
+    private IEnumerator FadeToAlphaMultiplier(float targetAlpha, float duration)
     {
-        float startAlpha = blinkImage.color.a;
+        float startAlpha = runtimeMaterial.GetFloat(ALPHA_PROPERTY_NAME);
         float time = 0f;
 
         while (time < duration)
         {
-            // Используем unscaledDeltaTime для работы при TimeScale = 0 (GameOver)
             time += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(time / duration);
             float alpha = Mathf.Lerp(startAlpha, targetAlpha, progress);
-            SetAlpha(alpha);
+            SetAlphaMultiplier(alpha);
             yield return null;
         }
-        Debug.Log("<color=green>FadeToAlpha запущен</color>");
-        SetAlpha(targetAlpha);
+        
+        SetAlphaMultiplier(targetAlpha);
     }
 
-    private void SetAlpha(float alpha)
+    private void SetAlphaMultiplier(float alpha)
     {
-        Color c = blinkImage.color;
-        c.a = alpha;
-        blinkImage.color = c;
+        if (runtimeMaterial != null)
+        {
+            // Устанавливаем значение для свойства _AlphaMultiplier в шейдере
+            runtimeMaterial.SetFloat(ALPHA_PROPERTY_NAME, alpha);
+        }
     }
 
     void Update()
     {
-        
         if (Input.GetKeyDown(KeyCode.Z))
         {
             BlinkScreen();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            HeartbeatEffect(0.5f, 5, 0.3f);
         }
     }
 }
