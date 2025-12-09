@@ -68,13 +68,5 @@ namespace Shaders.ScreenEffects {
             textComponent.text = currentTarget;
             currentGlitchCoroutine = null;
         }
-
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                Fire();
-            }
-        }
     }
 }
