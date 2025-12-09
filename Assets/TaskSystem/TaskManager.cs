@@ -147,6 +147,21 @@ namespace TaskSystem {
             Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
             Debug.Log($"<color=white>{_currentTask.Description}</color>");
             Debug.Log($"время: {_currentTaskTimeLimit} ");
+            // [!] ВАЖНО: Принудительно обновляем UI
+            StartCoroutine(ForceUIUpdate());
+        }
+        
+        private IEnumerator ForceUIUpdate()
+        {
+            yield return new WaitForSeconds(0.1f);
+            
+            // Обновляем таймер
+            if (OnTaskTimerUpdated != null)
+            {
+                OnTaskTimerUpdated.Invoke(_currentTask.TimeRemaining);
+            }
+            
+            Debug.Log("TaskManager: UI обновлен после создания задания");
         }
 
         private TaskSystem.DocumentRequirement GenerateRandomRequirements()

@@ -23,7 +23,23 @@ namespace UI
             // Ждем перед подпиской, чтобы убедиться, что все менеджеры инициализированы
             Invoke(nameof(SubscribeToEvents), 0.5f);
         }
-
+        public void ForceStartTimer()
+        {
+            if (TaskManager.Instance != null)
+            {
+                var task = TaskManager.Instance.GetCurrentTask();
+                if (task != null && !task.IsCompleted && !task.IsFailed)
+                {
+                    _hasActiveTask = true;
+                    if (_timerText != null)
+                    {
+                        _timerText.gameObject.SetActive(true);
+                        UpdateTimerDisplay(task.TimeRemaining);
+                        Debug.Log("SimpleTaskTimer: Таймер принудительно запущен");
+                    }
+                }
+            }
+        }
         void OnEnable()
         {
             // Если объект переактивируется, проверяем подписку

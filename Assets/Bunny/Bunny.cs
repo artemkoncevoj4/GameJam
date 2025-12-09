@@ -6,6 +6,7 @@ using System;
 using Shaders;
 using TaskSystem;
 using Shaders.ScreenEffects;
+using Unity.VisualScripting.FullSerializer;
 namespace Bunny {
     public class Bunny : MonoBehaviour
     {
@@ -73,14 +74,17 @@ namespace Bunny {
             //_animator = GetComponent<Animator>();
             //_audioSource = GetComponent<AudioSource>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
-            _cachedScreenShake = FindAnyObjectByType<Screen_Shake>();
-            _cachedFireText = FindAnyObjectByType<Fire_text>();
-            _cachedScreenFliskers = FindAnyObjectByType<ScreenFliskers>();
+
+            _cachedScreenShake = FindObjectInScene<Screen_Shake>();
+            _cachedFireText = FindObjectInScene<Fire_text>();
+            _cachedScreenFliskers = FindObjectInScene<ScreenFliskers>();
             
             // Логирование найденных эффектов
-            if (_cachedScreenShake != null) Debug.Log("Screen_Shake найден и кэширован");
-            if (_cachedFireText != null) Debug.Log("Fire_text найден и кэширован");
-            if (_cachedScreenFliskers != null) Debug.Log("ScreenFliskers найден и кэширован");
+            Debug.Log($"<color=red>Screen_Shake: {(_cachedScreenShake != null ? "найден" : "не найден</color>")}");
+            Debug.Log($"<color=red>Fire_text: {(_cachedFireText != null ? "найден" : "не найден</color>")}");
+            Debug.Log($"<color=red>ScreenFliskers: {(_cachedScreenFliskers != null ? "найден" : "не найден</color>")}");
+
+
             SetVisible(false);
             if (_appearPoint_Window != null)
             {
@@ -91,8 +95,28 @@ namespace Bunny {
             _bunnyDialogueManager = FindAnyObjectByType<BunnyDialogueManager>();
             if (_bunnyDialogueManager == null)
             {
-                Debug.LogError("BunnyDialogueManager не найден в сцене!");
+                Debug.LogError("<color=red>BunnyDialogueManager не найден в сцене!</color>");
             }
+        }
+        private T FindObjectInScene<T>() where T : MonoBehaviour
+        {
+            // Сначала ищем активные объекты
+            T foundObject = FindAnyObjectByType<T>();
+            if (foundObject != null)
+                return foundObject;
+            
+            // Если не нашли, ищем среди всех объектов сцены
+            T[] allObjects = Resources.FindObjectsOfTypeAll<T>();
+            foreach (T obj in allObjects)
+            {
+                // Исключаем префабы и объекты из других сцен
+                if (obj.gameObject.scene.IsValid() && !obj.gameObject.CompareTag("EditorOnly"))
+                {
+                    return obj;
+                }
+            }
+            
+            return null;
         }
         private IEnumerator SubscribeToTaskManagerEvents()
         {
@@ -100,10 +124,10 @@ namespace Bunny {
             while (TaskManager.Instance == null)
             {
                 yield return new WaitForSeconds(0.1f);
-                Debug.Log("Bunny: Waiting for TaskManager to initialize...");
+                Debug.Log("<color=green>Bunny: Waiting for TaskManager to initialize...</color>");
             }
             
-            Debug.Log("Bunny: TaskManager found, subscribing to events");
+            Debug.Log("<color=green>Bunny: TaskManager found, subscribing to events</color>");
             TaskManager.Instance.OnTaskCompleted += OnTaskCompletedHandler;
             TaskManager.Instance.OnTaskFailed += OnTaskCompletedHandler;
         }
@@ -336,9 +360,10 @@ namespace Bunny {
                 Debug.Log("Bunny: No current task, starting new task");
                 TaskManager.Instance.StartNewTask();
                 _isTaskPresent = true;
+                currentTask = TaskManager.Instance.GetCurrentTask();
                 
                 // Показываем диалог только при создании нового задания
-                ShowTaskDialogue();
+                StartCoroutine(ShowTaskDialogueWithDelay(0.1f));
             }
             else if (!currentTask.IsCorrupted)
             {
@@ -349,7 +374,7 @@ namespace Bunny {
                     TaskManager.Instance.HandleRabbitInterference();
                     
                     // Показываем диалог только при изменении задания
-                    ShowTaskDialogue();
+                    StartCoroutine(ShowTaskDialogueWithDelay(0.1f));
                 }
                 else
                 {
@@ -397,8 +422,37 @@ namespace Bunny {
                 }
             }
         }
-
-        //! Новый метод для показа диалога с заданием
+        private IEnumerator ShowTaskDialogueWithDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            ShowTaskDialogue();
+        }
+   
+        // private void ShowTaskDialogue()
+        // {
+        //     if (_bunnyDialogueManager == null) 
+        //     {
+        //         Debug.LogError("BunnyDialogueManager не найден!");
+        //         Leave();
+        //         return;
+        //     }
+            
+        //     // Получаем диалог с заданием
+        //     Dialogue taskDialogue = _bunnyDialogueManager.GetTaskDialogueForBunny(this);
+            
+        //     if (taskDialogue == null || taskDialogue.sentences.Length == 0)
+        //     {
+        //         Debug.Log($"Bunny: Не удалось получить описание задания. Заяц уходит.");
+        //         Leave(); 
+        //         return;
+        //     }
+            
+        //     Debug.Log($"Bunny: Starting dialogue with: {taskDialogue.sentences[0]}");
+            
+        //     // Запускаем диалог
+        //     _bunnyDialogueManager.StartBunnyDialogue(taskDialogue, this);
+        // }
+             //! Новый метод для показа диалога с заданием
         private void ShowTaskDialogue()
         {
             if (_bunnyDialogueManager == null) 
@@ -420,8 +474,28 @@ namespace Bunny {
             
             Debug.Log($"Bunny: Starting dialogue with: {taskDialogue.sentences[0]}");
             
+            // [!] ОБНОВЛЯЕМ UI перед показом диалога
+            UpdateTaskUI();
+            
             // Запускаем диалог
             _bunnyDialogueManager.StartBunnyDialogue(taskDialogue, this);
+        }
+        private void UpdateTaskUI()
+        {
+            // Используем TaskUIManager если есть, иначе ищем компоненты вручную
+            if (UI.TaskUIManager.Instance != null)
+            {
+                UI.TaskUIManager.Instance.UpdateTaskUI();
+            }
+            else
+            {
+                // Ручное обновление
+                UI.SimpleTaskTimer timer = FindAnyObjectByType<UI.SimpleTaskTimer>();
+                UI.TaskDisplayUI display = FindAnyObjectByType<UI.TaskDisplayUI>();
+                
+                if (timer != null) timer.ForceStartTimer();
+                if (display != null) display.ForceShowCurrentTask();
+            }
         }
         private void TriggerChaosEffect()
         {

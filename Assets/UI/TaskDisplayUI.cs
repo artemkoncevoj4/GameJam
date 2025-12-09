@@ -14,7 +14,10 @@ namespace UI
         [SerializeField] private Color _normalColor = new Color(1f, 0.8f, 0f, 1f); // Золотой цвет
         [SerializeField] private Color _urgentColor = new Color(1f, 0.2f, 0.2f, 1f); // Красный для срочных
         [SerializeField] private Color _corruptedColor = new Color(1f, 1f, 0f, 1f); // Желтый для измененных
-        
+
+         [Header("Связь с FireText")]
+        [SerializeField] private Shaders.ScreenEffects.Fire_text _fireTextEffect;
+
         [Header("Эффекты")]
         [SerializeField] private bool _enableGlow = true;
         [SerializeField] private float _glowIntensity = 0.8f;
@@ -34,6 +37,12 @@ namespace UI
             {
                 _canvasGroup.alpha = 0f;
                 _canvasGroup.gameObject.SetActive(false);
+            }
+            
+            // Находим FireText, если не назначен
+            if (_fireTextEffect == null)
+            {
+                _fireTextEffect = FindAnyObjectByType<Shaders.ScreenEffects.Fire_text>();
             }
             
             // Ждем перед подпиской
@@ -132,18 +141,8 @@ namespace UI
         
         private void OnNewTask(BureaucraticTask task)
         {
-            // Проверяем, активен ли диалог зайца
-            if (IsBunnyDialogueActive())
-            {
-                // Сохраняем задание в ожидании
-                _pendingTask = task;
-                _waitingForDialogueEnd = true;
-            }
-            else
-            {
-                // Диалог не активен, показываем сразу
-                ShowTask(task);
-            }
+            ShowTask(task);
+            Debug.Log($"TaskDisplayUI: Новое задание получено: {task.Title}");
         }
         
         private void OnTaskCompleted(BureaucraticTask task)
@@ -182,7 +181,10 @@ namespace UI
             if (task == null || _taskText == null) return;
             
             UpdateTaskDisplay(task);
-            
+             if (_fireTextEffect != null)
+            {
+                _fireTextEffect.SetTargetText(_taskText.text);
+            }
             if (_canvasGroup != null)
             {
                 if (_fadeCoroutine != null)
@@ -229,7 +231,10 @@ namespace UI
             // Форматируем описание задания
             string description = FormatTaskDescription(task);
             _taskText.text = description;
-            
+             if (_fireTextEffect != null)
+            {
+                _fireTextEffect.SetTargetText(description);
+            }
             // Устанавливаем цвет в зависимости от типа задания
             if (task.IsCorrupted)
             {
@@ -394,12 +399,12 @@ namespace UI
         }
         
         // Публичный метод для принудительного показа (например, из других скриптов)
-        public void ShowCurrentTask()
+        public void ForceShowCurrentTask()
         {
             if (TaskManager.Instance != null)
             {
                 var task = TaskManager.Instance.GetCurrentTask();
-                if (task != null && TaskManager.Instance.IsTaskActive)
+                if (task != null && !task.IsCompleted && !task.IsFailed)
                 {
                     ShowTask(task);
                 }

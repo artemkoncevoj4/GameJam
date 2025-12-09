@@ -5,28 +5,36 @@ using UnityEngine.Events;
 using System;
 using Random = UnityEngine.Random;
 using SampleScene;
+
 public class GameCycle : MonoBehaviour
 {
     public static GameCycle Instance { get; private set; }
+    
+    [Header("Game Settings")]
     [SerializeField] private int _tasksToWin = 10;
     [SerializeField] private float _maxRabbitSpawnInterval = 30f;
     [SerializeField] private float _minRabbitSpawnInterval = 8f;
-
-    public event Action<int, int> OnProgressUpdated; // Прогресс: выполнено/всего
-    public event Action<float> OnStressLevelChanged; // Изменение уровня стресса (0-100%)
-    public event Action OnRabbitAppearing; // Кролик появляется (визуальный сигнал)
-    public event Action OnRabbitLeaving; // Кролик уходит
-    public event Action<GameResult> OnGameEnded; // Игра завершена (победа/поражение)
-    private GameState _currentState = GameState.Playing; // menu
+    
+    [Header("End Game Effects")]
+    [SerializeField] private float victoryFadeDuration = 2f;
+    [SerializeField] private float defeatFadeDuration = 1.5f;
+    [SerializeField] private Color victoryColor = new Color(1f, 0.8f, 0f, 1f); // Золотой
+    [SerializeField] private Color defeatColor = new Color(0.8f, 0.1f, 0.1f, 1f); // Красный
+    
+    public event Action<int, int> OnProgressUpdated;
+    public event Action<float> OnStressLevelChanged;
+    public event Action OnRabbitAppearing;
+    public event Action OnRabbitLeaving;
+    public event Action<GameResult> OnGameEnded;
+    
+    private GameState _currentState = GameState.Playing;
     private float _timer;
     private float _rabbitTimer;
     private float _stressLevel = 0f;
     private int _completedTasks = 0;
     private bool _isRabbitHere = false;
     private float _rabbitInterval;
-    //private TaskManager _taskManager;
-    //private UIManager _uiManager;
-    
+
     public enum GameState
     {
         Playing,
@@ -41,29 +49,7 @@ public class GameCycle : MonoBehaviour
         Defeat, 
         Quit
     }
-    // Start is called before the first frame update
-    /*
-    void Start()
-    {
-        // Поиск зависимостей (можно сделать через инспектор)
-        _taskManager = FindObjectOfType<TaskManager>();
-        _uiManager = FindObjectOfType<UIManager>();
-        
-        // Подписка на события TaskManager
-        if (_taskManager != null)
-        {
-            _taskManager.OnTaskCompleted += HandleTaskCompleted;
-            _taskManager.OnTaskFailed += HandleTaskFailed;
-            _taskManager.OnTaskCorrupted += HandleTaskCorrupted;
-        }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-*/
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -73,6 +59,7 @@ public class GameCycle : MonoBehaviour
         }
         Instance = this;
     }
+    
     void Start()
     {
         StartGame();
@@ -87,6 +74,7 @@ public class GameCycle : MonoBehaviour
         
         GameCycleUpdate();
     }
+    
     void GameCycleUpdate() 
     {
         if (_currentState != GameState.Playing) return;
@@ -128,7 +116,6 @@ public class GameCycle : MonoBehaviour
         Time.timeScale = 0f;
     }
     
-    // Возобновить игру
     public void ResumeGame()
     {
         if (_currentState != GameState.Pause) return;
@@ -153,6 +140,12 @@ public class GameCycle : MonoBehaviour
 
         OnStressLevelChanged?.Invoke(_stressLevel);
         OnProgressUpdated?.Invoke(_completedTasks, _tasksToWin);
+        
+        // Сбрасываем цвет затемнения на черный при начале игры
+        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        {
+            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(Color.black);
+        }
     }
 
     public void StartGame()
@@ -174,7 +167,6 @@ public class GameCycle : MonoBehaviour
         _stressLevel += Time.deltaTime * multiplier;
         _stressLevel = Mathf.Clamp(_stressLevel, 0f, 100f);
         OnStressLevelChanged?.Invoke(_stressLevel);
-        //Debug.Log($"Stress Level {_stressLevel}");
     }
 
     public void AddStress(float stress)
@@ -182,7 +174,6 @@ public class GameCycle : MonoBehaviour
         _stressLevel += stress;
         _stressLevel = Mathf.Clamp(_stressLevel, 0f, 100f);
         OnStressLevelChanged?.Invoke(_stressLevel);
-        //Debug.Log($"<color=orange>Стресс увеличен на {stress:F1}. Текущий уровень: {_stressLevel:F1}</color>");
     }
 
     private void UpdateRabbitSpawnTimer()
@@ -193,6 +184,7 @@ public class GameCycle : MonoBehaviour
             RabbitAppear();
         }
     }
+    
     private void UpdateRabbitTimer()
     {
         _rabbitTimer += Time.deltaTime;
@@ -218,7 +210,6 @@ public class GameCycle : MonoBehaviour
 
         _isRabbitHere = false;
         _rabbitTimer = 0f;
-        // Обновляем интервал для следующего появления
         _rabbitInterval = Random.Range(_minRabbitSpawnInterval, _maxRabbitSpawnInterval);
         OnRabbitLeaving?.Invoke();
         Debug.Log("Кролик ушёл");
@@ -232,29 +223,9 @@ public class GameCycle : MonoBehaviour
 
     public void FailTask(float timePenalty)
     {
-        // Штраф за провал - конвертируем время в стресс
         AddStress(timePenalty * 1.5f);
     }
 
-//    private void CheckIsGameOver()
-//     {
-//         if (_completedTasks >= _tasksToWin)
-//         {
-//             // ПОБЕДА
-//             EndGame(GameResult.Victory);
-//             ShowVictoryEffects();
-//             Debug.Log("You Win!");
-//             return;
-//         }
-//         if (_stressLevel >= 100f)
-//         {
-//             // ПОРАЖЕНИЕ
-//             EndGame(GameResult.Defeat);
-//             ShowDefeatEffects();
-//             Debug.Log("Game Over (Heart Attack)");
-//             return;
-//         }
-//     }
     private void CheckIsGameOver()
     {
         if (_completedTasks >= _tasksToWin)
@@ -268,23 +239,32 @@ public class GameCycle : MonoBehaviour
             return;
         }
     }
+    
     private IEnumerator DefeatSequence()
     {
         Debug.Log("Starting defeat sequence...");
         
-        // 1. Меняем состояние на GameOver (но не вызываем EndGame сразу)
         _currentState = GameState.GameOver;
         
-        // 2. Запускаем быстрое затемнение экрана
+        // 1. Быстрое затемнение экрана красным цветом
         if (Shaders.ScreenEffects.ScreenFader.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(1.5f);
+            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(defeatColor);
+            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(defeatFadeDuration);
         }
         
-        // 3. Мигаем красным несколько раз
+        // 2. Мигаем красным несколько раз
         if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.3f, 3, Color.red);
+            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.3f, 3, defeatColor);
+        }
+        
+        // 3. Дополнительные эффекты для поражения
+        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        {
+            // Сердцебиение при поражении
+            yield return new WaitForSeconds(0.5f);
+            Shaders.ScreenEffects.ScreenBlinker.Instance.HeartbeatEffect(0.4f, 4, 0.1f);
         }
         
         // 4. Ждем, чтобы затемнение началось
@@ -300,9 +280,6 @@ public class GameCycle : MonoBehaviour
         EndGame(GameResult.Defeat);
     }
 
-    /// <summary>
-    /// Последовательность действий при победе
-    /// </summary>
     private IEnumerator VictorySequence()
     {
         Debug.Log("Starting victory sequence...");
@@ -312,29 +289,41 @@ public class GameCycle : MonoBehaviour
         // 1. Затемнение экрана с золотым оттенком
         if (Shaders.ScreenEffects.ScreenFader.Instance != null)
         {
-            // Меняем цвет затемнения на золотой
-            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(new Color(1f, 0.8f, 0f, 1f));
-            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(2f);
+            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(victoryColor);
+            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(victoryFadeDuration);
         }
         
         // 2. Мигаем золотым несколько раз
         if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.4f, 3, new Color(1f, 0.8f, 0f, 1f));
+            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.4f, 3, victoryColor);
         }
         
-        // 3. Ждем
+        // 3. Дополнительные эффекты для победы
+        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        {
+            // Пульсация золотым при победе
+            yield return new WaitForSeconds(0.5f);
+            for (int i = 0; i < 2; i++)
+            {
+                Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.5f, 1, victoryColor);
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+        
+        // 4. Ждем
         yield return new WaitForSecondsRealtime(1f);
         
-        // 4. Показываем меню победы
+        // 5. Показываем меню победы
         if (PauseMenu.Instance != null)
         {
             PauseMenu.Instance.ShowVictoryMenu();
         }
         
-        // 5. Вызываем EndGame
+        // 6. Вызываем EndGame
         EndGame(GameResult.Victory);
     }
+    
     void OnDestroy()
     {
         // Сброс цвета затемнения при уничтожении
@@ -343,6 +332,7 @@ public class GameCycle : MonoBehaviour
             Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(Color.black);
         }
     }
+    
     private void EndGame(GameResult result)
     {
         if (_currentState == GameState.GameOver) return;
@@ -359,8 +349,8 @@ public class GameCycle : MonoBehaviour
             _ => "Игра завершена."
         };
         Debug.Log(resultText);
-
     }
+    
     public bool IsRabbitHere => _isRabbitHere;
     public float StressLevel => _stressLevel;
     public int CompletedTasks => _completedTasks;

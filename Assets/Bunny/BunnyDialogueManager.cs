@@ -139,14 +139,8 @@ namespace Bunny
             // Если задания нет, создаем новое
             if (currentTask == null)
             {
-                Debug.Log("BunnyDialogueManager: No current task, starting new task");
-                TaskManager.Instance.StartNewTask();
-                currentTask = TaskManager.Instance.GetCurrentTask();
-                
-                if (currentTask == null)
-                {
-                    return "Новое задание создается...";
-                }
+                Debug.Log("BunnyDialogueManager: No current task, returning default message");
+                return "Новое задание создается...";
             }
             
             // [!] ИЗМЕНЕНО: Используем стандартное форматирование времени
@@ -173,7 +167,7 @@ namespace Bunny
         // [!] НОВОЕ: Восстановлен метод форматирования времени (нужен для GetTaskDescriptionForDialogue)
         private string FormatTime(float timeInSeconds)
         {
-            if (timeInSeconds <= 0) return "Время вышло!";
+            if (timeInSeconds <= 0) return "00:00";
             
             int minutes = Mathf.FloorToInt(timeInSeconds / 60);
             int seconds = Mathf.FloorToInt(timeInSeconds % 60);
