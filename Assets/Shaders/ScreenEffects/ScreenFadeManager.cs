@@ -25,8 +25,24 @@ namespace Shaders.ScreenEffects
         // --- Fade Methods (Public) ---
 
         // Общее затемнение (FadeIn/FadeOut)
-        public void FadeIn(float duration = 2f) => screenFader?.StartFade(1f, duration);
-        public void FadeOut(float duration = 2f) => screenFader?.StartFade(0f, duration);
+       public void FadeIn(float duration = 2f)
+        {
+            if (screenFader == null) {
+                Debug.LogError("<color=red>ScreenFadeManager: FadeIn НЕ ЗАПУЩЕН! Ссылка на ScreenFader не назначена в Инспекторе!</color>");
+                return;
+            }
+            screenFader.StartFade(1f, duration);
+            Debug.Log($"<color=green>ScreenFadeManager: Запуск FadeIn (к Alpha=1) за {duration:F2} сек.</color>");
+        }
+        public void FadeOut(float duration = 2f)
+        {
+            if (screenFader == null) {
+                Debug.LogError("<color=red>ScreenFadeManager: FadeOut НЕ ЗАПУЩЕН! Ссылка на ScreenFader не назначена в Инспекторе!</color>");
+                return;
+            }
+            screenFader.StartFade(0f, duration);
+            Debug.Log($"<color=green>ScreenFadeManager: Запуск FadeOut (к Alpha=0) за {duration:F2} сек.</color>");
+        }
 
         /// <summary>
         /// Быстрое затемнение до полного альфа (используется для завершения игры).
@@ -41,11 +57,26 @@ namespace Shaders.ScreenEffects
         // --- Blink Methods (Public) ---
 
         // Стандартное мигание (использует настройки из инспектора Blinker)
-        public void BlinkScreen() => screenBlinker?.BlinkScreen();
+       public void BlinkScreen()
+        {
+            if (screenBlinker == null) {
+                Debug.LogError("<color=red>ScreenFadeManager: BlinkScreen НЕ ЗАПУЩЕН! Ссылка на ScreenBlinker не назначена в Инспекторе!</color>");
+                return;
+            }
+            screenBlinker.BlinkScreen();
+            Debug.Log("<color=green>ScreenFadeManager: Запуск BlinkScreen (стандартные параметры).</color>");
+        }
         
         // Мигание с параметрами (перегрузка для динамических эффектов)
-        public void BlinkScreen(float duration, int count, Color color) => 
-            screenBlinker?.Blink(duration, count, color);
+       public void BlinkScreen(float duration, int count, Color color)
+        {
+            if (screenBlinker == null) {
+                Debug.LogError("<color=red>ScreenFadeManager: BlinkScreen(params) НЕ ЗАПУЩЕН! Ссылка на ScreenBlinker не назначена в Инспекторе!</color>");
+                return;
+            }
+            screenBlinker.Blink(duration, count, color);
+            Debug.Log($"<color=green>ScreenFadeManager: Запуск BlinkScreen. Длительность: {duration:F2}, Кол-во: {count}.</color>");
+        }
             
         /// <summary>
         /// Эффект сердцебиения (используется в GameCycle).

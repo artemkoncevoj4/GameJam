@@ -9,18 +9,20 @@ public class ScreenBlinker : MonoBehaviour
     [SerializeField] private int blinkCount = 3;
     [SerializeField] private Color blinkColor = Color.red;
 
-    void Awake()
+   void Awake()
     {
         if (blinkImage == null)
         {
             blinkImage = GetComponent<Image>();
             if (blinkImage == null)
             {
-                Debug.LogError("ScreenBlinker: Image component is missing!");
+                Debug.LogError("<color=red>ScreenBlinker: Image component is missing! Невозможно работать без Image!</color>");
                 return;
             }
+            Debug.LogWarning("<color=yellow>ScreenBlinker: blinkImage не был назначен вручную. Использование найденного GetComponent<Image>().</color>");
         }
         SetAlpha(0f);
+        Debug.Log("<color=green>ScreenBlinker: Компонент инициализирован. Alpha сброшена к 0.</color>");
     }
 
     /// <summary>
@@ -54,9 +56,10 @@ public class ScreenBlinker : MonoBehaviour
 
     private IEnumerator BlinkCoroutine(float duration, int count, Color color)
     {
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
         Color originalColor = blinkImage.color;
         blinkImage.color = new Color(color.r, color.g, color.b, 0f);
-
+        Debug.Log("<color=green>BlinkCoroutine запущена</color>");
         for (int i = 0; i < count; i++)
         {
             // Fade in (почти непрозрачный)
@@ -105,7 +108,7 @@ public class ScreenBlinker : MonoBehaviour
             SetAlpha(alpha);
             yield return null;
         }
-
+        Debug.Log("<color=green>FadeToAlpha запущен</color>");
         SetAlpha(targetAlpha);
     }
 
@@ -118,7 +121,7 @@ public class ScreenBlinker : MonoBehaviour
 
     void Update()
     {
-        // Нажать B для Blink
+        
         if (Input.GetKeyDown(KeyCode.Z))
         {
             BlinkScreen();

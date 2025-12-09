@@ -14,10 +14,12 @@ public class ScreenShake : MonoBehaviour
             shakeTransform = GetComponent<RectTransform>();
             if (shakeTransform == null)
             {
-                Debug.LogError("ScreenShake: RectTransform component is missing!");
+                Debug.LogError("<color=red>ScreenShake: RectTransform component is missing! Невозможно работать без RectTransform!</color>");
                 return;
             }
+            Debug.LogWarning("<color=yellow>ScreenShake: shakeTransform не был назначен вручную. Использование найденного GetComponent<RectTransform>().</color>");
         }
+        Debug.Log("<color=green>ScreenShake: Компонент инициализирован.</color>");
     }
 
     /// <summary>
@@ -25,8 +27,15 @@ public class ScreenShake : MonoBehaviour
     /// </summary>
     public void Start_shaking()
     {
+        if (shakeTransform == null) // ДОБАВЛЕНО
+        {
+            Debug.LogError("<color=red>ScreenShake: Start_shaking НЕ ЗАПУЩЕН! RectTransform не назначен. См. лог Awake().</color>");
+            return;
+        }
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
         StopAllCoroutines();
         StartCoroutine(ShakingCoroutine());
+        Debug.Log($"<color=green>ScreenShake: Эффект тряски запущен. Длительность: {shakeDuration:F2} сек, Сила: {shiftAmount:F2}.</color>"); // ИЗМЕНЕНО
     }
 
     private IEnumerator ShakingCoroutine()

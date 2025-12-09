@@ -15,12 +15,14 @@ public class ScreenFader : MonoBehaviour
             fadeImage = GetComponent<Image>();
             if (fadeImage == null)
             {
-                Debug.LogError("ScreenFader: Image component is missing!");
+                Debug.LogError("<color=red>ScreenFader: Image component is missing! Невозможно работать без Image!</color>");
                 return;
             }
+            Debug.LogWarning("<color=yellow>ScreenFader: fadeImage не был назначен вручную. Использование найденного GetComponent<Image>().</color>");
         }
         
         SetAlpha(0f);
+        Debug.Log("<color=green>ScreenFader: Компонент инициализирован. Alpha сброшена к 0.</color>");
     }
 
     /// <summary>
@@ -48,6 +50,7 @@ public class ScreenFader : MonoBehaviour
     /// </summary>
     public void StartFade(float targetAlpha, float duration)
     {
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
         StopAllCoroutines();
         StartCoroutine(Fade(targetAlpha, duration));
     }
@@ -77,7 +80,7 @@ public class ScreenFader : MonoBehaviour
     {
         float startAlpha = fadeImage.color.a;
         float time = 0f;
-
+          Debug.Log("<color=green>Fade эффект запущен</color>");
         while (time < duration)
         {
             // Используем unscaledDeltaTime на случай, если игра на паузе или TimeScale=0 при GameOver

@@ -581,9 +581,15 @@ namespace Bunny {
         }
 
         // Обновленная корутина для затемнения экрана
-       private IEnumerator QuickDarkenAndLighten()
+        private IEnumerator QuickDarkenAndLighten()
         {
-            if (ScreenFadeManager.Instance == null) yield break;
+            if (ScreenFadeManager.Instance == null)
+            {
+                Debug.LogError("<color=red>Bunny: QuickDarkenAndLighten НЕ ЗАПУЩЕН! ScreenFadeManager.Instance == null. Убедитесь, что объект с ScreenFadeManager активен на сцене.</color>");
+                yield break;
+            }
+
+            Debug.Log("<color=green>Bunny: Запуск QuickDarkenAndLighten (успешная проверка ScreenFadeManager).</color>");
 
             // Быстрое затемнение до черного (0.8f) за 0.2 секунды
             ScreenFadeManager.StaticFadeIn(0.2f);
