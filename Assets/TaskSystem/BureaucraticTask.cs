@@ -71,7 +71,7 @@ namespace TaskSystem
 
             bool isValid =
                 document.InkColor == Requirements.requiredInkColor &&
-                document.SignaturePos == Requirements.requiredStampPos &&
+                document.StampPos == Requirements.requiredStampPos &&
                 document.PaperType == Requirements.requiredPaperType &&
                 document.IsSigned == Requirements.isSigned && 
                 (Requirements.isStamped ? (document.IsStamped && document.StampType == Requirements.requiredStampType) : !document.IsStamped);

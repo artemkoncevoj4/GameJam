@@ -227,7 +227,7 @@ namespace TaskSystem {
                 _currentDocument.IsSigned = true;
                 if (_currentTask != null)
                 {
-                    _currentDocument.SignaturePos = _currentTask.Requirements.requiredStampPos;
+                    _currentDocument.StampPos = _currentTask.Requirements.requiredStampPos;
                 }
             }
             else if (stationType.Contains("stamping_desk") && itemType.Contains("stamp"))
@@ -298,6 +298,7 @@ namespace TaskSystem {
         {
             _currentTask.Fail();
             _isTaskActive = false;
+            _currentDocument = null;
 
             OnTaskFailed?.Invoke(_currentTask);
 

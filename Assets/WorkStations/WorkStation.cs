@@ -5,10 +5,10 @@ using TaskSystem;
 using System;
 namespace InteractiveObjects
 {
-    public abstract class Workstation : InteractObject
+    public class Workstation : InteractObject
     {
 
-        public void UseStation()
+        public virtual void UseStation()
         {
             Debug.Log("Interaction with workstation started");
 
