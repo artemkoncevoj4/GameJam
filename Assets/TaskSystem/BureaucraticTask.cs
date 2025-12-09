@@ -93,6 +93,7 @@ namespace TaskSystem
 
         private string GenerateDescription(DocumentRequirement req)
         {   
+            //TODO Сделать прикольные дополнительные фразочки по теме косвенно намекающие что нужно сделать имеено это задание. Нужна сложная логика.
             return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
                    $"Подпись: {req.requiredSignaturePos}. " +
                    $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} ";
