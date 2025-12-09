@@ -348,6 +348,11 @@ namespace TaskSystem {
 
             return items;
         }
+        public Document GetCurrentDocument()
+        {
+            if (_currentDocument != null) return _currentDocument;
+            return null;
+        }
 
         public bool IsTaskActive => _isTaskActive;
     }
