@@ -99,6 +99,12 @@ public class PlayerInteraction : MonoBehaviour
                 HighlightObject(currentNearestObject);
                 Debug.Log($"Ближайший объект: {currentNearestObject.name}");
             }
+            if (previousNearest != null)
+            {
+                Debug.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                Workstation workstation = previousNearest.GetComponent<Workstation>();
+                workstation.ResetTable();
+            }
         }
     }
 

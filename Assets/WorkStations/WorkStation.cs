@@ -13,5 +13,9 @@ namespace InteractiveObjects
             Debug.Log("Interaction with workstation started");
 
         }
+        public virtual void ResetTable()
+        {
+            Debug.Log("Interaction with workstation ended");
+        }
     }
 }
