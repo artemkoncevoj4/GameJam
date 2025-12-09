@@ -12,8 +12,8 @@ namespace InteractiveObjects
         private bool _isCollected = false;
 
 
-        // public override void Interact()
-        // {
+        public override void Interact()
+        {
         //     if (_isCollected) return;
 
         //     Interact();
@@ -49,7 +49,7 @@ namespace InteractiveObjects
         //         // �� ������� �������� ������� (��������� �����)
         //         _isCollected = false;
         //     }
-        // }
+        }
 
         public void Pickup()
         {

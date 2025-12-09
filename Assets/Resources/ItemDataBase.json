@@ -1,0 +1,53 @@
+{
+  "items": [
+    {
+    "inks" : [
+        {
+        "id": 0,
+        "type": "green_ink",
+        "name": "Зеленые чернила",
+        "description": "Чернила из древесного сока",
+        "iconPath": "Icons/green_ink_icon",
+        "prefabPath": "Prefabs/Inks/green_ink"
+        },
+        {
+        "id": 1,
+        "type": "red_ink",
+        "name": "Красные чернила", 
+        "description": "Магические чернила",
+        "iconPath": "Icons/red_ink_icon",
+        "prefabPath": "Prefabs/Inks/red_ink"
+        },
+        {
+        "id": 2,
+        "type": "black_ink",
+        "name": "Черные чернила",
+        "description": "Обычные чернила",
+        "iconPath": "Icons/black_ink_icon",
+        "prefabPath": "Prefabs/Inks/black_ink"
+        }
+    ],
+    "stamps" : [
+        {
+        "id": 3,
+        "type": "stamp",
+        "name": "Штамп",
+        "description": "Красивый штамп с печатью зайца",
+        "iconPath": "Icons/stamp_icon",
+        "prefabPath": "Prefabs/Tools/stamp"
+        }
+    ],
+    "work_stations" : [
+        {
+        "id": 4,
+        "type": "desk",
+        "name": "Стол",
+        "description": "Кабинетный стол, повидавший многое",
+        "iconPath": "Icons/desk_icon",
+        "prefabPath": "Prefabs/Furniture/desk",
+        "isStatic": true
+        }
+    ]
+    }
+  ]
+}

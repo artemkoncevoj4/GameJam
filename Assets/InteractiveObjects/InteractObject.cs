@@ -7,48 +7,48 @@ namespace InteractiveObjects
     abstract public class InteractObject : MonoBehaviour
     {
         private static Dictionary<int, InteractObject> _objectDatabase = new Dictionary<int, InteractObject>();
-        private static int _idCounter = 1;
+        private static int _idCounter = 1000;
 
-        [Header("Object")]
+        [Header("Object Data")]
+        [SerializeField] private int _itemDataId = -1;
+
+        [Header("Object Placement")]
         [SerializeField] private Transform _item_placement;
+        [SerializeField] private GameObject _visualObject;
 
-        public string Type { get; private set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
+        private ItemData _jsonData;
+
+        public string Type => _jsonData?.type ?? "Default";
+        public string Name => _jsonData?.name ?? gameObject.name;
+        public string Description => _jsonData?.description ?? "No description";
+        public string Category => _jsonData?.category ?? "Unknown";
         public int ID { get; private set; }
 
         private bool _is_visible = false;
         private bool _is_picked = false;
 
-        public void InitializeObject(string objType, string name, string description)
+        void Start()
         {
             ID = _idCounter++;
-            Type = objType;
-            Name = name;
-            Description = description;
+            
+            if (_itemDataId >= 0 && ItemDatabase.Instance != null)
+            {
+                _jsonData = ItemDatabase.Instance.GetItem(_itemDataId);
+            } 
 
             if (!_objectDatabase.ContainsKey(ID))
             {
                 _objectDatabase.Add(ID, this);
                 Debug.Log($"Объект '{Name}' зарегистрирован с ID: {ID}");
             }
-        }
 
-        void Start()
-        {
-            if (ID == 0)
+            if (_jsonData == null)
             {
-                ID = _idCounter++;
-                Type = "Default";
-                Name = gameObject.name;
-                Description = "Автоматически созданный объект";
-
-                if (!_objectDatabase.ContainsKey(ID))
-                {
-                    _objectDatabase.Add(ID, this);
-                }
+                Debug.LogWarning($"Для объекта {gameObject.name} не найдены данные в JSON (ID: {_itemDataId})");
             }
         }
+
+        
 
         public static bool DestroyObjectByID(int id)
         {
@@ -68,6 +68,7 @@ namespace InteractiveObjects
             DestroyObjectByID(this.ID);
         }
 
+        // ..
         public virtual void Interact()
         {
             Debug.Log($"Взаимодействие с объектом: {Name} (ID: {ID})");

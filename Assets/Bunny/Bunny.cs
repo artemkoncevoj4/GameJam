@@ -77,7 +77,7 @@ namespace Bunny {
                 transform.rotation = _appearPoint_Window.rotation;
             }
 
-            _bunnyDialogueManager = FindObjectOfType<BunnyDialogueManager>();
+            _bunnyDialogueManager = FindAnyObjectByType<BunnyDialogueManager>();
             if (_bunnyDialogueManager == null)
             {
                 Debug.LogError("BunnyDialogueManager не найден в сцене!");
