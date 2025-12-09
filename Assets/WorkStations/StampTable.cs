@@ -68,7 +68,6 @@ namespace InteractiveObjects
                 currCoroutine = StartCoroutine(StampDocument(_currentDocument));
             }
             Debug.Log($"Теперь нажмите E еще раз для штамповки документа");
-            ResetTable();
         }
         
         // Штамповка документа
@@ -94,27 +93,33 @@ namespace InteractiveObjects
             document.IsStamped = true;
             document.StampType = stampType;
             document.StampPos = stampPos;
-
-            isCoroutineRunning = false;
             
             Debug.Log($"Документ {document} был штампован с типом {stampType}");
+            ResetTable();
         }
         
-        private void ResetTable()
+        public override void ResetTable()
         {
             ChangeEmptyPos(-1);
+            Stamp2D.isStumped = false;
             currentDocument = null;
             
             if (documentModel != null)
                 documentModel.SetActive(false);
+            
+            if (currCoroutine != null)
+            {
+                StopCoroutine(currCoroutine);
+            }
+            isCoroutineRunning = false;
+            shouldCoroutineStop = false;
         }
 
         private void ChangeEmptyPos(int direction)
         {
-            Debug.Log("Nihuya ne rabotaet");
-            Vector2 tempPos = _movementEmpty.transform.position;
-            tempPos.y = _movementEmpty.transform.position.y + 10 * direction;
-            _movementEmpty.transform.position = tempPos;
+
+            _movementEmpty.transform.localPosition += new Vector3(0, 10 * direction, 0);
+
         }
         void OnDestroy()
     {
