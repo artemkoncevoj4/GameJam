@@ -236,22 +236,111 @@ public class GameCycle : MonoBehaviour
         AddStress(timePenalty * 1.5f);
     }
 
+//    private void CheckIsGameOver()
+//     {
+//         if (_completedTasks >= _tasksToWin)
+//         {
+//             // ПОБЕДА
+//             EndGame(GameResult.Victory);
+//             ShowVictoryEffects();
+//             Debug.Log("You Win!");
+//             return;
+//         }
+//         if (_stressLevel >= 100f)
+//         {
+//             // ПОРАЖЕНИЕ
+//             EndGame(GameResult.Defeat);
+//             ShowDefeatEffects();
+//             Debug.Log("Game Over (Heart Attack)");
+//             return;
+//         }
+//     }
     private void CheckIsGameOver()
     {
         if (_completedTasks >= _tasksToWin)
         {
-            EndGame(GameResult.Victory);
-            Debug.Log("You Win!");
+            StartCoroutine(VictorySequence());
             return;
         }
         if (_stressLevel >= 100f)
         {
-            EndGame(GameResult.Defeat);
-            //TODO: Здесь вызвать функцию затемнения экрана и вызова главного меню без кнопки
-            Shaders.ScreenEffects.ScreenFader.Instance.StartFade();
-            PauseMenu.Instance.TogglePause();
-            Debug.Log("Game Over (Heartatack)");
+            StartCoroutine(DefeatSequence());
             return;
+        }
+    }
+    private IEnumerator DefeatSequence()
+    {
+        Debug.Log("Starting defeat sequence...");
+        
+        // 1. Меняем состояние на GameOver (но не вызываем EndGame сразу)
+        _currentState = GameState.GameOver;
+        
+        // 2. Запускаем быстрое затемнение экрана
+        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        {
+            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(1.5f);
+        }
+        
+        // 3. Мигаем красным несколько раз
+        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        {
+            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.3f, 3, Color.red);
+        }
+        
+        // 4. Ждем, чтобы затемнение началось
+        yield return new WaitForSecondsRealtime(0.8f);
+        
+        // 5. Показываем меню Game Over
+        if (PauseMenu.Instance != null)
+        {
+            PauseMenu.Instance.ShowGameOverMenu();
+        }
+        
+        // 6. Вызываем EndGame с задержкой
+        EndGame(GameResult.Defeat);
+    }
+
+    /// <summary>
+    /// Последовательность действий при победе
+    /// </summary>
+    private IEnumerator VictorySequence()
+    {
+        Debug.Log("Starting victory sequence...");
+        
+        _currentState = GameState.GameOver;
+        
+        // 1. Затемнение экрана с золотым оттенком
+        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        {
+            // Меняем цвет затемнения на золотой
+            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(new Color(1f, 0.8f, 0f, 1f));
+            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(2f);
+        }
+        
+        // 2. Мигаем золотым несколько раз
+        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        {
+            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.4f, 3, new Color(1f, 0.8f, 0f, 1f));
+        }
+        
+        // 3. Ждем
+        yield return new WaitForSecondsRealtime(1f);
+        
+        // 4. Показываем меню победы
+        if (PauseMenu.Instance != null)
+        {
+            PauseMenu.Instance.ShowVictoryMenu();
+        }
+        
+        // 5. Вызываем EndGame
+        EndGame(GameResult.Victory);
+    }
+    void OnDestroy()
+    {
+        // Сброс цвета затемнения при уничтожении
+        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        {
+            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(Color.black);
         }
     }
     private void EndGame(GameResult result)

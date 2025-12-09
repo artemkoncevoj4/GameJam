@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Shaders.ScreenEffects
 {
-    public class ScreenFader : MonoBehaviour, IScreenFader
+     public class ScreenFader : MonoBehaviour, IScreenFader
     {
         [Header("Fade Settings")]
         [SerializeField] private Image fadeImage;
@@ -15,6 +15,7 @@ namespace Shaders.ScreenEffects
         [SerializeField] private bool useCurve = false;
         [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         [SerializeField] private bool disableRaycastWhenTransparent = true;
+        [SerializeField] private int canvasSortOrder = -10; // Установите низкий порядок рендеринга
 
         private bool isFading = false;
         private Coroutine currentFadeCoroutine;
@@ -34,6 +35,13 @@ namespace Shaders.ScreenEffects
             }
 
             InitializeImage();
+            
+            // Устанавливаем низкий порядок рендеринга для Canvas
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas != null)
+            {
+                canvas.sortingOrder = canvasSortOrder;
+            }
         }
 
         private void InitializeImage()
@@ -145,7 +153,39 @@ namespace Shaders.ScreenEffects
             if (Instance != null)
                 Instance.StartFade(0f, duration);
         }
+          public void QuickFadeToBlack(float duration = 1f)
+        {
+            if (isFading && currentFadeCoroutine != null)
+                StopCoroutine(currentFadeCoroutine);
+            
+            currentFadeCoroutine = StartCoroutine(QuickFadeCoroutine(duration));
+        }
 
+        private IEnumerator QuickFadeCoroutine(float duration)
+        {
+            isFading = true;
+            float timer = 0f;
+            
+            Color startColor = fadeImage.color;
+            Color targetColor = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1f);
+
+            while (timer < duration)
+            {
+                timer += Time.unscaledDeltaTime; // Используем unscaled, так как игра на паузе
+                float progress = Mathf.Clamp01(timer / duration);
+                
+                // Ускоряем затемнение в начале для драматичности
+                progress = Mathf.Pow(progress, 2f);
+                
+                fadeImage.color = Color.Lerp(startColor, targetColor, progress);
+                UpdateRaycastTarget();
+                yield return null;
+            }
+
+            fadeImage.color = targetColor;
+            UpdateRaycastTarget();
+            isFading = false;
+        }
         // Дополнительные методы
         public void SetFadeColor(Color color)
         {

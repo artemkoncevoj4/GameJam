@@ -81,20 +81,20 @@ namespace Bunny
             // Добавляем срочность, если задание срочное
             if (currentTask.IsUrgent)
             {
-                description = $"<color=red>СРОЧНО!!!</color>\n" + description;
+                description = $"<color=red>СРОЧНО!!!</color>" + description;
             }
             
             // Добавляем пометку об изменении, если задание испорчено
             if (currentTask.IsCorrupted)
             {
-                description = $"<color=yellow>! ВНИМАНИЕ: Заяц изменил требования!</color>\n" + description;
+                description = $"<color=yellow>! ВНИМАНИЕ: Заяц изменил требования!</color>" + description;
             }
             
             Debug.Log($"BunnyDialogueManager: Task description: {description}");
             return description;
         }
         
-        // Метод для Bunny.cs для получения диалога с заданием
+        //Метод для Bunny.cs для получения диалога с заданием
         public Dialogue GetTaskDialogueForBunny(global::Bunny.Bunny bunny)
         {
             Debug.Log($"BunnyDialogueManager: GetTaskDialogueForBunny called for {bunny.BunnyName}");

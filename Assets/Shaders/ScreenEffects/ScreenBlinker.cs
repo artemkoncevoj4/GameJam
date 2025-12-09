@@ -54,6 +54,17 @@ namespace Shaders.ScreenEffects
             }
         }
 
+        /// <summary>
+        /// Запускает эффект сердцебиения (короткие пульсации)
+        /// </summary>
+        public static void StartHeartbeatEffect(float intensity = 0.3f, int pulses = 2, float pulseSpeed = 0.15f)
+        {
+            if (Instance != null)
+            {
+                Instance.HeartbeatEffect(intensity, pulses, pulseSpeed);
+            }
+        }
+
         public void Blink()
         {
             if (blinkCoroutine != null)
@@ -68,6 +79,17 @@ namespace Shaders.ScreenEffects
             blinkCount = customCount;
             blinkColor = customColor;
             Blink();
+        }
+
+        /// <summary>
+        /// Эффект сердцебиения - быстрые пульсации
+        /// </summary>
+        public void HeartbeatEffect(float intensity = 0.3f, int pulses = 2, float pulseSpeed = 0.15f)
+        {
+            if (blinkCoroutine != null)
+                StopCoroutine(blinkCoroutine);
+            
+            blinkCoroutine = StartCoroutine(HeartbeatCoroutine(intensity, pulses, pulseSpeed));
         }
 
         private IEnumerator BlinkCoroutine()
@@ -93,6 +115,34 @@ namespace Shaders.ScreenEffects
 
             // Return to original color
             Image.color = originalColor;
+        }
+
+        private IEnumerator HeartbeatCoroutine(float intensity, int pulses, float pulseSpeed)
+        {
+            // Цвет для эффекта сердцебиения - темный, почти черный
+            Color heartbeatColor = new Color(0.1f, 0.1f, 0.1f, 0f);
+            
+            // Сохраняем оригинальный цвет
+            Color originalColor = Image.color;
+            
+            // Устанавливаем цвет для сердцебиения
+            Image.color = heartbeatColor;
+            
+            for (int i = 0; i < pulses; i++)
+            {
+                // Быстрое затемнение (сокращенное время)
+                yield return FadeToAlpha(intensity, pulseSpeed);
+                
+                // Быстрое осветление (сокращенное время)
+                yield return FadeToAlpha(0f, pulseSpeed);
+                
+                // Короткая пауза между пульсациями (меньше, чем в обычном мигании)
+                if (i < pulses - 1)
+                    yield return new WaitForSeconds(pulseSpeed * 0.5f);
+            }
+            
+            // Возвращаем прозрачность
+            SetAlpha(0f);
         }
 
         private IEnumerator FadeToAlpha(float targetAlpha, float duration)

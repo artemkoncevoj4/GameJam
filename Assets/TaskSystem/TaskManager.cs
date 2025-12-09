@@ -51,8 +51,6 @@ namespace TaskSystem {
             }
             Instance = this;
             
-            DontDestroyOnLoad(gameObject);
-            
             Debug.Log("TaskManager: Awake called, Instance set");
         }
 
@@ -109,12 +107,23 @@ namespace TaskSystem {
                 if (_currentTask.UpdateTimer(Time.deltaTime))
                 {
                     FailCurrentTask("Время вышло!");
+                    // [!] Важно: при провале по времени сразу обновляем UI
+                    OnTaskTimerUpdated?.Invoke(0f);
                 }
-
+                else
+                {
+                    // [!] Всегда обновляем UI с текущим временем
+                    OnTaskTimerUpdated?.Invoke(_currentTask.TimeRemaining);
+                }
+            }
+        }
+        public void ForceUpdateTimerUI()
+        {
+            if (_currentTask != null && !_currentTask.IsCompleted && !_currentTask.IsFailed)
+            {
                 OnTaskTimerUpdated?.Invoke(_currentTask.TimeRemaining);
             }
         }
-
         public void StartNewTask()
         {
             if (_isTaskActive)

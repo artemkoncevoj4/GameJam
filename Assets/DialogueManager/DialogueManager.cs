@@ -36,7 +36,7 @@ namespace DialogueManager {
             set => _useTimerForClosing = value;
         }
         
-        [SerializeField] protected float _autoCloseDuration = 3f;
+        [SerializeField] protected float _autoCloseDuration = 5f;
         private float _currentTimer = 0f;
         //*
 

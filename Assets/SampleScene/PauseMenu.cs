@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
-
+using Shaders.ScreenEffects;
+using UI;
 namespace SampleScene {
     public class PauseMenu : MonoBehaviour
     {
@@ -13,13 +14,19 @@ namespace SampleScene {
         [SerializeField] private Button _resumeButton;
         [SerializeField] private Button _mainMenuButton;
         [SerializeField] private Button _restartButton;
+        
+        [Header("Тексты")]
+        [SerializeField] private GameObject _pauseText; // Текст "PAUSE"
+        [SerializeField] private GameObject _gameOverText; // Текст "GAME OVER"
+        [SerializeField] private GameObject _victoryText; // Текст "VICTORY"
 
         [Header("Настройки")]
         [SerializeField] private string _mainMenuSceneName = "MainMenu";
         [SerializeField] private float _pauseBackgroundAlpha = 0.7f;
-        
+        [SerializeField] private float _gameOverBackgroundAlpha = 0.85f; // Более темный фон для Game Over
         private string _currentSceneName;
         private bool _isPaused = false;
+        private bool _isGameOver = false;
         private Image _backgroundImage;
         
         [Header("Анимация")]
@@ -40,18 +47,16 @@ namespace SampleScene {
             
             _currentSceneName = SceneManager.GetActiveScene().name;
             
-            Debug.Log("PauseMenu Awake. Scene: " + _currentSceneName);
+            // Скрываем все тексты по умолчанию
+            HideAllTexts();
         }
 
         void Start()
         {
             InitializeUI();
             SetupEventListeners();
-            
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
-            
-            Debug.Log("PauseMenu Start. Buttons initialized.");
         }
 
         private void InitializeUI()
@@ -64,6 +69,7 @@ namespace SampleScene {
                     _backgroundImage = _pauseMenuPanel.AddComponent<Image>();
                 }
                 
+                // Начальный цвет - стандартный черный с прозрачностью
                 Color bgColor = Color.black;
                 bgColor.a = _pauseBackgroundAlpha;
                 _backgroundImage.color = bgColor;
@@ -71,54 +77,45 @@ namespace SampleScene {
             }
         }
 
+        private void HideAllTexts()
+        {
+            if (_pauseText != null) 
+            {
+                _pauseText.SetActive(false);
+                Debug.Log("Pause text hidden");
+            }
+            if (_gameOverText != null) 
+            {
+                _gameOverText.SetActive(false);
+                Debug.Log("Game Over text hidden");
+            }
+            if (_victoryText != null) 
+            {
+                _victoryText.SetActive(false);
+                Debug.Log("Victory text hidden");
+            }
+        }
+
         private void SetupEventListeners()
         {
-            Debug.Log("Setting up button listeners...");
-            
             if (_resumeButton != null)
-            {
                 _resumeButton.onClick.AddListener(ResumeGame);
-                Debug.Log("Resume button listener added.");
-            }
-            else
-            {
-                Debug.LogError("Resume button is not assigned!");
-            }
             
             if (_mainMenuButton != null)
-            {
                 _mainMenuButton.onClick.AddListener(GoToMainMenu);
-                Debug.Log("Main Menu button listener added.");
-            }
-            else
-            {
-                Debug.LogError("Main Menu button is not assigned!");
-            }
             
             if (_restartButton != null)
-            {
                 _restartButton.onClick.AddListener(RestartGame);
-                Debug.Log("Restart button listener added.");
-            }
-            else
-            {
-                Debug.LogError("Restart button is not assigned!");
-            }
             
             if (GameCycle.Instance != null)
             {
                 GameCycle.Instance.OnGameEnded += OnGameEnded;
-                Debug.Log("Subscribed to GameEnded event.");
-            }
-            else
-            {
-                Debug.LogError("GameCycle instance not found!");
             }
         }
 
         public void TogglePause()
         {
-            Debug.Log("TogglePause called, current state: " + _isPaused);
+            if (_isGameOver) return;
             
             if (_isPaused)
             {
@@ -132,20 +129,116 @@ namespace SampleScene {
 
         public void PauseGame()
         {
-            if (_isPaused) return;
+            if (_isPaused || _isGameOver) return;
             
+            Debug.Log("PauseGame called");
             _isPaused = true;
-            
-            // СНАЧАЛА ставим игру на паузу в GameCycle
+            // Ставим игру на паузу в GameCycle
             if (GameCycle.Instance != null)
                 GameCycle.Instance.PauseGame();
             
-            // Затем выключаем инпуты и показываем меню
+            // Выключаем инпуты
             if (InputHandler.Instance != null)
                 InputHandler.Instance.DisableInput();
             
+            // Включаем панель
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(true);
+            
+            // Показываем только текст паузы
+            HideAllTexts();
+            if (_pauseText != null) 
+            {
+                _pauseText.SetActive(true);
+                Debug.Log("Pause text shown");
+            }
+            
+            // Все кнопки активны
+            if (_resumeButton != null) _resumeButton.gameObject.SetActive(true);
+            if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
+            if (_restartButton != null) _restartButton.gameObject.SetActive(true);
+            
+            // Стандартный цвет фона
+            if (_backgroundImage != null)
+            {
+                Color bgColor = Color.black;
+                bgColor.a = _pauseBackgroundAlpha;
+                _backgroundImage.color = bgColor;
+            }
+            
+            // Запускаем анимацию
+            if (_menuAnimator != null)
+                _menuAnimator.ShowMenu();
+        }
+
+        /// <summary>
+        /// Показать меню поражения
+        /// </summary>
+        public void ShowGameOverMenu()
+        {
+            Debug.Log("ShowGameOverMenu called");
+            _isPaused = true;
+            _isGameOver = true;
+            
+            // Включаем панель
+            if (_pauseMenuPanel != null)
+                _pauseMenuPanel.SetActive(true);
+            
+            // Показываем только текст Game Over
+            HideAllTexts();
+            if (_gameOverText != null) 
+            {
+                _gameOverText.SetActive(true);
+                Debug.Log("Game Over text shown");
+            }
+            
+            // Скрываем кнопку Resume, остальные активны
+            if (_resumeButton != null) _resumeButton.gameObject.SetActive(false);
+            if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
+            if (_restartButton != null) _restartButton.gameObject.SetActive(true);
+            
+            // Темный фон с красным оттенком
+            if (_backgroundImage != null)
+            {
+                Color bgColor = new Color(0.15f, 0f, 0f, _gameOverBackgroundAlpha);
+                _backgroundImage.color = bgColor;
+            }
+            
+            // Запускаем анимацию
+            if (_menuAnimator != null)
+                _menuAnimator.ShowMenu();
+        }
+
+        /// <summary>
+        /// Показать меню победы
+        /// </summary>
+        public void ShowVictoryMenu()
+        {
+            Debug.Log("ShowVictoryMenu called");
+            _isPaused = true;
+            _isGameOver = true;
+            
+            if (_pauseMenuPanel != null)
+                _pauseMenuPanel.SetActive(true);
+            
+            HideAllTexts();
+            if (_victoryText != null) 
+            {
+                _victoryText.SetActive(true);
+                Debug.Log("Victory text shown");
+            }
+            
+            // Скрываем кнопку Resume, остальные активны
+            if (_resumeButton != null) _resumeButton.gameObject.SetActive(false);
+            if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
+            if (_restartButton != null) _restartButton.gameObject.SetActive(true);
+            
+            // Темный фон с золотым оттенком
+            if (_backgroundImage != null)
+            {
+                Color bgColor = new Color(0.2f, 0.15f, 0f, _gameOverBackgroundAlpha);
+                _backgroundImage.color = bgColor;
+            }
             
             if (_menuAnimator != null)
                 _menuAnimator.ShowMenu();
@@ -153,19 +246,23 @@ namespace SampleScene {
 
         public void ResumeGame()
         {
-            if (!_isPaused) return;
+            if (!_isPaused || _isGameOver) return;
             
-            // Сразу снимаем флаг паузы
+            Debug.Log("ResumeGame called");
+            
+            // Снимаем флаг паузы
             _isPaused = false;
             
-            // Сразу снимаем паузу в GameCycle
+            // Снимаем паузу в GameCycle
             if (GameCycle.Instance != null)
                 GameCycle.Instance.ResumeGame();
             
-            // Сразу восстанавливаем инпуты
+            // Восстанавливаем инпуты
             if (InputHandler.Instance != null)
                 InputHandler.Instance.EnableInput();
             
+            // Скрываем текст паузы ПЕРЕД анимацией
+            HideAllTexts();
             // Скрываем меню с анимацией
             if (_menuAnimator != null)
             {
@@ -180,47 +277,44 @@ namespace SampleScene {
         
         private void DisableMenuPanel()
         {
+            Debug.Log("DisableMenuPanel called");
+            
+            // Скрываем панель
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
+            
+            // Гарантируем, что все тексты скрыты
+            HideAllTexts();
+            
+            // Сбрасываем флаги
+            _isPaused = false;
+            _isGameOver = false;
+            
+            // Восстанавливаем стандартный цвет фона
+            if (_backgroundImage != null)
+            {
+                Color bgColor = Color.black;
+                bgColor.a = _pauseBackgroundAlpha;
+                _backgroundImage.color = bgColor;
+            }
+            
+            // Восстанавливаем все кнопки
+            if (_resumeButton != null) _resumeButton.gameObject.SetActive(true);
+            if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
+            if (_restartButton != null) _restartButton.gameObject.SetActive(true);
+            
+            Debug.Log("Menu panel disabled and reset");
         }
         
         private void RestartGame()
         {
-            Debug.Log("=== RESTART GAME CALLED ===");
-            Debug.Log("Current scene: " + _currentSceneName);
-            Debug.Log("Current timeScale: " + Time.timeScale);
-            Debug.Log("IsPaused: " + _isPaused);
+            Debug.Log("=== RESTART GAME ===");
             
             // Восстанавливаем нормальную скорость времени
             Time.timeScale = 1f;
-            Debug.Log("Time.timeScale set to 1");
-            
-            // Снимаем все флаги паузы
-            _isPaused = false;
-            
-            // Отключаем меню, если оно активно
-            if (_pauseMenuPanel != null && _pauseMenuPanel.activeSelf)
-            {
-                _pauseMenuPanel.SetActive(false);
-                Debug.Log("Pause menu panel disabled.");
-            }
-            
-            // Сбрасываем состояние GameCycle
-            if (GameCycle.Instance != null)
-            {
-                // Если GameCycle имеет метод ResetGame, вызываем его
-                Debug.Log("GameCycle instance found. Starting new game...");
-                GameCycle.Instance.StartGame();
-            }
-            
-            // Получаем текущую сцену по индексу (более надежно)
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            Debug.Log("Loading scene with index: " + currentSceneIndex);
-            
-            // Загружаем сцену с опцией для сброса всех объектов
-            SceneManager.LoadScene(currentSceneIndex, LoadSceneMode.Single);
-            
-            Debug.Log("Scene load initiated.");
+            CleanUpBeforeSceneChange();
+            // Загружаем текущую сцену заново
+            SceneManager.LoadScene(_currentSceneName);
         }
 
         private void GoToMainMenu()
@@ -229,17 +323,41 @@ namespace SampleScene {
             
             // Восстанавливаем нормальную скорость времени
             Time.timeScale = 1f;
-            _isPaused = false;
-            
+            CleanUpBeforeSceneChange();
             // Загружаем главное меню
-            SceneManager.LoadScene(_mainMenuSceneName);
+            SceneManager.LoadScene(0);
         }
-
+        private void CleanUpBeforeSceneChange()
+        {
+            Debug.Log("Cleaning up before scene change...");
+            
+            // Уничтожаем синглтоны, которые могут сохранять состояние
+            if (TaskSystem.TaskManager.Instance != null)
+            {
+                Destroy(TaskSystem.TaskManager.Instance.gameObject);
+            }
+            
+            if (GameCycle.Instance != null)
+            {
+                Destroy(GameCycle.Instance.gameObject);
+            }
+            
+            if (Bunny.Bunny.Instance != null)
+            {
+                Destroy(Bunny.Bunny.Instance.gameObject);
+            }
+            
+            if (Player.PlayerInventory.Instance != null)
+            {
+                Destroy(Player.PlayerInventory.Instance.gameObject);
+            }
+            
+            //TODO Можно добавить очистку других синглтонов при необходимости
+        }
         private void OnGameEnded(GameCycle.GameResult result)
         {
-            _isPaused = false;
-            if (_pauseMenuPanel != null)
-                _pauseMenuPanel.SetActive(false);
+            Debug.Log($"PauseMenu: Game ended with result {result}");
+            // Не обрабатываем здесь, так как мы показываем меню в GameCycle
         }
 
         void OnDestroy()
@@ -263,5 +381,6 @@ namespace SampleScene {
         }
 
         public bool IsPaused => _isPaused;
+        public bool IsGameOver => _isGameOver;
     }
 }
