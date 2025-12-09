@@ -15,8 +15,7 @@ public class Stamp2D : MonoBehaviour
     private Vector2 originalScale;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    public Action<StampType> OnStampPress;
-    
+    public static bool isStumped = false;
     void Start()
     {
         // Сохраняем оригинальные значения
@@ -37,9 +36,8 @@ public class Stamp2D : MonoBehaviour
         
         // Визуальная обратная связь
         transform.localScale = originalScale * clickScale;
+        isStumped = !isStumped;
         
-        // Вызываем действие штампа
-        OnStampPress?.Invoke(GetStamp());
     }
     
     void OnMouseUp()
