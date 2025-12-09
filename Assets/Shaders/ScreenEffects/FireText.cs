@@ -8,65 +8,110 @@ namespace Shaders.ScreenEffects {
     {
         [SerializeField] private TMP_Text textComponent;
         [SerializeField] private string glitchText = "ERROR";
-        [SerializeField] private float duration = 10f; // Ограничено 10 секундами
-
+        [SerializeField] private float duration = 10f;
+        
         private Coroutine currentGlitchCoroutine;
-        private string targetOriginalText; // Текст, который нужно вернуть после эффекта
+        // Удалено: private string originalText; // Исходный текст больше не хранится здесь
+        private bool isEffectActive = false;
 
         void Start()
         {
-            if (textComponent != null)
-            {
-                targetOriginalText = textComponent.text;
-            }
+            // Здесь Awake или Start не нужен для originalText, так как он будет передаваться
+        }
+        
+        void OnEnable()
+        {
+            // Убрана логика сохранения originalText при активации
         }
 
-        public void Fire()
+        /// <summary>
+        /// Запускает эффект глитча, используя переданный текст как исходный.
+        /// </summary>
+        /// <param name="textToGlitch">Исходный текст, который нужно временно заменить.</param>
+        public void Fire(string textToGlitch)
         {
+            if (textComponent == null)
+            {
+                Debug.LogError("<color=red>Fire_text: textComponent не назначен!</color>");
+                return;
+            }
+            
             if (currentGlitchCoroutine != null)
             {
                 StopCoroutine(currentGlitchCoroutine);
             }
             
-            // Сохраняем текущий текст как целевой для возврата
-            if (textComponent != null)
+            // Если объект был неактивен, активируем его для работы корутины
+            if (!gameObject.activeSelf)
             {
-                targetOriginalText = textComponent.text;
+                gameObject.SetActive(true);
             }
-            
-            currentGlitchCoroutine = StartCoroutine(GlitchRoutine());
+
+            isEffectActive = true;
+            currentGlitchCoroutine = StartCoroutine(GlitchCoroutine(textToGlitch));
         }
 
-        // Новый метод для установки целевого текста
-        public void SetTargetText(string text)
+        private IEnumerator GlitchCoroutine(string originalText)
         {
-            targetOriginalText = text;
-        }
-
-        private IEnumerator GlitchRoutine()
-        {
-            if (textComponent == null) yield break;
-            
-            float startTime = Time.time;
-            float endTime = startTime + duration;
-            
-            // Используем сохраненный текст как целевой для возврата
-            string currentTarget = targetOriginalText;
+            float endTime = Time.time + duration;
+            // Скорость мигания (интервал между сменой текста)
+            float blinkSpeed = 0.1f;
             
             while (Time.time < endTime)
             {
-                // Меняем на glitchText
+                // Показываем глитч-текст
                 textComponent.text = glitchText;
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(blinkSpeed);
                 
-                // Возвращаем к целевому тексту
-                textComponent.text = currentTarget;
-                yield return new WaitForSeconds(0.1f);
+                // Возвращаем оригинальный текст
+                textComponent.text = originalText;
+                yield return new WaitForSeconds(blinkSpeed);
             }
             
-            // Гарантированно возвращаем целевой текст
-            textComponent.text = currentTarget;
+            // Гарантированно возвращаем оригинальный текст
+            textComponent.text = originalText;
             currentGlitchCoroutine = null;
+            isEffectActive = false;
+            
+            // Деактивируем объект, если он был активен только для эффекта
+            if (gameObject.activeSelf && !ShouldKeepActive())
+            {
+                 gameObject.SetActive(false);
+            }
+            
+            Debug.Log($"<color=green>Fire_text завершен.</color> <color=white>Восстановлен текст: '{originalText}'</color>");
         }
+        
+        /// <summary>
+        /// Метод-заглушка для определения, нужно ли держать объект активным после завершения эффекта. 
+        /// Если компонент Fire_text используется только для glich-эффекта и должен быть выключен после, 
+        /// замените 'true' на 'false'.
+        /// </summary>
+        private bool ShouldKeepActive()
+        {
+            // Если этот скрипт управляет текстом, который всегда должен быть виден, верните true.
+            // Если он используется только для временного эффекта, верните false.
+            return false; 
+        }
+
+        public void StopEffect()
+        {
+            if (currentGlitchCoroutine != null)
+            {
+                StopCoroutine(currentGlitchCoroutine);
+                currentGlitchCoroutine = null;
+            }
+            
+            // Поскольку исходный текст здесь не хранится, этот метод должен быть вызван 
+            // с нужным текстом, или мы должны быть уверены, что текст будет восстановлен извне.
+            // На данный момент просто сбрасываем состояние.
+            
+            isEffectActive = false;
+            
+            // Не отключаем объект здесь, так как текст еще может быть глитчевым. 
+            // Восстановление текста должно произойти в вызывающем скрипте.
+        }
+        
+        public bool IsEffectActive => isEffectActive;
     }
 }

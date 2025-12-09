@@ -275,6 +275,99 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 460, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &31754586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 31754588}
+  - component: {fileID: 31754587}
+  m_Layer: 0
+  m_Name: ScreenFadeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &31754587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31754586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e8aca3b81445794e8d236eacaf44008, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenEffects.ScreenFadeManager
+  screenFader: {fileID: 840777775}
+  screenBlinker: {fileID: 1369132725}
+--- !u!4 &31754588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31754586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &32123050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 32123052}
+  - component: {fileID: 32123051}
+  m_Layer: 0
+  m_Name: ScreenShake
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &32123051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32123050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7499666cc52607147b6a72197eb22384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenShake
+  shakeTransform: {fileID: 629084864}
+  shiftAmount: 15
+  shakeDuration: 0.3
+--- !u!4 &32123052
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 32123050}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &99768779
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +730,6 @@ GameObject:
   - component: {fileID: 179492036}
   - component: {fileID: 179492035}
   - component: {fileID: 179492034}
-  - component: {fileID: 179492033}
   m_Layer: 0
   m_Name: Blinker
   m_TagString: Untagged
@@ -645,23 +737,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &179492033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 179492032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenEffects.ScreenBlinker
-  Image: {fileID: 179492034}
-  fadeDuration: 0.5
-  pauseDuration: 0.2
-  blinkCount: 3
-  blinkColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &179492034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -719,52 +794,6 @@ RectTransform:
   m_AnchoredPosition: {x: 34.851, y: -98.436}
   m_SizeDelta: {x: 2704.5, y: 1691.4}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &180237432
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 180237434}
-  - component: {fileID: 180237433}
-  m_Layer: 0
-  m_Name: EffectsManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &180237433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180237432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e8aca3b81445794e8d236eacaf44008, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenEffects.ScreenFadeManager
-  screenFader: {fileID: 1580448746}
-  screenBlinker: {fileID: 179492033}
---- !u!4 &180237434
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180237432}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1346.046, y: 797.638, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &180590354
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,53 +869,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 180590354}
   m_CullTransparentMesh: 1
---- !u!1 &220935450
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 220935452}
-  - component: {fileID: 220935451}
-  m_Layer: 0
-  m_Name: ScreenFliskers
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &220935451
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220935450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 578b52d93c74cc6408cf7716de85c32e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScreenFliskers
-  flicker_black: {fileID: 1346897789}
-  duration: 0.5
-  num_flickers: 8
---- !u!4 &220935452
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 220935450}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &342553531
 GameObject:
   m_ObjectHideFlags: 0
@@ -1303,6 +1285,53 @@ MonoBehaviour:
   stampType: 0
   hoverScale: 1.1
   clickScale: 0.95
+--- !u!1 &406756835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 406756837}
+  - component: {fileID: 406756836}
+  m_Layer: 0
+  m_Name: ScreenFliskers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &406756836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406756835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 578b52d93c74cc6408cf7716de85c32e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenFliskers
+  flicker_black: {fileID: 1346897789}
+  duration: 0.5
+  num_flickers: 8
+--- !u!4 &406756837
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406756835}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414733878
 GameObject:
   m_ObjectHideFlags: 0
@@ -3492,7 +3521,7 @@ MonoBehaviour:
   _topColor: {r: 0.30980393, g: 0.32156864, b: 0.5058824, a: 0.9}
   _bottomColor: {r: 0.11764706, g: 0.12156863, b: 0.23137255, a: 0.95}
   _gradientHeight: 0.9
---- !u!1 &851861055
+--- !u!1 &840777774
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3500,40 +3529,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 851861057}
-  - component: {fileID: 851861056}
+  - component: {fileID: 840777776}
+  - component: {fileID: 840777775}
   m_Layer: 0
-  m_Name: Screen_Shake
+  m_Name: ScreenFader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &851861056
+--- !u!114 &840777775
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 851861055}
+  m_GameObject: {fileID: 840777774}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7499666cc52607147b6a72197eb22384, type: 3}
+  m_Script: {fileID: 11500000, guid: bb3007ff1c232b74798314a6a6f67cd5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Screen_Shake
-  shake_shape: {fileID: 487059780}
-  shift: 15
-  duration: 0.5
---- !u!4 &851861057
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenFader
+  fadeImage: {fileID: 1580448744}
+  fadeDuration: 1
+--- !u!4 &840777776
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 851861055}
+  m_GameObject: {fileID: 840777774}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1346.046, y: 797.638, z: 0}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5156,7 +5184,6 @@ GameObject:
   - component: {fileID: 1346897787}
   - component: {fileID: 1346897790}
   - component: {fileID: 1346897789}
-  - component: {fileID: 1346897788}
   m_Layer: 0
   m_Name: BlackOverlay
   m_TagString: Untagged
@@ -5183,21 +5210,6 @@ RectTransform:
   m_AnchoredPosition: {x: 34.86274, y: -98.43555}
   m_SizeDelta: {x: 2704.4395, y: 1691.374}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1346897788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1346897786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 578b52d93c74cc6408cf7716de85c32e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScreenFliskers
-  flicker_black: {fileID: 1346897789}
-  duration: 0.5
-  num_flickers: 8
 --- !u!114 &1346897789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5262,6 +5274,54 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1465, y: 294, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1369132724
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1369132726}
+  - component: {fileID: 1369132725}
+  m_Layer: 0
+  m_Name: ScreenBlinker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1369132725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369132724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8a01c2b71f6b5f45a19a0642f5dc63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenBlinker
+  blinkImage: {fileID: 179492034}
+  fadeDuration: 0.5
+  blinkCount: 3
+  blinkColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!4 &1369132726
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369132724}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 812.30457, y: 548.4934, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5386,7 +5446,6 @@ GameObject:
   - component: {fileID: 1580448743}
   - component: {fileID: 1580448745}
   - component: {fileID: 1580448744}
-  - component: {fileID: 1580448746}
   m_Layer: 0
   m_Name: Fader
   m_TagString: Untagged
@@ -5451,48 +5510,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1580448742}
   m_CullTransparentMesh: 1
---- !u!114 &1580448746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1580448742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb3007ff1c232b74798314a6a6f67cd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Shaders.ScreenEffects.ScreenFader
-  fadeImage: {fileID: 1580448744}
-  fadeDuration: 2
-  fadeColor: {r: 0, g: 0, b: 0, a: 1}
-  useCurve: 0
-  fadeCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  disableRaycastWhenTransparent: 1
-  canvasSortOrder: -10
 --- !u!1 &1672746849
 GameObject:
   m_ObjectHideFlags: 0
@@ -6853,8 +6870,10 @@ SceneRoots:
   - {fileID: 576512576}
   - {fileID: 1100974556}
   - {fileID: 504664146}
-  - {fileID: 851861057}
-  - {fileID: 180237434}
   - {fileID: 1111304516}
-  - {fileID: 220935452}
   - {fileID: 757479455}
+  - {fileID: 1369132726}
+  - {fileID: 31754588}
+  - {fileID: 840777776}
+  - {fileID: 406756837}
+  - {fileID: 32123052}

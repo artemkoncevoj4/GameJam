@@ -1,39 +1,59 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
-public class Screen_Shake : MonoBehaviour
-{
-    [SerializeField] private RectTransform shake_shape;
-    [SerializeField] float shift = 15f;
-    [SerializeField] float duration = 0.3f;
 
-    public void Start_shaking()
+public class ScreenShake : MonoBehaviour
+{
+    [SerializeField] private RectTransform shakeTransform;
+    [SerializeField] float shiftAmount = 15f;
+    [SerializeField] float shakeDuration = 0.3f;
+
+    void Awake()
     {
-        StartCoroutine(shaking());
+        if (shakeTransform == null)
+        {
+            shakeTransform = GetComponent<RectTransform>();
+            if (shakeTransform == null)
+            {
+                Debug.LogError("ScreenShake: RectTransform component is missing!");
+                return;
+            }
+        }
     }
 
-    private System.Collections.IEnumerator shaking()
+    /// <summary>
+    /// Запускает эффект тряски.
+    /// </summary>
+    public void Start_shaking()
     {
-        Vector2 originalPos = shake_shape.anchoredPosition;
+        StopAllCoroutines();
+        StartCoroutine(ShakingCoroutine());
+    }
+
+    private IEnumerator ShakingCoroutine()
+    {
+        Vector2 originalPos = shakeTransform.anchoredPosition;
         float elapsed = 0f;
-        while (elapsed < duration)
+        while (elapsed < shakeDuration)
         {
-            float x = Random.Range(-shift, shift);
-            float y = Random.Range(-shift, shift);
-            shake_shape.anchoredPosition = originalPos + new Vector2(x, y);
+            float x = Random.Range(-shiftAmount, shiftAmount);
+            float y = Random.Range(-shiftAmount, shiftAmount);
+            
+            shakeTransform.anchoredPosition = originalPos + new Vector2(x, y);
+            
             elapsed += Time.deltaTime;
             yield return null;
         }
-        shake_shape.anchoredPosition = originalPos;
+        
+        // Возвращаем в исходную позицию
+        shakeTransform.anchoredPosition = originalPos;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D))
+        // Нажать S для Shake
+        if (Input.GetKeyDown(KeyCode.V))
         {
             Start_shaking();
         }
-
     }
 }

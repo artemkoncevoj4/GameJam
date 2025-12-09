@@ -34,7 +34,7 @@ public class ScreenFliskers : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             Start_flickers();
         }

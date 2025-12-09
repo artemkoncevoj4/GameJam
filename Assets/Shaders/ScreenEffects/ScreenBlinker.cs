@@ -2,180 +2,126 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-namespace Shaders.ScreenEffects
+public class ScreenBlinker : MonoBehaviour
 {
-    public class ScreenBlinker : MonoBehaviour
+    [SerializeField] private Image blinkImage;
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private int blinkCount = 3;
+    [SerializeField] private Color blinkColor = Color.red;
+
+    void Awake()
     {
-        public static ScreenBlinker Instance { get; private set; }
-
-        [Header("Blink Settings")]
-        [SerializeField] private Image Image;
-        [SerializeField] private float fadeDuration = 0.5f;
-        [SerializeField] private float pauseDuration = 0.2f;
-        [SerializeField] private int blinkCount = 3;
-        [SerializeField] private Color blinkColor = Color.red;
-
-        private Coroutine blinkCoroutine;
-
-        private void Awake()
+        if (blinkImage == null)
         {
-            if (Instance == null)
+            blinkImage = GetComponent<Image>();
+            if (blinkImage == null)
             {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
+                Debug.LogError("ScreenBlinker: Image component is missing!");
                 return;
             }
-
-            if (Image == null)
-            {
-                Image = GetComponent<Image>();
-                if (Image == null)
-                {
-                    Debug.LogError("<color=red>ScreenBlinker: No Image component found!</color>");
-                    return;
-                }
-            }
-
-            SetAlpha(0f);
         }
+        SetAlpha(0f);
+    }
 
-        public static void StartBlink()
-        {
-            if (Instance != null)
-            {
-                Instance.Blink();
-            }
-            else
-            {
-                Debug.LogError("<color=red>ScreenBlinker instance not found!</color>");
-            }
-        }
+    /// <summary>
+    /// Запускает эффект мигания с настройками по умолчанию (из инспектора).
+    /// </summary>
+    public void BlinkScreen()
+    {
+        StopAllCoroutines();
+        StartCoroutine(BlinkCoroutine(fadeDuration, blinkCount, blinkColor));
+    }
 
-        /// <summary>
-        /// Запускает эффект сердцебиения (короткие пульсации)
-        /// </summary>
-        public static void StartHeartbeatEffect(float intensity = 0.3f, int pulses = 2, float pulseSpeed = 0.15f)
-        {
-            if (Instance != null)
-            {
-                Instance.HeartbeatEffect(intensity, pulses, pulseSpeed);
-            }
-        }
+    // --- Методы для ScreenFadeManager ---
 
-        public void Blink()
+    /// <summary>
+    /// Запускает мигание с кастомными параметрами.
+    /// </summary>
+    public void Blink(float duration, int count, Color color)
+    {
+        StopAllCoroutines();
+        StartCoroutine(BlinkCoroutine(duration, count, color));
+    }
+
+    /// <summary>
+    /// Эффект сердцебиения (пульсация прозрачности).
+    /// </summary>
+    public void HeartbeatEffect(float intensity, int pulses, float pulseSpeed)
+    {
+        StopAllCoroutines();
+        StartCoroutine(HeartbeatCoroutine(intensity, pulses, pulseSpeed));
+    }
+
+    private IEnumerator BlinkCoroutine(float duration, int count, Color color)
+    {
+        Color originalColor = blinkImage.color;
+        blinkImage.color = new Color(color.r, color.g, color.b, 0f);
+
+        for (int i = 0; i < count; i++)
         {
-            if (blinkCoroutine != null)
-                StopCoroutine(blinkCoroutine);
+            // Fade in (почти непрозрачный)
+            yield return FadeToAlpha(0.7f, duration);
             
-            blinkCoroutine = StartCoroutine(BlinkCoroutine());
+            // Fade out
+            yield return FadeToAlpha(0f, duration);
         }
 
-        public void Blink(float customDuration, int customCount, Color customColor)
+        // Возврат к оригинальной прозрачности и цвету
+        SetAlpha(0f);
+        blinkImage.color = originalColor;
+    }
+
+    private IEnumerator HeartbeatCoroutine(float maxAlpha, int pulses, float speed)
+    {
+        Color originalColor = blinkImage.color;
+        // Для сердцебиения часто используют красный оттенок текущего image, или переданный цвет.
+        // Здесь используем текущий цвет image, но управляем альфой.
+        
+        for (int i = 0; i < pulses; i++)
         {
-            fadeDuration = customDuration;
-            blinkCount = customCount;
-            blinkColor = customColor;
-            Blink();
+            // Удар (появление)
+            yield return FadeToAlpha(maxAlpha, speed);
+            // Затухание
+            yield return FadeToAlpha(0f, speed);
+            // Пауза между ударами
+            yield return new WaitForSecondsRealtime(speed * 0.5f);
         }
 
-        /// <summary>
-        /// Эффект сердцебиения - быстрые пульсации
-        /// </summary>
-        public void HeartbeatEffect(float intensity = 0.3f, int pulses = 2, float pulseSpeed = 0.15f)
+        SetAlpha(0f);
+        blinkImage.color = originalColor;
+    }
+
+    private IEnumerator FadeToAlpha(float targetAlpha, float duration)
+    {
+        float startAlpha = blinkImage.color.a;
+        float time = 0f;
+
+        while (time < duration)
         {
-            if (blinkCoroutine != null)
-                StopCoroutine(blinkCoroutine);
-            
-            blinkCoroutine = StartCoroutine(HeartbeatCoroutine(intensity, pulses, pulseSpeed));
+            // Используем unscaledDeltaTime для работы при TimeScale = 0 (GameOver)
+            time += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(time / duration);
+            float alpha = Mathf.Lerp(startAlpha, targetAlpha, progress);
+            SetAlpha(alpha);
+            yield return null;
         }
 
-        private IEnumerator BlinkCoroutine()
+        SetAlpha(targetAlpha);
+    }
+
+    private void SetAlpha(float alpha)
+    {
+        Color c = blinkImage.color;
+        c.a = alpha;
+        blinkImage.color = c;
+    }
+
+    void Update()
+    {
+        // Нажать B для Blink
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            Color originalColor = Image.color;
-            Image.color = new Color(blinkColor.r, blinkColor.g, blinkColor.b, 0f);
-
-            for (int i = 0; i < blinkCount; i++)
-            {
-                // Fade in
-                yield return FadeToAlpha(0.7f, fadeDuration);
-                
-                // Pause
-                yield return new WaitForSeconds(pauseDuration);
-                
-                // Fade out
-                yield return FadeToAlpha(0f, fadeDuration);
-                
-                // Pause between blinks
-                if (i < blinkCount - 1)
-                    yield return new WaitForSeconds(pauseDuration);
-            }
-
-            // Return to original color
-            Image.color = originalColor;
-        }
-
-        private IEnumerator HeartbeatCoroutine(float intensity, int pulses, float pulseSpeed)
-        {
-            // Цвет для эффекта сердцебиения - темный, почти черный
-            Color heartbeatColor = new Color(0.1f, 0.1f, 0.1f, 0f);
-            
-            // Сохраняем оригинальный цвет
-            Color originalColor = Image.color;
-            
-            // Устанавливаем цвет для сердцебиения
-            Image.color = heartbeatColor;
-            
-            for (int i = 0; i < pulses; i++)
-            {
-                // Быстрое затемнение (сокращенное время)
-                yield return FadeToAlpha(intensity, pulseSpeed);
-                
-                // Быстрое осветление (сокращенное время)
-                yield return FadeToAlpha(0f, pulseSpeed);
-                
-                // Короткая пауза между пульсациями (меньше, чем в обычном мигании)
-                if (i < pulses - 1)
-                    yield return new WaitForSeconds(pulseSpeed * 0.5f);
-            }
-            
-            // Возвращаем прозрачность
-            SetAlpha(0f);
-        }
-
-        private IEnumerator FadeToAlpha(float targetAlpha, float duration)
-        {
-            float startAlpha = Image.color.a;
-            float time = 0f;
-
-            while (time < duration)
-            {
-                time += Time.deltaTime;
-                float alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
-                SetAlpha(alpha);
-                yield return null;
-            }
-
-            SetAlpha(targetAlpha);
-        }
-
-        private void SetAlpha(float alpha)
-        {
-            Color c = Image.color;
-            c.a = alpha;
-            Image.color = c;
-        }
-
-        public void StopBlink()
-        {
-            if (blinkCoroutine != null)
-            {
-                StopCoroutine(blinkCoroutine);
-                blinkCoroutine = null;
-            }
-            SetAlpha(0f);
+            BlinkScreen();
         }
     }
 }

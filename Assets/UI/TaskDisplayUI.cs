@@ -183,7 +183,7 @@ namespace UI
             UpdateTaskDisplay(task);
              if (_fireTextEffect != null)
             {
-                _fireTextEffect.SetTargetText(_taskText.text);
+               // _fireTextEffect.SetTargetText(_taskText.text);
             }
             if (_canvasGroup != null)
             {
@@ -233,7 +233,7 @@ namespace UI
             _taskText.text = description;
              if (_fireTextEffect != null)
             {
-                _fireTextEffect.SetTargetText(description);
+              //  _fireTextEffect.SetTargetText(description);
             }
             // Устанавливаем цвет в зависимости от типа задания
             if (task.IsCorrupted)

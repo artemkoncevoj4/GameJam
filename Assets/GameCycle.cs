@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using System;
 using Random = UnityEngine.Random;
 using SampleScene;
+using Shaders.ScreenEffects; // Добавлено для доступа к ScreenFadeManager
 
 public class GameCycle : MonoBehaviour
 {
@@ -142,9 +143,9 @@ public class GameCycle : MonoBehaviour
         OnProgressUpdated?.Invoke(_completedTasks, _tasksToWin);
         
         // Сбрасываем цвет затемнения на черный при начале игры
-        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(Color.black);
+            ScreenFadeManager.Instance.SetFaderColor(Color.black);
         }
     }
 
@@ -247,24 +248,24 @@ public class GameCycle : MonoBehaviour
         _currentState = GameState.GameOver;
         
         // 1. Быстрое затемнение экрана красным цветом
-        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(defeatColor);
-            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(defeatFadeDuration);
+            ScreenFadeManager.Instance.SetFaderColor(defeatColor);
+            ScreenFadeManager.Instance.QuickFadeToBlack(defeatFadeDuration);
         }
         
         // 2. Мигаем красным несколько раз
-        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.3f, 3, defeatColor);
+            ScreenFadeManager.Instance.BlinkScreen(0.3f, 3, defeatColor);
         }
         
         // 3. Дополнительные эффекты для поражения
-        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
             // Сердцебиение при поражении
             yield return new WaitForSeconds(0.5f);
-            Shaders.ScreenEffects.ScreenBlinker.Instance.HeartbeatEffect(0.4f, 4, 0.1f);
+            ScreenFadeManager.Instance.HeartbeatEffect(0.4f, 4, 0.1f);
         }
         
         // 4. Ждем, чтобы затемнение началось
@@ -287,26 +288,26 @@ public class GameCycle : MonoBehaviour
         _currentState = GameState.GameOver;
         
         // 1. Затемнение экрана с золотым оттенком
-        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(victoryColor);
-            Shaders.ScreenEffects.ScreenFader.Instance.QuickFadeToBlack(victoryFadeDuration);
+            ScreenFadeManager.Instance.SetFaderColor(victoryColor);
+            ScreenFadeManager.Instance.QuickFadeToBlack(victoryFadeDuration);
         }
         
         // 2. Мигаем золотым несколько раз
-        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
-            Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.4f, 3, victoryColor);
+            ScreenFadeManager.Instance.BlinkScreen(0.4f, 3, victoryColor);
         }
         
         // 3. Дополнительные эффекты для победы
-        if (Shaders.ScreenEffects.ScreenBlinker.Instance != null)
+        if (ScreenFadeManager.Instance != null)
         {
             // Пульсация золотым при победе
             yield return new WaitForSeconds(0.5f);
             for (int i = 0; i < 2; i++)
             {
-                Shaders.ScreenEffects.ScreenBlinker.Instance.Blink(0.5f, 1, victoryColor);
+                ScreenFadeManager.Instance.BlinkScreen(0.5f, 1, victoryColor);
                 yield return new WaitForSeconds(0.3f);
             }
         }
@@ -327,10 +328,7 @@ public class GameCycle : MonoBehaviour
     void OnDestroy()
     {
         // Сброс цвета затемнения при уничтожении
-        if (Shaders.ScreenEffects.ScreenFader.Instance != null)
-        {
-            Shaders.ScreenEffects.ScreenFader.Instance.SetFadeColor(Color.black);
-        }
+        ScreenFadeManager.StaticSetFaderColor(Color.black);
     }
     
     private void EndGame(GameResult result)
