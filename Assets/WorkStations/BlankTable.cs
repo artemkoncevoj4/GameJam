@@ -36,29 +36,29 @@ namespace InteractiveObjects
         // Размещение документа на столе
         private void OpenBlankWindow()
         {
-            Debug.Log($"Open stamp window");
+            Debug.Log($"Open blank window");
             Document _currentDocument = TaskManager.Instance.GetCurrentDocument();
             
-            StampType stampType = StampType.Одобрено; //!   Change later
-            StampDocument(_currentDocument, stampType);
+            PaperType paperType = PaperType.Бланк_формы_7_Б; //!   Change later
+
+            GetBlank(_currentDocument, paperType);
             Debug.Log($"Теперь нажмите E еще раз для штамповки документа");
             ResetTable();
         }
         
         // Штамповка документа
-        private void StampDocument(Document document, StampType stampType)
+        private void GetBlank(Document document, PaperType paperType)
         {
-            Debug.Log($"StampTable: Stamping document {document}");
+            Debug.Log($"StampTable: Blank document {document}");
             
             // Звуковой эффект
             if (_paperSound != null)
                 AudioSource.PlayClipAtPoint(_paperSound, transform.position);
             
             // Выдаем штампованный документ
-            document.IsStamped = true;
-            document.StampType = stampType;
+            document.PaperType = paperType;
 
-            Debug.Log($"Документ {document} был штампован с типом {stampType}");
+            Debug.Log($"Документ {document} был штампован с типом {paperType}");
         }
         
         private void ResetTable()
