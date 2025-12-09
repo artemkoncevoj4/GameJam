@@ -10,6 +10,8 @@ namespace InteractiveObjects
         [Header("Stamp Table Settings")]
         [SerializeField] private AudioClip _paperSound; // Звук 
         [SerializeField] private GameObject documentModel;
+        [Header("Empty")]
+        [SerializeField] private GameObject _movementEmpty;
         private Document currentDocument;
         
         public string GetInteractionHint()
@@ -38,6 +40,7 @@ namespace InteractiveObjects
         {
             Debug.Log($"Open blank window");
             Document _currentDocument = TaskManager.Instance.GetCurrentDocument();
+            ChangeEmptyPos(1);
             
             PaperType paperType = PaperType.Бланк_формы_7_Б; //!   Change later
 
@@ -63,10 +66,18 @@ namespace InteractiveObjects
         
         private void ResetTable()
         {
+            ChangeEmptyPos(-1);
             currentDocument = null;
             
             if (documentModel != null)
                 documentModel.SetActive(false);
+        }
+
+        private void ChangeEmptyPos(int direction)
+        {
+            Vector2 tempPos = _movementEmpty.transform.position;
+            tempPos.y = _movementEmpty.transform.position.y + 10 * direction;
+            _movementEmpty.transform.position = tempPos;
         }
 
     }

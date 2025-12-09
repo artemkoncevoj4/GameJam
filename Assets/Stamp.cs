@@ -1,5 +1,6 @@
 using UnityEngine;
 using TaskSystem;
+using System;
 public class Stamp2D : MonoBehaviour
 {
     [Header("Настройки штампа")]
@@ -14,6 +15,7 @@ public class Stamp2D : MonoBehaviour
     private Vector2 originalScale;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
+    public Action<StampType> OnStampPress;
     
     void Start()
     {
@@ -37,7 +39,7 @@ public class Stamp2D : MonoBehaviour
         transform.localScale = originalScale * clickScale;
         
         // Вызываем действие штампа
-        GetStamp();
+        OnStampPress?.Invoke(GetStamp());
     }
     
     void OnMouseUp()

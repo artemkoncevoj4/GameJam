@@ -169,7 +169,7 @@ namespace TaskSystem {
             TaskSystem.DocumentRequirement req = new TaskSystem.DocumentRequirement();
 
             req.requiredInkColor = (TaskSystem.InkColor)Random.Range(0, 4);
-            req.requiredSignaturePos = (TaskSystem.SignaturePosition)Random.Range(0, 4);
+            req.requiredStampPos = (TaskSystem.StampPosition)Random.Range(0, 4);
             req.requiredPaperType = (TaskSystem.PaperType)Random.Range(0, 4);
             req.requiredStampType = (TaskSystem.StampType)Random.Range(0, 5);
             req.isStamped = Random.value > 0.3f;
@@ -227,7 +227,7 @@ namespace TaskSystem {
                 _currentDocument.IsSigned = true;
                 if (_currentTask != null)
                 {
-                    _currentDocument.SignaturePos = _currentTask.Requirements.requiredSignaturePos;
+                    _currentDocument.SignaturePos = _currentTask.Requirements.requiredStampPos;
                 }
             }
             else if (stationType.Contains("stamping_desk") && itemType.Contains("stamp"))
@@ -356,7 +356,7 @@ namespace TaskSystem {
 
                 items.Add($"Чернила: {req.requiredInkColor}");
                 items.Add($"Бумага: {req.requiredPaperType}");
-                items.Add($"Подпись: {req.requiredSignaturePos}");
+                items.Add($"Подпись: {req.requiredStampPos}");
                 if (req.isStamped)
                     items.Add($"Штамп: {req.requiredStampType}");
             }

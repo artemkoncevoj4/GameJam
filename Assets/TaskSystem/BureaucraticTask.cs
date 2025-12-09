@@ -51,7 +51,7 @@ namespace TaskSystem
                         Requirements.requiredInkColor = (InkColor)Random.Range(0, 4);
                         break;
                     case 1:
-                        Requirements.requiredSignaturePos = (SignaturePosition)Random.Range(0, 4);
+                        Requirements.requiredStampPos = (StampPosition)Random.Range(0, 4);
                         break;
                     case 2:
                         Requirements.requiredPaperType = (PaperType)Random.Range(0, 4);
@@ -71,7 +71,7 @@ namespace TaskSystem
 
             bool isValid =
                 document.InkColor == Requirements.requiredInkColor &&
-                document.SignaturePos == Requirements.requiredSignaturePos &&
+                document.SignaturePos == Requirements.requiredStampPos &&
                 document.PaperType == Requirements.requiredPaperType &&
                 document.IsSigned == Requirements.isSigned && 
                 (Requirements.isStamped ? (document.IsStamped && document.StampType == Requirements.requiredStampType) : !document.IsStamped);
@@ -94,7 +94,7 @@ namespace TaskSystem
         private string GenerateDescription(DocumentRequirement req)
         {   
             return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
-                   $"Подпись: {req.requiredSignaturePos}. " +
+                   $"Подпись: {req.requiredStampPos}. " +
                    $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} ";
         }
     }
