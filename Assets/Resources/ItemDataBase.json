@@ -64,6 +64,24 @@
         "iconPath": "Icons/blank_table_icon",
         "prefabPath": "Prefabs/Furniture/blank_table",
         "isStatic": true
+        },
+        {
+        "id": 7,
+        "type": "inkwell",
+        "name": "Чернильница",
+        "description": "Разноцветная чернильница",
+        "iconPath": "Icons/inkwell_icon",
+        "prefabPath": "Prefabs/Furniture/inkwell",
+        "isStatic": true
+        },
+        {
+        "id": 8,
+        "type": "window",
+        "name": "Окно",
+        "description": "Бесконечная темнота смотрит тебе в душу",
+        "iconPath": "Icons/window_icon",
+        "prefabPath": "Prefabs/Furniture/window",
+        "isStatic": true
         }
     ]
     }
