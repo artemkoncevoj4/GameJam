@@ -25,8 +25,6 @@ namespace Bunny {
         [SerializeField] private float _peekDuration = 2f; // Длительность подглядывания
     
         [Header("Эффекты")]
-        //[SerializeField] private AudioClip _shoutSound;
-        //[SerializeField] private AudioClip _peekSound;
         [SerializeField] private GameObject _chaosEffect; // Визуальный эффект хаоса
         //private Animator _animator;
         //private AudioSource _audioSource;
@@ -248,15 +246,6 @@ namespace Bunny {
         
         private IEnumerator ShoutBehavior()
         {
-            // Анимация крика
-            //if (_animator != null)
-            //    _animator.SetTrigger("Shout");
-            
-            // Звук крика
-            //if (_audioSource != null && _shoutSound != null)
-            //    _audioSource.PlayOneShot(_shoutSound);
-        
-            // Ждём
             yield return new WaitForSeconds(_shoutDuration);
         
             // После крика - назначить новое задание или изменить текущее
@@ -274,10 +263,6 @@ namespace Bunny {
             //if (_animator != null)
             //    _animator.SetTrigger("Peek");
             
-            // Звук подглядывания
-            //if (_audioSource != null && _peekSound != null)
-            //    _audioSource.PlayOneShot(_peekSound);
-        
             // Визуальный эффект хаоса
             //if (_chaosEffect != null)
             //    _chaosEffect.SetActive(true);
@@ -459,7 +444,14 @@ namespace Bunny {
             {
                 GameCycle.Instance.AddStress(4f);
             }
-            
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayRandomChaosSound();
+            }
+            else
+            {
+                Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+            }
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
             
