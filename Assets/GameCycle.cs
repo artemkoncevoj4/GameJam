@@ -224,7 +224,7 @@ public class GameCycle : MonoBehaviour
 
     public void FailTask(float timePenalty)
     {
-        AddStress(timePenalty * 1.5f);
+        AddStress(timePenalty * 1f);
     }
 
     private void CheckIsGameOver()

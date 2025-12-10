@@ -26,9 +26,9 @@ public class Paper : MonoBehaviour
                     {
                         StampTable.stampPos = StampPosition.Левый_нижний;
                     }
-                    else
+                    else if (mousePosition.x > 420)
                     {
-                        StampTable.stampPos = StampPosition.Левая_сторона;
+                        StampTable.stampPos = StampPosition.Левый_верхний;
                     }
                 }
                 else if (mousePosition.y < 270)

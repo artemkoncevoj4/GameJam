@@ -69,12 +69,12 @@ namespace TaskSystem
         {
             if (IsCompleted || IsFailed) return false;
 
+            Debug.LogWarning($"Документ:\n{document.InkColor}\n{document.StampPos}\n{document.PaperType}\n{document.IsStamped}\n{document.IsSigned}\nТребования:\n{Requirements.requiredInkColor}\n{Requirements.requiredStampPos}\n{Requirements.requiredPaperType}\n{Requirements.isStamped}\n{Requirements.isSigned}");
+
             bool isValid =
-                document.InkColor == Requirements.requiredInkColor &&
-                document.StampPos == Requirements.requiredStampPos &&
                 document.PaperType == Requirements.requiredPaperType &&
-                document.IsSigned == Requirements.isSigned && 
-                (Requirements.isStamped ? (document.IsStamped && document.StampType == Requirements.requiredStampType) : !document.IsStamped);
+                (document.IsSigned ? (document.IsSigned && document.InkColor == Requirements.requiredInkColor) : !document.IsSigned) && 
+                (Requirements.isStamped ? (document.IsStamped && document.StampType == Requirements.requiredStampType && document.StampPos == Requirements.requiredStampPos) : !document.IsStamped);
 
             return isValid;
         }
@@ -93,9 +93,8 @@ namespace TaskSystem
 
         private string GenerateDescription(DocumentRequirement req)
         {   
-            return $"Заполнить {req.requiredPaperType} {req.requiredInkColor} чернилами. " +
-                   $"Подпись: {req.requiredStampPos}. " +
-                   $"{(req.isStamped ? $"Штамп: {req.requiredStampType}." : "Без штампа.")} ";
+            return $"Взять {req.requiredPaperType} и {(req.isSigned ? $"подписать {req.requiredInkColor} чернилами." : "Без подписи")}" +
+                   $"{(req.isStamped ? $"Штамп: {req.requiredStampType}, позиция: {req.requiredStampPos}" : "Без штампа.")} ";
         }
     }
 }

@@ -242,10 +242,10 @@ namespace Bunny {
         
         private IEnumerator ShoutBehavior()
         {
+            AssignOrModifyTask();
             yield return new WaitForSeconds(_shoutDuration);
         
             // После крика - назначить новое задание или изменить текущее
-            AssignOrModifyTask();
             yield return new WaitForSeconds(1f);
             if (GameCycle.Instance != null)
             {
@@ -444,9 +444,10 @@ namespace Bunny {
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
             
-            if (randomEffect < 0.10f) // 10% шанс - инверсия управления
+            if (randomEffect < 0.1f) // 10% шанс - инверсия управления
             {
                 Debug.Log("<color=white>Хаос: Инверсия управления на 3 секунды!</color>");
+                Player.MovementPlayer.invertControls = true;
                 // Здесь можно вызвать инверсию управления у игрока
             }
             else if (randomEffect < 0.20f) // 10% шанс - замедление времени

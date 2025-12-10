@@ -54,7 +54,7 @@ public class Blank : MonoBehaviour
     {
         Document _currDoc = TaskManager.Instance.GetCurrentDocument();
         _currDoc.PaperType = _paperType;
-        _currDoc.StampPos = StampPosition.Левая_сторона;
+        _currDoc.StampPos = StampPosition.Левый_верхний;
         _currDoc.StampType = StampType.На_рассмотрении;
         _currDoc.IsSigned = false;
         _currDoc.IsStamped = false;

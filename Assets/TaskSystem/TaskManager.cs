@@ -11,8 +11,8 @@ namespace TaskSystem {
 
         [Header("Настройки заданий")]
         [SerializeField] private float _baseTaskTime = 60f;
-        [SerializeField] private float _timeReductionPerTask = 5f;
-        [SerializeField] private float _minTaskTime = 20f;
+        [SerializeField] private float _timeReductionPerTask = 4f;
+        [SerializeField] private float _minTaskTime = 23f;
         [SerializeField] private float _urgentTaskChance = 0.2f;
 
         [Header("Предметы и станции")]
