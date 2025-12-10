@@ -25,7 +25,9 @@ public class Blank : MonoBehaviour
     {
         // Обработка клика
         Debug.Log($"Кликнут штамп: {stampName}");
-        
+        //? paper. DONE?
+        AudioManager.Instance?.PlaySpecialSoundByIndex(1);
+
         // Визуальная обратная связь
         transform.localScale = originalScale * clickScale;
         ResetBlank();

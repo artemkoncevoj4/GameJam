@@ -74,8 +74,8 @@ namespace InteractiveObjects
             doc.IsSigned = true;
             
             // Звук
-            if (_signSound != null)
-                AudioSource.PlayClipAtPoint(_signSound, transform.position);
+            //? pen done?
+            AudioManager.Instance?.PlaySpecialSoundByIndex(2);
             
             Debug.Log($"Подписано {_availableInkColors[_currentColorIndex]} чернилами");
         }
