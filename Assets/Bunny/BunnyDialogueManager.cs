@@ -12,13 +12,13 @@ namespace Bunny
     {
         private global::Bunny.Bunny _activeBunny;
         private bool _isTaskDialogue = false;
-        
+        public GameObject dialogueContainer;
         protected override void OnSentencePrinted()
         {
             base.OnSentencePrinted();
         }
         
-        public void StartBunnyDialogue(Dialogue dialogue, global::Bunny.Bunny bunny)
+         public void StartBunnyDialogue(Dialogue dialogue, global::Bunny.Bunny bunny)
         {
             Debug.Log($"<color=green>BunnyDialogueManager: StartBunnyDialogue called with bunny {bunny}</color>");
             
@@ -26,6 +26,17 @@ namespace Bunny
             
             _activeBunny = bunny;
             _isTaskDialogue = true;
+            
+            // [!] ИЗМЕНЕНО: Активируем контейнер диалога, если он задан
+            if (dialogueContainer != null)
+            {
+                dialogueContainer.SetActive(true);
+                Debug.Log("<color=green>BunnyDialogueManager: DialogueContainer activated</color>");
+            }
+            else
+            {
+                Debug.LogWarning("<color=yellow>BunnyDialogueManager: DialogueContainer not assigned!</color>");
+            }
             
             // Показываем textCloud перед началом диалога
             if (textCloud != null)
@@ -44,7 +55,7 @@ namespace Bunny
             }
         }
         
-        public override void EndDialogue()
+         public override void EndDialogue()
         {
             Debug.Log("<color=cyan>BunnyDialogueManager: EndDialogue called</color>");
             
@@ -58,6 +69,13 @@ namespace Bunny
                 TaskManager.Instance.OnTaskFailed -= OnTaskEnded;
             }
             
+            // [!] ИЗМЕНЕНО: Деактивируем контейнер диалога, если он задан
+            if (dialogueContainer != null)
+            {
+                dialogueContainer.SetActive(false);
+                Debug.Log("<color=green>BunnyDialogueManager: DialogueContainer deactivated</color>");
+            }
+            
             base.EndDialogue();
             
             if (_activeBunny != null)
@@ -68,7 +86,7 @@ namespace Bunny
         }
         
         // Обработчик завершения задания (успешного или проваленного)
-        private void OnTaskEnded(BureaucraticTask task)
+         private void OnTaskEnded(BureaucraticTask task)
         {
             Debug.Log($"<color=green>BunnyDialogueManager: Задание завершено ({task?.Title}), закрываю диалог</color>");
             
