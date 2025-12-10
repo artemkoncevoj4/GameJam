@@ -26,8 +26,6 @@ namespace Bunny {
     
         [Header("Эффекты")]
         [SerializeField] private GameObject _chaosEffect; // Визуальный эффект хаоса
-        //private Animator _animator;
-        //private AudioSource _audioSource;
         private SpriteRenderer _spriteRenderer;
         private bool _isActive = false;
         private bool _isTaskPresent = false;
@@ -67,8 +65,6 @@ namespace Bunny {
             // Подписка на события TaskManager - отложим до его инициализации
             StartCoroutine(SubscribeToTaskManagerEvents());
             
-            //_animator = GetComponent<Animator>();
-            //_audioSource = GetComponent<AudioSource>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
             
             // Инициализация эффектов с улучшенным поиском
@@ -444,14 +440,7 @@ namespace Bunny {
             {
                 GameCycle.Instance.AddStress(4f);
             }
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayRandomChaosSound();
-            }
-            else
-            {
-                Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-            }
+
             // 2. Случайная проблема для игрока
             float randomEffect = UnityEngine.Random.value;
             
@@ -473,6 +462,14 @@ namespace Bunny {
                 if (_cachedScreenShake != null)
                 {
                     _cachedScreenShake.Start_shaking();
+                    if (AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlayRandomChaosSound();
+                    }
+                    else
+                    {
+                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+                    }
                     Debug.Log("<color=green>Вызван Screen_Shake</color>");
                 }
                 else
@@ -485,6 +482,14 @@ namespace Bunny {
                 Debug.Log("<color=white>Хаос: экран потемнел!</color>");
                 // Вызываем затемнение через ScreenFader
                 StartCoroutine(QuickDarkenAndLighten());
+                    if (AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlayRandomChaosSound();
+                    }
+                    else
+                    {
+                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+                    }
             }
             else if (randomEffect < 0.65f) // 15% шанс - FireText
             {
@@ -508,6 +513,14 @@ namespace Bunny {
             else if (randomEffect < 0.80f) // 15% шанс - мигание (ScreenFliskers)
             {
                 Debug.Log("<color=white>Хаос: Мигание экрана!</color>");
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayRandomChaosSound();
+                }
+                else
+                {
+                    Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+                }
                 if (_cachedScreenFliskers != null)
                 {
                     _cachedScreenFliskers.Start_flickers();
@@ -527,6 +540,16 @@ namespace Bunny {
                     // Длительность 0.3, 2 пульса, цвет по умолчанию
                     Debug.Log("<color=green> Вызван Эффект серцебиения </color>");
                     Shaders.ScreenEffects.ScreenFadeManager.Instance.BlinkScreen(0.3f, 2, Color.red);
+                    if (AudioManager.Instance == null)
+                    {
+                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+                        return;
+                    }
+                    else
+                    {
+                        AudioManager.Instance.PlaySpecialSoundByIndex(0);
+                    }
+                    
                 }
                 else
                 {
@@ -536,7 +559,15 @@ namespace Bunny {
             else // 10% шанс - звуковой эффект
             {
                 Debug.Log("<color=white>Хаос: Случайный звуковой эффект!</color>");
-                // Воспроизвести странный звук
+                if (AudioManager.Instance == null)
+                    {
+                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
+                        return;
+                    }
+                    else
+                    {
+                        AudioManager.Instance.PlayRandomSpecialSFX();
+                    }
             }
             
             // [!] ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ С ШАНСОМ 30%
