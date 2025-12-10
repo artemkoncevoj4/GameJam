@@ -38,6 +38,7 @@ namespace Bunny {
         public bool IsActive => _isActive; // Публичный геттер для _isActive
         public event Action OnRabbitActive; // Событие, когда заяц становится активным
         // Start is called before the first frame update
+        public static bool Peeking = false;
         public int CurrentDialogueIndex 
         { 
             get => _currentDialogueIndex; 
@@ -81,6 +82,14 @@ namespace Bunny {
             if (_bunnyDialogueManager == null)
             {
                 Debug.LogError("<color=red>BunnyDialogueManager не найден в сцене!</color>");
+            }
+        }
+        void Update()
+        {
+            if (!Peeking)
+            {
+                transform.position = _appearPoint_Window.position;
+                transform.rotation = _appearPoint_Window.rotation;
             }
         }
         
@@ -187,29 +196,19 @@ namespace Bunny {
             
             // Вызываем событие активности кролика
             OnRabbitActive?.Invoke();
-            
-            SetVisible(true);
         
             bool willPeek = _isTaskPresent ? UnityEngine.Random.value < _peekChance : false;
             Debug.Log($"<color=white>Шанс peek {willPeek}</color>");
-            bool whichDoor = UnityEngine.Random.value < 0.5f;
         
             if (willPeek)
             {
-                if (whichDoor)
-                {
-                    transform.position = _appearPoint_Door1.position;
-                    transform.rotation = _appearPoint_Door1.rotation;
-                }
-                else
-                {
-                    transform.position = _appearPoint_Door2.position;
-                    transform.rotation = _appearPoint_Door2.rotation;
-                }
+                Peeking = true;
                 _currentBehavior = StartCoroutine(PeekBehavior());
             }
             else
             {
+                SetVisible(true);
+                Peeking = false;
                 transform.position = _appearPoint_Window.position;
                 transform.rotation = _appearPoint_Window.rotation;
                 _currentBehavior = StartCoroutine(ShoutBehavior());
@@ -272,7 +271,7 @@ namespace Bunny {
             // Выключить эффект
             //if (_chaosEffect != null)
             //    _chaosEffect.SetActive(false);
-
+            Peeking = false;
             // Уходим
             if (GameCycle.Instance != null)
             {

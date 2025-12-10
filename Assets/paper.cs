@@ -20,13 +20,13 @@ public class Paper : MonoBehaviour
                 {
                     StampTable.stampPos = StampPosition.Центр;
                 }
-                if (mousePosition.x < 610)
+                else if (mousePosition.x < 610)
                 {
-                    if (mousePosition.y < 270)
+                    if (mousePosition.y <= 270)
                     {
                         StampTable.stampPos = StampPosition.Левый_нижний;
                     }
-                    else if (mousePosition.x > 420)
+                    else if (mousePosition.x >= 420)
                     {
                         StampTable.stampPos = StampPosition.Левый_верхний;
                     }
