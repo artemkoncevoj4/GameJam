@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 664913078316167553}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 886.7311, y: 284.0723, z: 0}
+  m_LocalPosition: {x: 1058.7635, y: 914.7351, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -51,14 +51,23 @@ MonoBehaviour:
   spawnSound: {fileID: 0}
   clickSound: {fileID: 0}
   explosionSound: {fileID: 0}
-  bunnySpecialSound: {fileID: 0}
-  eventActivationSound: {fileID: 0}
-  criticalFailureSound: {fileID: 0}
-  glitchSfx: {fileID: 8300000, guid: 14158b4c35dcf9b4993f6e1365d6f218, type: 3}
-  horrorSting: {fileID: 8300000, guid: f49f2173ff127264d97f1de97edcd794, type: 3}
-  creepyTensionRise: {fileID: 8300000, guid: baf507ac3fc9a7d438ec3c04a4532cc9, type: 3}
-  scaryHitsRisers: {fileID: 8300000, guid: f41e5ccc95e28e54cb38fc48f6a2273b, type: 3}
-  backgroundMusicClip: {fileID: 8300000, guid: 5488385b4f9174e4c907072d9457bd65, type: 3}
+  bunnySpecialSound: {fileID: 8300000, guid: a57a86bac529a704189a54141132497e, type: 3}
+  eventActivationSound: {fileID: 8300000, guid: fe596b4a48eeddd409d2b09b7cc60a0f, type: 3}
+  criticalFailureSound: {fileID: 8300000, guid: 6c38f729f4d3c444880185c85ae0c708, type: 3}
+  achievementUnlockedSound: {fileID: 8300000, guid: 86cea5e05b3747c4a87cdadfa8e36dc9, type: 3}
+  bonusCollectedSound: {fileID: 0}
+  teleportSound: {fileID: 0}
+  doorOpenSound: {fileID: 0}
+  itemPickupSound: {fileID: 0}
+  hintSound: {fileID: 0}
+  levelCompleteSound: {fileID: 0}
+  glitchSfx: {fileID: 8300000, guid: 3eacf3a3f540295429afeebb00525859, type: 3}
+  horrorSting: {fileID: 8300000, guid: fdbc23db947508a439be95b4557575f5, type: 3}
+  creepyTensionRise: {fileID: 8300000, guid: ec5e52acfe9a1ee45a9af49424949185, type: 3}
+  scaryHitsRisers: {fileID: 8300000, guid: d9cf41533dd6a6943a336c0620ebea9e, type: 3}
+  specialRandomSFX1: {fileID: 8300000, guid: e0c8891fe4e4de8499373865a44b2703, type: 3}
+  specialRandomSFX2: {fileID: 8300000, guid: 1a4973900f2db6e4a955a80e74fc905b, type: 3}
+  backgroundMusicClip: {fileID: 8300000, guid: 5926d9601a047d740b797b8a79f4addb, type: 3}
 --- !u!82 &5376645133750665447
 AudioSource:
   m_ObjectHideFlags: 0

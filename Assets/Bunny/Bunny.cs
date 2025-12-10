@@ -383,7 +383,6 @@ namespace Bunny {
             ShowTaskDialogue();
         }
    
-        //! Новый метод для показа диалога с заданием
         private void ShowTaskDialogue()
         {
             if (_bunnyDialogueManager == null) 
@@ -543,8 +542,7 @@ namespace Bunny {
                     Shaders.ScreenEffects.ScreenFadeManager.Instance.BlinkScreen(0.3f, 2, Color.red);
                     if (AudioManager.Instance == null)
                     {
-                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-                        return;
+                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден!...</color>");
                     }
                     else
                     {
@@ -568,6 +566,7 @@ namespace Bunny {
                     else
                     {
                         AudioManager.Instance.PlayRandomSpecialSFX();
+                        Debug.Log("<color=green>! 10% шанс - звуковой эффект !</color>");
                     }
             }
             
