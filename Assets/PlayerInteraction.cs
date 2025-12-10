@@ -6,18 +6,18 @@ using InteractiveObjects;
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("Настройки")]
-    public float interactionRadius = 5f; // Радиус зоны взаимодействия
-    public KeyCode interactionKey = KeyCode.E; // Клавиша для активации
-    public Material highlightMaterial; // Материал для подсветки (опционально)
+    public float interactionRadius = 5f;
+    public KeyCode interactionKey = KeyCode.E;
+    public Material highlightMaterial;
 
     [Header("Информация (для отладки)")]
-    [SerializeField] private GameObject currentNearestObject; // Текущий ближайший объект
-    [SerializeField] private List<GameObject> objectsInRange = new List<GameObject>(); // Список объектов в зоне
+    [SerializeField] private GameObject currentNearestObject;
+    [SerializeField] private List<GameObject> objectsInRange = new List<GameObject>();
 
-    private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>(); // Кэш оригинальных материалов
-
+    private Dictionary<GameObject, Material[]> originalMaterials = new Dictionary<GameObject, Material[]>();
     private CircleCollider2D triggerCollider;
     public Action OnObjectInteraction;
+    private Workstation activeWorkstation = null; // Текущая активная станция
 
     void Awake()
     {
@@ -26,19 +26,16 @@ public class PlayerInteraction : MonoBehaviour
 
     void SetupTriggerCollider()
     {
-        // Удаляем старые коллайдеры если есть
         var oldColliders = GetComponents<Collider>();
         foreach (var col in oldColliders)
         {
             if (col.isTrigger) Destroy(col);
         }
 
-        // Создаем и настраиваем 2D коллайдер
         triggerCollider = gameObject.AddComponent<CircleCollider2D>();
         triggerCollider.isTrigger = true;
         triggerCollider.radius = interactionRadius;
         
-        // Добавляем Rigidbody2D для работы триггеров
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
@@ -50,25 +47,44 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
-        // 1. Постоянно обновляем ближайший объект
         UpdateNearestObject();
 
-        // 2. Проверяем нажатие клавиши взаимодействия
-        if (Input.GetKeyDown(interactionKey) && currentNearestObject != null)
+        if (Input.GetKeyDown(interactionKey))
         {
-            Debug.Log($"<color=white>Nearest object: {currentNearestObject}</color=red>");
-            InteractWithCurrentObject();
+            // Если есть активная станция, проверяем не нажали ли мы на неё
+            if (activeWorkstation != null && currentNearestObject != null)
+            {
+                Workstation workstation = currentNearestObject.GetComponent<Workstation>();
+                if (workstation == activeWorkstation)
+                {
+                    // Нажали на активную станцию - обрабатываем взаимодействие
+                    InteractWithCurrentObject();
+                }
+                else
+                {
+                    // Нажали на другую станцию - закрываем текущую и открываем новую
+                    if (activeWorkstation.IsActive())
+                    {
+                        activeWorkstation.ResetTable();
+                        activeWorkstation = null;
+                    }
+                    InteractWithCurrentObject();
+                }
+            }
+            else if (currentNearestObject != null)
+            {
+                // Нет активной станции, открываем новую
+                InteractWithCurrentObject();
+            }
         }
     }
 
-    // Основной метод поиска ближайшего объекта из списка
     void UpdateNearestObject()
     {
         GameObject previousNearest = currentNearestObject;
         GameObject nearest = null;
         float closestDistanceSqr = Mathf.Infinity;
 
-        // Перебираем все объекты в зоне, находим ближайший
         foreach (var obj in objectsInRange)
         {
             if (obj == null) continue;
@@ -83,13 +99,24 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
 
-        // Если ближайший объект изменился
         if (nearest != previousNearest)
         {
             // Убираем подсветку со старого объекта
             if (previousNearest != null)
             {
                 RestoreMaterials(previousNearest);
+                
+                // Если отходим от активной станции - закрываем её
+                if (activeWorkstation != null && previousNearest == activeWorkstation.gameObject)
+                {
+                    float distance = Vector2.Distance(transform.position, previousNearest.transform.position);
+                    if (distance > interactionRadius * 1.5f) // Немного больше радиуса для надежности
+                    {
+                        activeWorkstation.ResetTable();
+                        activeWorkstation = null;
+                        Debug.Log("Отходим от активной станции, закрываем окно");
+                    }
+                }
             }
 
             // Подсвечиваем новый объект
@@ -99,16 +126,9 @@ public class PlayerInteraction : MonoBehaviour
                 HighlightObject(currentNearestObject);
                 Debug.Log($"Ближайший объект: {currentNearestObject.name}");
             }
-            if (previousNearest != null)
-            {
-                Debug.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-                Workstation workstation = previousNearest.GetComponent<Workstation>();
-                workstation.ResetTable();
-            }
         }
     }
 
-    // Подсветка объекта (меняем материалы)
     void HighlightObject(GameObject obj)
     {
         if (highlightMaterial == null) return;
@@ -116,13 +136,11 @@ public class PlayerInteraction : MonoBehaviour
         Renderer renderer = obj.GetComponent<Renderer>();
         if (renderer != null)
         {
-            // Сохраняем оригинальные материалы
             if (!originalMaterials.ContainsKey(obj))
             {
                 originalMaterials[obj] = renderer.materials;
             }
 
-            // Применяем материал подсветки ко всем материалам объекта
             Material[] highlightMats = new Material[renderer.materials.Length];
             for (int i = 0; i < highlightMats.Length; i++)
             {
@@ -132,7 +150,6 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    // Восстановление оригинальных материалов
     void RestoreMaterials(GameObject obj)
     {
         if (originalMaterials.ContainsKey(obj))
@@ -146,7 +163,6 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    // Взаимодействие с текущим ближайшим объектом
     void InteractWithCurrentObject()
     {
         Debug.Log($"Взаимодействуем с: {currentNearestObject.name}");
@@ -156,11 +172,23 @@ public class PlayerInteraction : MonoBehaviour
         if (workstation != null)
         {
             workstation.UseStation(); 
+            
+            // Если станция стала активной, запоминаем её
+            if (workstation.IsActive())
+            {
+                activeWorkstation = workstation;
+            }
+            else
+            {
+                activeWorkstation = null;
+            }
+            
             OnObjectInteraction?.Invoke();
             return;
         }
     }
-     void OnTriggerEnter2D(Collider2D other)
+
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Interactive") && !objectsInRange.Contains(other.gameObject))
         {
@@ -175,6 +203,14 @@ public class PlayerInteraction : MonoBehaviour
         {
             GameObject exitedObject = other.gameObject;
             objectsInRange.Remove(exitedObject);
+
+            // Если выходим из зоны активной станции - закрываем её
+            if (activeWorkstation != null && exitedObject == activeWorkstation.gameObject)
+            {
+                activeWorkstation.ResetTable();
+                activeWorkstation = null;
+                Debug.Log("Вышли из зоны активной станции, закрыли окно");
+            }
 
             if (exitedObject == currentNearestObject)
             {
@@ -191,5 +227,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
+        
+        // Дополнительная визуализация для большей зоны закрытия
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactionRadius * 1.5f);
     }
 }

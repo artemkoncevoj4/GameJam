@@ -2,12 +2,11 @@ using UnityEngine;
 using TaskSystem;
 using System;
 using InteractiveObjects;
-public class Stamp2D : MonoBehaviour
+public class Blank : MonoBehaviour
 {
-    [Header("Настройки штампа")]
-    public string stampName = "Штамп";
-    public Color stampColor = Color.red;
-    public StampType stampType = StampType.Одобрено;
+    [Header("Настройки бланка")]
+    public string stampName = "Бланк";
+    [SerializeField] private PaperType _paperType = PaperType.Бланк_формы_7_Б;
     
     [Header("Визуальная обратная связь")]
     public float hoverScale = 1.1f;
@@ -15,19 +14,11 @@ public class Stamp2D : MonoBehaviour
     
     private Vector2 originalScale;
     private SpriteRenderer spriteRenderer;
-    private Color originalColor;
-    public static bool isStumped = false;
     void Start()
     {
         // Сохраняем оригинальные значения
         originalScale = transform.localScale;
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
-        if (spriteRenderer != null)
-        {
-            originalColor = spriteRenderer.color;
-            spriteRenderer.color = stampColor;
-        }
     }
     
     void OnMouseDown()
@@ -37,8 +28,9 @@ public class Stamp2D : MonoBehaviour
         
         // Визуальная обратная связь
         transform.localScale = originalScale * clickScale;
-        isStumped = !isStumped;
-        StampTable.stampType = GetStamp();
+        ResetBlank();
+        BlankTable.paperType = _paperType;
+        BlankTable.shouldCoroutineStop = true;
     }
     
     void OnMouseUp()
@@ -58,16 +50,19 @@ public class Stamp2D : MonoBehaviour
         transform.localScale = originalScale;
     }
     
-    // Метод, который можно переопределить для разных штампов
-    public StampType GetStamp()
+    private void ResetBlank()
     {
-        // Базовая логика - можно переопределить в дочерних классах
-        Debug.Log($"Применен штамп: {stampName}");
-        return stampType;
+        Document _currDoc = TaskManager.Instance.GetCurrentDocument();
+        _currDoc.PaperType = _paperType;
+        _currDoc.StampPos = StampPosition.Левая_сторона;
+        _currDoc.StampType = StampType.На_рассмотрении;
+        _currDoc.IsSigned = false;
+        _currDoc.IsStamped = false;
+        _currDoc.InkColor = InkColor.Зеленые;
     }
     void OnDestroy()
 {
-    StampTable.stampType = StampType.На_рассмотрении;
-    StampTable.shouldCoroutineStop = false;
+    BlankTable.paperType = PaperType.Бланк_формы_7_Б;
+    BlankTable.shouldCoroutineStop = false;
 }
 }

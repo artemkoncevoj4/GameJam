@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using TaskSystem;
@@ -7,16 +8,42 @@ namespace InteractiveObjects
 {
     public class BlankTable : Workstation
     {
-        [Header("Stamp Table Settings")]
-        [SerializeField] private AudioClip _paperSound; // Звук 
+        [Header("Blank Table Settings")]
+        [SerializeField] private AudioClip _paperSound;
         [SerializeField] private GameObject documentModel;
+        public static PaperType paperType;
         [Header("Empty")]
-        [SerializeField] private GameObject _movementEmpty;
-        private Document currentDocument;
+        public GameObject _movementEmpty;
         
+        private bool _isDocumentPresent = false;
+        private bool isCoroutineRunning = false;
+        public static bool shouldCoroutineStop = false;
+        private Document currentDocument;
+        private Coroutine currCoroutine;
+        private Vector3 originalEmptyPosition;
+        
+        void Start()
+        {
+            originalEmptyPosition = _movementEmpty.transform.localPosition;
+        }
+        
+        void Update()
+        {
+            if (TaskManager.Instance.GetCurrentDocument() != null)
+            {
+                _isDocumentPresent = true;
+                currentDocument = TaskManager.Instance.GetCurrentDocument();
+            }
+            else
+            {
+                _isDocumentPresent = false;
+                currentDocument = null;
+            }
+        }
+
         public string GetInteractionHint()
         {
-            return "Нажмите E для использования штампа";
+            return "Выберите бланк";
         }
 
         public bool CanInteract()
@@ -24,61 +51,102 @@ namespace InteractiveObjects
             return true;
         }
         
-        // Переопределяем метод UseStation для конкретной логики штампа
-        public new void UseStation()
+        // Переопределяем метод UseStation
+        public override void UseStation()
         {
             Debug.Log("BlankTable: Checking for interaction");
             
-            if (currentDocument == null) return;
+            // Если станция уже активна - закрываем её
+            if (isActive)
+            {
+                Debug.Log("Closing blank window");
+                ResetTable();
+                return;
+            }
+            
+            if (!_isDocumentPresent) 
+            {
+                Debug.LogWarning("No document present on BlankTable");
+                return;
+            }
 
             OpenBlankWindow();
-            
         }
         
-        // Размещение документа на столе
         private void OpenBlankWindow()
         {
             Debug.Log($"Open blank window");
-            Document _currentDocument = TaskManager.Instance.GetCurrentDocument();
-            ChangeEmptyPos(1);
+            isActive = true;
+            ChangeEmptyPos(-1);
             
-            PaperType paperType = PaperType.Бланк_формы_7_Б; //!   Change later
-
-            GetBlank(_currentDocument, paperType);
-            Debug.Log($"Теперь нажмите E еще раз для штамповки документа");
+            if (!isCoroutineRunning)
+            {
+                currCoroutine = StartCoroutine(GetBlank(currentDocument));
+            }
+            Debug.Log($"Нажмите E еще раз для закрытия окна");
+        }
+        
+        private IEnumerator GetBlank(Document document)
+        {
+            Debug.Log($"BlankTable: Getting blank for document {document}");
+            isCoroutineRunning = true;
+            
+            while (!shouldCoroutineStop)
+            {
+                // Если станция стала неактивной, прерываем корутину
+                if (!isActive)
+                {
+                    Debug.Log("Blank window was closed, stopping coroutine");
+                    break;
+                }
+                yield return new WaitForSeconds(0.1f);
+            }
+            
+            // Если корутина завершилась нормально (не была отменена)
+            if (shouldCoroutineStop && isActive)
+            {
+                if (_paperSound != null)
+                    AudioSource.PlayClipAtPoint(_paperSound, transform.position);
+                
+                document.PaperType = paperType;
+                Debug.Log($"Документ {document} получил тип бумаги {paperType}");
+            }
+            
             ResetTable();
         }
         
-        // Штамповка документа
-        private void GetBlank(Document document, PaperType paperType)
+        public override void ResetTable()
         {
-            Debug.Log($"StampTable: Blank document {document}");
-            
-            // Звуковой эффект
-            if (_paperSound != null)
-                AudioSource.PlayClipAtPoint(_paperSound, transform.position);
-            
-            // Выдаем штампованный документ
-            document.PaperType = paperType;
-
-            Debug.Log($"Документ {document} был штампован с типом {paperType}");
-        }
-        
-        private void ResetTable()
-        {
-            ChangeEmptyPos(-1);
-            currentDocument = null;
+            // Возвращаем empty в исходную позицию
+            _movementEmpty.transform.localPosition = originalEmptyPosition;
             
             if (documentModel != null)
                 documentModel.SetActive(false);
+            
+            if (currCoroutine != null)
+            {
+                StopCoroutine(currCoroutine);
+                currCoroutine = null;
+            }
+            
+            isCoroutineRunning = false;
+            shouldCoroutineStop = false;
+            isActive = false;
+            
+            Debug.Log("Blank table reset to original state");
         }
 
         private void ChangeEmptyPos(int direction)
         {
-            Vector2 tempPos = _movementEmpty.transform.position;
-            tempPos.y = _movementEmpty.transform.position.y + 10 * direction;
-            _movementEmpty.transform.position = tempPos;
+            _movementEmpty.transform.localPosition += new Vector3(0, 10 * direction, 0);
         }
-
+        
+        void OnDestroy()
+        {
+            if (currCoroutine != null)
+            {
+                StopCoroutine(currCoroutine);
+            }
+        }
     }
 }

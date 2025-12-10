@@ -10,13 +10,33 @@ public class Paper : MonoBehaviour
         // Сохраняем оригинальные значения
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
-    
+
     void OnMouseDown()
     {
-        if (Stamp2D.isStumped)
-        {
-            StampTable.shouldCoroutineStop = true;
-        }
+        Vector3 mousePosition = Input.mousePosition;
+            Debug.Log($"Экранные координаты: {mousePosition}");
+            if (Stamp2D.isStumped) {
+                if (mousePosition.y < 420 && mousePosition.y > 270)
+                {
+                    StampTable.stampPos = StampPosition.Центр;
+                }
+                if (mousePosition.x < 610)
+                {
+                    if (mousePosition.y < 270)
+                    {
+                        StampTable.stampPos = StampPosition.Левый_нижний;
+                    }
+                    else
+                    {
+                        StampTable.stampPos = StampPosition.Левая_сторона;
+                    }
+                }
+                else if (mousePosition.y < 270)
+                {
+                    StampTable.stampPos = StampPosition.Правый_нижний;
+                }
+                StampTable.shouldCoroutineStop = true;
+            }
     }
 
 }

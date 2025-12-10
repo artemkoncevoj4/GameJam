@@ -46,6 +46,24 @@
         "iconPath": "Icons/desk_icon",
         "prefabPath": "Prefabs/Furniture/desk",
         "isStatic": true
+        },
+        {
+        "id": 5,
+        "type": "stamp_table",
+        "name": "Стол с печатями",
+        "description": "Стол для утверждения документов",
+        "iconPath": "Icons/stamp_table_icon",
+        "prefabPath": "Prefabs/Furniture/stamp_table",
+        "isStatic": true
+        },
+        {
+        "id": 6,
+        "type": "blank_table",
+        "name": "Стол с бланками",
+        "description": "Стол с бесконечным количеством бумаги",
+        "iconPath": "Icons/blank_table_icon",
+        "prefabPath": "Prefabs/Furniture/blank_table",
+        "isStatic": true
         }
     ]
     }

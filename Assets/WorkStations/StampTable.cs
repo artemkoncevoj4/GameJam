@@ -14,31 +14,36 @@ namespace InteractiveObjects
         [SerializeField] private GameObject documentModel;
         public GameObject _movementEmpty;
         
-        private bool _isDoucmenPresent = false;
+        private bool _isDocumentPresent = false;
         private bool isCoroutineRunning = false;
         public static bool shouldCoroutineStop = false;
         private Document currentDocument;
         private Coroutine currCoroutine;
+        public static StampPosition stampPos;
+        public static StampType stampType;
+        private Vector3 originalEmptyPosition;
         
 
         void Start()
         {
-            
+            originalEmptyPosition = _movementEmpty.transform.localPosition;
         }
         void Update()
         {
             if (TaskManager.Instance.GetCurrentDocument() != null)
             {
-                _isDoucmenPresent = true;
+                _isDocumentPresent = true;
+                currentDocument = TaskManager.Instance.GetCurrentDocument();
             }
             else
             {
-                _isDoucmenPresent = false;
+                _isDocumentPresent = false;
+                currentDocument = null;
             }
         } 
         public string GetInteractionHint()
         {
-            return "Нажмите E для использования штампа";
+            return "Выберите штамп и поставьте на бумагу";
         }
 
         public bool CanInteract()
@@ -50,8 +55,20 @@ namespace InteractiveObjects
         public override void UseStation()
         {
             Debug.Log("StampTable: Checking for interaction");
-            Debug.LogWarning($" Document: {_isDoucmenPresent}");
-            if (!_isDoucmenPresent) return;
+            
+            // Если станция уже активна - закрываем её
+            if (isActive)
+            {
+                Debug.Log("Closing stamp window");
+                ResetTable();
+                return;
+            }
+            
+            if (!_isDocumentPresent) 
+            {
+                Debug.LogWarning("No document present on StampTable");
+                return;
+            }
 
             OpenStampWindow();
             
@@ -61,48 +78,58 @@ namespace InteractiveObjects
         private void OpenStampWindow()
         {
             Debug.Log($"Open stamp window");
-            Document _currentDocument = TaskManager.Instance.GetCurrentDocument();
+            isActive = true;
             ChangeEmptyPos(1);
+
             if (!isCoroutineRunning)
             {
-                currCoroutine = StartCoroutine(StampDocument(_currentDocument));
+                currCoroutine = StartCoroutine(StampDocument(currentDocument));
             }
-            Debug.Log($"Теперь нажмите E еще раз для штамповки документа");
+            Debug.Log($"Теперь нажмите E еще раз закрытия");
         }
         
         // Штамповка документа
         private IEnumerator StampDocument(Document document)
         {
-            StampPosition stampPos = StampPosition.Левая_сторона;
-            StampType stampType = StampType.На_рассмотрении;
             isCoroutineRunning = true;
             Debug.Log($"StampTable: Stamping document {document}");
             while (!shouldCoroutineStop)
             {
+                if (!isActive)
+                {
+                    Debug.Log("Stamp window was closed, stopping coroutine");
+                    break;
+                }
                 yield return new WaitForSeconds(0.1f);
             }
-            // Визуальные эффекты
-            if (_stampParticleEffect != null)
-                _stampParticleEffect.Play();
+            if (shouldCoroutineStop && isActive)
+            {
+                // Визуальные эффекты
+                if (_stampParticleEffect != null)
+                    _stampParticleEffect.Play();
+                
+                // Звуковой эффект
+                if (_stampSound != null)
+                    AudioSource.PlayClipAtPoint(_stampSound, transform.position);
+                
+                // Выдаем штампованный документ
+                if (!document.IsStamped)
+                {
+                    document.StampType = stampType;
+                    document.StampPos = stampPos;
+                    Debug.Log($"Документ {document} был штампован с типом {stampType}");
+                }
+                document.IsStamped = true;
+            }
             
-            // Звуковой эффект
-            if (_stampSound != null)
-                AudioSource.PlayClipAtPoint(_stampSound, transform.position);
-            
-            // Выдаем штампованный документ
-            document.IsStamped = true;
-            document.StampType = stampType;
-            document.StampPos = stampPos;
-            
-            Debug.Log($"Документ {document} был штампован с типом {stampType}");
             ResetTable();
         }
         
         public override void ResetTable()
         {
-            ChangeEmptyPos(-1);
+            _movementEmpty.transform.localPosition = originalEmptyPosition;
+
             Stamp2D.isStumped = false;
-            currentDocument = null;
             
             if (documentModel != null)
                 documentModel.SetActive(false);
@@ -110,9 +137,14 @@ namespace InteractiveObjects
             if (currCoroutine != null)
             {
                 StopCoroutine(currCoroutine);
+                currCoroutine = null;
             }
+            
             isCoroutineRunning = false;
             shouldCoroutineStop = false;
+            isActive = false;
+            
+            Debug.Log("Stamp table reset to original state");
         }
 
         private void ChangeEmptyPos(int direction)
@@ -122,12 +154,12 @@ namespace InteractiveObjects
 
         }
         void OnDestroy()
-    {
-        if (currCoroutine != null)
         {
-            StopCoroutine(currCoroutine);
+            if (currCoroutine != null)
+            {
+                StopCoroutine(currCoroutine);
+            }
         }
-    }
 
     }
 }
