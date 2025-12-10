@@ -9,51 +9,63 @@ public class AudioManager : MonoBehaviour
     // Ссылки на Audio Source
     [Header("Источники звука")]
     [Tooltip("Источник для коротких звуковых эффектов (PlayOneShot)")]
-    private AudioSource sfxSource; // Главный AudioSource для SFX (будем искать его)
+    private AudioSource sfxSource; // Главный AudioSource для SFX
     
     [Tooltip("Источник для фоновой музыки")]
-    public AudioSource musicSource; // Второй AudioSource для музыки (нужно назначить вручную)
+    public AudioSource musicSource; // Второй AudioSource для музыки (Назначается в Inspector)
+
     [Header("Настройки Аудио Mixer")]
     [Tooltip("Ссылка на ваш главный Audio Mixer")]
-    public AudioMixer masterMixer; // <-- НОВАЯ ПУБЛИЧНАЯ ПЕРЕМЕННАЯ
-    [Header("Звуковые Клипы (SFX)")]
+    public AudioMixer masterMixer; 
+
+    // Основные SFX (примеры)
+    [Header("1. Основные SFX (по умолчанию)")]
     public AudioClip spawnSound;
     public AudioClip clickSound;
     public AudioClip explosionSound;
 
-    // [НОВОЕ] Клипы для эффекта Хаоса
-    [Header("Звуковые Клипы (Хаос)")]
+    // НОВЫЕ ПОЛЯ ДЛЯ ОСОБЫХ ЗВУКОВ
+    [Header("2. Особые SFX (по триггеру)")]
+    [Tooltip("Специальный звук для действия зайца")]
+    public AudioClip bunnySpecialSound;
+    [Tooltip("Звук активации особого события")]
+    public AudioClip eventActivationSound;
+    [Tooltip("Звук проигрыша/критический SFX")]
+    public AudioClip criticalFailureSound;
+
+    // Клипы для эффекта Хаоса
+    [Header("3. Звуковые Клипы (Хаос)")]
     public AudioClip glitchSfx;
     public AudioClip horrorSting;
     public AudioClip creepyTensionRise;
     public AudioClip scaryHitsRisers;
-
-    // [НОВОЕ] Клип для фоновой музыки
-    [Header("Музыка")]
-    public AudioClip backgroundMusicClip; // action-music-loop-with-dark-ambient-drones.wav
-
-    // Список всех клипов Хаоса для случайного выбора
     private AudioClip[] chaosClips;
 
-   private void Awake()
+    // Клип для фоновой музыки
+    [Header("4. Музыка")]
+    public AudioClip backgroundMusicClip;
+
+  private void Awake()
     {
-        // Устанавливаем себя как единственный экземпляр
         if (Instance == null)
         {
             Instance = this;
-            // Ищем первый AudioSource (он будет для SFX)
+            
+            // Ищем все AudioSource на объекте
             AudioSource[] sources = GetComponents<AudioSource>();
             
-            // [ИСПРАВЛЕНО] Логика получения SFX Source
+            // Мы предполагаем, что на объекте есть два AudioSource:
+            // Первый - для SFX (мы делаем его приватным)
+            // Второй - для Музыки (он публичный и должен быть назначен)
+            
             if (sources.Length > 0)
             {
                 sfxSource = sources[0];
             }
             else
             {
-                // Если нет ни одного AudioSource, добавляем для SFX
+                // Если нет, создаем его
                 sfxSource = gameObject.AddComponent<AudioSource>();
-                Debug.LogWarning("<color=orange>AudioManager: AudioSource для SFX добавлен динамически.</color>");
             }
         }
         else
@@ -62,7 +74,6 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        // [ИСПРАВЛЕНО] actionMusicLoop (которого нет в полях) заменен на backgroundMusicClip
         // Инициализация массива клипов Хаоса
         chaosClips = new AudioClip[]
         {
@@ -74,31 +85,80 @@ public class AudioManager : MonoBehaviour
     }
     
     // [НОВОЕ] Start для автоматического запуска фоновой музыки
-    void Start()
+   void Start()
     {
         PlayBackgroundMusic();
     }
     
+    // =========================================================================================
+    // НОВЫЙ УНИВЕРСАЛЬНЫЙ МЕТОД ДЛЯ ОСОБЫХ SFX
+    // Вызывается извне, чтобы воспроизвести любой конкретный SFX
+    // =========================================================================================
+
+    /// <summary>
+    /// Воспроизводит один короткий звуковой клип, используя SFX-источник.
+    /// </summary>
+    /// <param name="clip">Клип, который необходимо воспроизвести.</param>
+    public void PlaySpecificSFX(AudioClip clip)
+    {
+        if (sfxSource == null)
+        {
+            Debug.LogError("<color=red>AudioManager: AudioSource для SFX не найден!</color>");
+            return;
+        }
+        
+        if (clip != null)
+        {
+            // Используем PlayOneShot для коротких звуков, чтобы не прерывать текущие SFX
+            sfxSource.PlayOneShot(clip);
+            // Debug.Log($"<color=green>AudioManager: Воспроизведен особый SFX: {clip.name}</color>");
+        }
+        else
+        {
+            Debug.LogWarning("<color=orange>AudioManager: Попытка воспроизвести пустой AudioClip.</color>");
+        }
+    }
+    
+    // =========================================================================================
+    // ДОПОЛНИТЕЛЬНЫЕ ПУБЛИЧНЫЕ МЕТОДЫ ДЛЯ ОСОБЫХ ТРИГГЕРОВ (Опционально)
+    // Эти методы вызывают универсальный метод PlaySpecificSFX с назначенным клипом
+    // =========================================================================================
+    
+    public void PlayBunnySpecialSound()
+    {
+        PlaySpecificSFX(bunnySpecialSound);
+    }
+    
+    public void PlayEventActivationSound()
+    {
+        PlaySpecificSFX(eventActivationSound);
+    }
+
+    public void PlayCriticalFailureSound()
+    {
+        PlaySpecificSFX(criticalFailureSound);
+    }
+
+    // =========================================================================================
+    // СУЩЕСТВУЮЩИЕ МЕТОДЫ (Музыка и Хаос)
+    // =========================================================================================
+    
     // Метод для запуска фоновой музыки
     public void PlayBackgroundMusic()
     {
-        if (musicSource == null)
+       if (musicSource == null)
         {
             Debug.LogError("<color=red>AudioManager: Music Source не назначен! Фоновая музыка не будет воспроизводиться.</color>");
             return;
         }
-
         if (backgroundMusicClip == null)
         {
              Debug.LogWarning("<color=orange>AudioManager: Клип фоновой музыки не назначен.</color>");
              return;
         }
-
-        // Настройка и запуск музыки на Music Source
         musicSource.clip = backgroundMusicClip;
-        musicSource.loop = true; // Убеждаемся, что музыка повторяется
+        musicSource.loop = true; 
         musicSource.Play();
-        Debug.Log("<color=green>AudioManager: Фоновая музыка запущена.</color>");
     }
 
     public void PlayRandomChaosSound()
@@ -130,10 +190,9 @@ public class AudioManager : MonoBehaviour
             }
 
             // Выбираем случайный *валидный* клип
-            AudioClip clipToPlay = null;
-            // Удостоверяемся, что выбранный клип не null
+           AudioClip clipToPlay = null;
             int attempts = 0;
-            while (clipToPlay == null && attempts < 100) // Ограничиваем попытки на всякий случай
+            while (clipToPlay == null && attempts < 100) 
             {
                 clipToPlay = chaosClips[UnityEngine.Random.Range(0, chaosClips.Length)];
                 attempts++;
@@ -141,9 +200,8 @@ public class AudioManager : MonoBehaviour
 
             if (clipToPlay != null)
             {
-                 // Воспроизведение звука один раз
-                sfxSource.PlayOneShot(clipToPlay);
-                Debug.Log($"<color=green>AudioManager: Воспроизведен звук хаоса: {clipToPlay.name}</color>");
+                 sfxSource.PlayOneShot(clipToPlay);
+                 // Debug.Log($"<color=green>AudioManager: Воспроизведен звук хаоса: {clipToPlay.name}</color>");
             }
             else
             {

@@ -41,11 +41,23 @@ public class VolumeSliderControl : MonoBehaviour
 
     public void SetVolume(float sliderValue)
     {
-        // Преобразуем значение ползунка (0 до 1) обратно в логарифмическую шкалу (-80 до 0)
-        // Чтобы избежать Log(0), используем Mathf.Log10(sliderValue)
-        float volume = Mathf.Log10(sliderValue) * 20;
+        float volume;
+        
+        // 1. Нормализация: Масштабируем значение от 0 до 0.5 к диапазону от 0 до 1
+        // (Поскольку ваш ползунок идет до 0.5, мы умножаем на 2, чтобы получить 1.0)
+        float normalizedValue = sliderValue * 2f; 
+        
+        // 2. Защита от нуля: Используем минимальное значение, чтобы избежать Log(0)
+        if (normalizedValue <= 0.0001f)
+        {
+            volume = -80f; // Выключено
+        }
+        else
+        {
+            // 3. Логарифмическое преобразование (из 0..1 в -80..0 дБ)
+            volume = Mathf.Log10(normalizedValue) * 20;
+        }
 
-        // Устанавливаем громкость в Mixer'е
         mixer.SetFloat(exposedParameterName, volume);
     }
 }
