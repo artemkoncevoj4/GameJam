@@ -11,33 +11,41 @@ public class Paper : MonoBehaviour
     }
 
     void OnMouseDown()
-    {
-        Vector3 mousePosition = Input.mousePosition;
-        Debug.Log($"Экранные координаты: {mousePosition}");
-        if (Stamp2D.isStumped) {
-            if (mousePosition.y < 420 && mousePosition.y > 270)
-            {
-                StampTable.stampPos = StampPosition.Центр;
-            }
-            else if (mousePosition.x < 610)
-            {
-                if (mousePosition.y <= 270)
-                {
-                    StampTable.stampPos = StampPosition.Левый_нижний;
-                }
-                else if (mousePosition.x >= 420)
-                {
-                    StampTable.stampPos = StampPosition.Левый_верхний;
-                }
-            }
-            else if (mousePosition.y < 270)
-            {
-                StampTable.stampPos = StampPosition.Правый_нижний;
-            }
-            StampTable.shouldCoroutineStop = true;
+{
+    // 1. Преобразуем экранные координаты в нормализованные (0.0 до 1.0)
+    // Не рекомендуется, если Paper - это игровой объект, но работает для экрана.
+    Vector3 viewportMousePosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+
+    Debug.Log($"Нормализованные координаты экрана: {viewportMousePosition}");
+
+    if (Stamp2D.isStumped) {
+        // Ваши пороговые значения теперь должны быть от 0.0 до 1.0
+        float normalizedY = viewportMousePosition.y;
+        float normalizedX = viewportMousePosition.x;
+        // Примерная адаптация ваших старых значений к Viewport (требует настройки!)
+        if (normalizedY < 0.6f && normalizedY > 0.4f) // Центр по Y
+        {
+            StampTable.stampPos = StampPosition.Центр;
         }
-        AudioManager.Instance?.PlaySoundByName("stamp");
+        else if (normalizedX < 0.5f) // Левая сторона
+        {
+            if (normalizedY <= 0.4f)
+            {
+                StampTable.stampPos = StampPosition.Левый_нижний;
+            }
+            else if (normalizedY >= 0.6f) // Это условие выглядит странно, но адаптируем
+            {
+                StampTable.stampPos = StampPosition.Левый_верхний;
+            }
+        }
+        else if (normalizedY < 0.4f) // Правый нижний
+        {
+            StampTable.stampPos = StampPosition.Правый_нижний;
+        }
+        StampTable.shouldCoroutineStop = true;
     }
+    AudioManager.Instance?.PlaySoundByName("stamp");
+}
     //TODO сделать замену спрайтов
     private void ChangeSprite(PaperType paperType)
     {
