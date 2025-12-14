@@ -347,11 +347,6 @@ namespace SampleScene {
                 Destroy(Bunny.Bunny.Instance.gameObject);
             }
             
-            if (Player.PlayerInventory.Instance != null)
-            {
-                Destroy(Player.PlayerInventory.Instance.gameObject);
-            }
-            
             //TODO Можно добавить очистку других синглтонов при необходимости
         }
         private void OnGameEnded(GameCycle.GameResult result)

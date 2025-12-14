@@ -21,11 +21,8 @@ namespace Bunny {
 
         [Header("Настройки поведения")]
         [SerializeField] private float _shoutDuration = 3f; // Сколько секунд заяц "кричит"
-        [SerializeField] private float _peekChance = 0.8f; // Шанс подглядывания вместо крика //! Изменен с 0.6f до 0.8f
+        [SerializeField] private float _peekChance = 0.8f; // Шанс подглядывания вместо крика
         [SerializeField] private float _peekDuration = 2f; // Длительность подглядывания
-    
-        [Header("Эффекты")]
-        [SerializeField] private GameObject _chaosEffect; // Визуальный эффект хаоса
         private SpriteRenderer _spriteRenderer;
         private bool _isActive = false;
         private bool _isTaskPresent = false;
@@ -254,98 +251,72 @@ namespace Bunny {
     
         private IEnumerator PeekBehavior()
         {
-            // Анимация подглядывания
-            //if (_animator != null)
-            //    _animator.SetTrigger("Peek");
-            
-            // Визуальный эффект хаоса
-            //if (_chaosEffect != null)
-            //    _chaosEffect.SetActive(true);
-        
-            // Вызвать хаос-эффект в игре
             TriggerChaosEffect();
         
-            // Ждём
             yield return new WaitForSeconds(_peekDuration);
 
-            // Выключить эффект
-            //if (_chaosEffect != null)
-            //    _chaosEffect.SetActive(false);
             Peeking = false;
-            // Уходим
-            if (GameCycle.Instance != null)
-            {
-                // GameCycle сам вызовет Leave() через событие OnRabbitLeaving
-            }
         }
     
        //* ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
     
         public string BunnyName => _shoutDialogue != null ? _shoutDialogue.name : "Заяц";
 
-        //! Далее идет более прокачанная логика порчи задания.
         private void AssignOrModifyTask()
         {
-            Debug.Log($"<color=cyan>Bunny: AssignOrModifyTask called. _bunnyDialogueManager is</color> {(_bunnyDialogueManager == null ? "<color=red>null</color>" : "<color=green>not null</color>")}");
+            //Debug.Log($"<color=cyan>Bunny: AssignOrModifyTask called. _bunnyDialogueManager is</color> {(_bunnyDialogueManager == null ? "<color=red>null</color>" : "<color=green>not null</color>")}");
             
-            // Ждем TaskManager, если он еще не инициализирован
             if (TaskManager.Instance == null) 
             {
-                Debug.LogError("<color=red>Bunny: TaskManager not found! Trying to find it...</color>");
+                //Debug.LogError("<color=red>Bunny: TaskManager not found! Trying to find it...</color>");
                 TaskManager taskManager = FindAnyObjectByType<TaskManager>();
                 if (taskManager == null)
                 {
-                    Debug.LogError("<color=red>Bunny: TaskManager not found in scene! Cannot assign task.</color>");
+                    //Debug.LogError("<color=red>Bunny: TaskManager not found in scene! Cannot assign task.</color>");
                     Leave();
                     return;
                 }
                 else
                 {
-                    Debug.Log("<color=green>Bunny: Found TaskManager in scene</color>");
+                    //Debug.Log("<color=green>Bunny: Found TaskManager in scene</color>");
                 }
             }
 
             var currentTask = TaskManager.Instance.GetCurrentTask();
-            Debug.Log($"<color=cyan>Bunny: Current task is {(currentTask == null ? "<color=red>null</color>" : currentTask.Title)}</color>");
+            //Debug.Log($"<color=cyan>Bunny: Current task is {(currentTask == null ? "<color=red>null</color>" : currentTask.Title)}</color>");
 
             if (_isTaskPresent == false)
             {
-                Debug.Log("<color=yellow>Bunny: No current task, starting new task</color>");
+                //Debug.Log("<color=yellow>Bunny: No current task, starting new task</color>");
                 TaskManager.Instance.StartNewTask();
                 _isTaskPresent = true;
                 currentTask = TaskManager.Instance.GetCurrentTask();
                 
-                // Показываем диалог только при создании нового задания
                 StartCoroutine(ShowTaskDialogueWithDelay(0.1f));
             }
             else if (!currentTask.IsCorrupted)
             {
-                // Портим задание с вероятностью 30%
-                if (UnityEngine.Random.value > 0.7f)  // 30% chance
+                if (UnityEngine.Random.value > 0.7f) 
                 {
-                    Debug.Log("<color=cyan>Bunny: Corrupting current task</color>");
+                    //Debug.Log("<color=cyan>Bunny: Corrupting current task</color>");
                     TaskManager.Instance.HandleRabbitInterference();
                     
-                    // Показываем диалог только при изменении задания
                     StartCoroutine(ShowTaskDialogueWithDelay(0.1f));
                 }
                 else
                 {
-                    Debug.Log("<color=cyan>Заяц решил не трогать задание</color>");
-                    // Не показываем диалог, просто уходим
+                    //Debug.Log("<color=cyan>Заяц решил не трогать задание</color>");
                     Leave();
                     return;
                 }
             }
             else
             {
-                Debug.Log("Задание уже изменено ранее");
-                
-                // Если задание уже изменено, с шансом 50% заяц подглядывает вместо ухода
+                //Debug.Log("Задание уже изменено ранее");
+    
                 if (UnityEngine.Random.value < 0.5f)
                 {
-                    Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц подглядывает</color>");
-                    // Прерываем текущее поведение (если есть)
+                    //Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц подглядывает</color>");
                     if (_currentBehavior != null)
                     {
                         StopCoroutine(_currentBehavior);
@@ -368,8 +339,7 @@ namespace Bunny {
                 }
                 else
                 {
-                    Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц просто уходит</color>");
-                    // Просто уходим, не показывая диалог
+                    //Debug.Log("<color=cyan>Bunny: Задание уже изменено ранее, заяц просто уходит</color>");
                     Leave();
                     return;
                 }
@@ -545,7 +515,7 @@ namespace Bunny {
                     }
                     else
                     {
-                        AudioManager.Instance.PlaySpecialSoundByIndex(0);
+                        //!AudioManager.Instance.PlaySoundByName();
                     }
                     
                 }
@@ -637,11 +607,6 @@ namespace Bunny {
             {
                 child.gameObject.SetActive(visible);
             }
-        }
-    
-        private void Hide()
-        {
-            SetVisible(false);
         }
 
         private void OnTaskCompletedHandler(TaskSystem.BureaucraticTask task)

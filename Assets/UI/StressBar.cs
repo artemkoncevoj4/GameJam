@@ -45,7 +45,7 @@ namespace UI {
             // ����� ���������
             if (_percentageText != null)
             {
-                _percentageText.text = $"{Mathf.RoundToInt(stressLevel)}%";
+                _percentageText.text = $"СТРЕСС: {Mathf.RoundToInt(stressLevel)}%";
                 _percentageText.color = GetStressColor(stressLevel / 100);
             }
 

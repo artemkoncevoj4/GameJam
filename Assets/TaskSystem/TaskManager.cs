@@ -61,11 +61,6 @@ namespace TaskSystem {
             _currentTaskTimeLimit = _baseTaskTime;
             
             StartCoroutine(FindBunnyAndSubscribe());
-            
-            if (PlayerInventory.Instance != null)
-            {
-                PlayerInventory.Instance.OnInventoryChanged += CheckTaskRequirements;
-            }
         }
 
         private IEnumerator FindBunnyAndSubscribe()
@@ -89,11 +84,6 @@ namespace TaskSystem {
             if (Bunny.Bunny.Instance != null)
             {
                 Bunny.Bunny.Instance.OnRabbitActive -= HandleRabbitInterference;
-            }
-
-            if (PlayerInventory.Instance != null)
-            {
-                PlayerInventory.Instance.OnInventoryChanged -= CheckTaskRequirements;
             }
         }
 
@@ -274,7 +264,7 @@ namespace TaskSystem {
             {
                 FailCurrentTask("<color=red>Неверно заполнен документ!</color>");
                 //? paper rip fast. DONE?
-                AudioManager.Instance?.PlaySpecialSoundByIndex(3);
+                //!AudioManager.Instance?.PlaySpecialSoundByIndex(3);
             }
         }
 

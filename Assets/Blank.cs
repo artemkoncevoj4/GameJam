@@ -7,13 +7,12 @@ public class Blank : MonoBehaviour
     [Header("Настройки бланка")]
     public string stampName = "Бланк";
     [SerializeField] private PaperType _paperType = PaperType.Бланк_формы_7_Б;
-    
-    [Header("Визуальная обратная связь")]
-    public float hoverScale = 1.1f;
-    public float clickScale = 0.95f;
+    private float hoverScale = 1.1f;
+    private float clickScale = 0.95f;
     
     private Vector2 originalScale;
     private SpriteRenderer spriteRenderer;
+    public static event Action<PaperType> OnBlankUpdate;
     void Start()
     {
         // Сохраняем оригинальные значения
@@ -26,12 +25,13 @@ public class Blank : MonoBehaviour
         // Обработка клика
         Debug.Log($"Кликнут штамп: {stampName}");
         //? paper. DONE?
-        AudioManager.Instance?.PlaySpecialSoundByIndex(1);
+        //!AudioManager.Instance?.PlaySpecialSoundByIndex(1);
 
         // Визуальная обратная связь
         transform.localScale = originalScale * clickScale;
         ResetBlank();
         BlankTable.paperType = _paperType;
+        OnBlankUpdate?.Invoke(_paperType);
         BlankTable.shouldCoroutineStop = true;
     }
     
@@ -63,8 +63,9 @@ public class Blank : MonoBehaviour
         _currDoc.InkColor = InkColor.Зеленые;
     }
     void OnDestroy()
-{
-    BlankTable.paperType = PaperType.Бланк_формы_7_Б;
-    BlankTable.shouldCoroutineStop = false;
-}
+    {
+        BlankTable.paperType = PaperType.Бланк_формы_7_Б;
+        BlankTable.shouldCoroutineStop = false;
+    }
+    
 }

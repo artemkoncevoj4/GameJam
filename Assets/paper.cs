@@ -1,10 +1,9 @@
 using UnityEngine;
 using TaskSystem;
-using System;
 using InteractiveObjects;
 public class Paper : MonoBehaviour
 {
-    private SpriteRenderer spriteRenderer;
+    [SerializeField] private SpriteRenderer spriteRenderer;
     void Start()
     {
         // Сохраняем оригинальные значения
@@ -37,6 +36,23 @@ public class Paper : MonoBehaviour
                 }
                 StampTable.shouldCoroutineStop = true;
             }
+    }
+    //TODO сделать замену спрайтов
+    private void ChangeSprite(PaperType paperType)
+    {
+        switch (paperType)
+        {
+            case PaperType.Бланк_формы_7_Б:
+                break;
+            case PaperType.Бланк_формы_АА_Я:
+                break;
+            case PaperType.Карточка:
+                break;
+            case PaperType.Пергамент:
+                break;
+            default:
+                break;
+        }
     }
 
 }
