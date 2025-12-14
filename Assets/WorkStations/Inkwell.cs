@@ -65,7 +65,7 @@ namespace InteractiveObjects
             
             // Звук
             //? pen done?
-            //!AudioManager.Instance?.PlaySpecialSoundByIndex(2);
+            AudioManager.Instance?.PlaySoundByName("pen");
             
             Debug.Log($"Подписано {_availableInkColors[_currentColorIndex]} чернилами");
         }

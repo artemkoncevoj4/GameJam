@@ -42,16 +42,16 @@ public class AudioManager : MonoBehaviour
     public AudioClip criticalFailureSound;
     
     [Tooltip("Звук достижения успеха")]
-    public AudioClip achievementUnlockedSound;
+    public AudioClip HeartbeatSound;
     
     [Tooltip("Звук получения бонуса")]
-    public AudioClip bonusCollectedSound;
+    public AudioClip PenSound;
     
     [Tooltip("Звук телепортации/перемещения")]
-    public AudioClip teleportSound;
+    public AudioClip StampSound;
     
     [Tooltip("Звук открытия двери/сундука")]
-    public AudioClip doorOpenSound;
+    public AudioClip PaperRipFastSound;
     
     [Tooltip("Звук сбора предмета")]
     public AudioClip itemPickupSound;
@@ -157,10 +157,10 @@ public class AudioManager : MonoBehaviour
             { "eventactivation", eventActivationSound },
             { "critical", criticalFailureSound },
             { "criticalfailure", criticalFailureSound },
-            { "achievement", achievementUnlockedSound },
-            { "bonus", bonusCollectedSound },
-            { "teleport", teleportSound },
-            { "door", doorOpenSound },
+            { "heartbeat", HeartbeatSound },
+            { "pen", PenSound },
+            { "stamp", StampSound },
+            { "paperripfast", PaperRipFastSound },
             { "item", itemPickupSound },
             { "hint", hintSound },
             { "levelcomplete", levelCompleteSound }
