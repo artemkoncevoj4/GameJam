@@ -1138,7 +1138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &179492034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6477,7 +6477,7 @@ MonoBehaviour:
   blinkImage: {fileID: 179492034}
   fadeDuration: 0.5
   blinkCount: 3
-  blinkColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  blinkColor: {r: 0.4811321, g: 0, b: 0, a: 1}
 --- !u!4 &1303015916
 Transform:
   m_ObjectHideFlags: 0
@@ -6625,7 +6625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1346897787
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7078,7 +7078,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1580448743
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8368,8 +8368,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _appearPoint_Window: {fileID: 2082918471}
-  _appearPoint_Door1: {fileID: 0}
-  _appearPoint_Door2: {fileID: 0}
   _shoutDuration: 3
   _peekChance: 0.6
   _peekDuration: 2

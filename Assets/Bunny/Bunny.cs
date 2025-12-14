@@ -16,8 +16,6 @@ namespace Bunny {
         private ScreenFliskers _cachedScreenFliskers;
         [Header("Позиция появления")]
         [SerializeField] private Transform _appearPoint_Window;
-        [SerializeField] private Transform _appearPoint_Door1;
-        [SerializeField] private Transform _appearPoint_Door2;// Дверь или окно, куда прибегает заяц
 
         [Header("Настройки поведения")]
         [SerializeField] private float _shoutDuration = 3f; // Сколько секунд заяц "кричит"
@@ -219,18 +217,12 @@ namespace Bunny {
         
             _isActive = false;
         
-            // Остановить текущее поведение
             if (_currentBehavior != null)
             {
                 StopCoroutine(_currentBehavior);
                 _currentBehavior = null;
             }
 
-            // Анимация ухода
-            //if (_animator != null)
-            //    _animator.SetTrigger("Leave");
-
-            // Скрыть через секунду (или после завершения анимации)
             SetVisible(false);
 
             Debug.Log("<color=cyan>Заяц ушёл</color>");
@@ -240,13 +232,6 @@ namespace Bunny {
         {
             AssignOrModifyTask();
             yield return new WaitForSeconds(_shoutDuration);
-        
-            // После крика - назначить новое задание или изменить текущее
-            yield return new WaitForSeconds(1f);
-            if (GameCycle.Instance != null)
-            {
-                // GameCycle сам вызовет Leave() через событие OnRabbitLeaving
-            }
         }
     
         private IEnumerator PeekBehavior()
@@ -575,11 +560,11 @@ namespace Bunny {
             Debug.Log("<color=green>Bunny: Запуск QuickDarkenAndLighten (успешная проверка ScreenFadeManager).</color>");
 
             // Быстрое затемнение до черного (0.8f) за 0.2 секунды
-            ScreenFadeManager.StaticFadeIn(0.2f);
-            yield return new WaitForSeconds(0.3f);
+            ScreenFadeManager.StaticFadeIn(1f);
+            yield return new WaitForSeconds(2f);
 
             // Осветление обратно (0f) за 0.2 секунды
-            ScreenFadeManager.StaticFadeOut(0.2f);
+            ScreenFadeManager.StaticFadeOut(1f);
         }
 
         private void ResetTimeScale()
