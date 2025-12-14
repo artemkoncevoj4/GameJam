@@ -13,8 +13,8 @@ public class GameCycle : MonoBehaviour
     
     [Header("Game Settings")]
     [SerializeField] private int _tasksToWin = 10;
-    [SerializeField] private float _maxRabbitSpawnInterval = 30f;
-    [SerializeField] private float _minRabbitSpawnInterval = 8f;
+    [SerializeField] private float _maxRabbitSpawnInterval = 20f;
+    [SerializeField] private float _minRabbitSpawnInterval = 5f;
     
     [Header("End Game Effects")]
     [SerializeField] private float victoryFadeDuration = 2f;

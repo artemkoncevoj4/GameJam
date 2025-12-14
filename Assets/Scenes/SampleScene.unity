@@ -352,7 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScreenShake
   shakeTransform: {fileID: 629084864}
   shiftAmount: 15
-  shakeDuration: 1
+  shakeDuration: 3
 --- !u!4 &32123052
 Transform:
   m_ObjectHideFlags: 0
@@ -6856,6 +6856,10 @@ PrefabInstance:
       propertyPath: inkVisual
       value: 
       objectReference: {fileID: 2077824156}
+    - target: {fileID: 8502862589494561173, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
+      propertyPath: _colorChangeTime
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7562,7 +7566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90207943a43a84428506f3198a5a66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 200
+  moveSpeed: 250
 --- !u!212 &1706604780
 SpriteRenderer:
   m_ObjectHideFlags: 0
