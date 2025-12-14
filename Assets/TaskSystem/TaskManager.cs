@@ -264,7 +264,7 @@ namespace TaskSystem {
             {
                 FailCurrentTask("<color=red>Неверно заполнен документ!</color>");
                 //? paper rip fast. DONE?
-                //!AudioManager.Instance?.PlaySpecialSoundByIndex(3);
+                AudioManager.Instance?.PlaySoundByName("paperripfast");
             }
         }
 

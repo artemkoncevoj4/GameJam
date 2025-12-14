@@ -515,7 +515,7 @@ namespace Bunny {
                     }
                     else
                     {
-                        //!AudioManager.Instance.PlaySoundByName();
+                        AudioManager.Instance.PlaySoundByName("heartbeat");
                     }
                     
                 }
