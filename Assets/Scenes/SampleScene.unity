@@ -352,7 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScreenShake
   shakeTransform: {fileID: 629084864}
   shiftAmount: 15
-  shakeDuration: 0.3
+  shakeDuration: 1
 --- !u!4 &32123052
 Transform:
   m_ObjectHideFlags: 0
@@ -1772,9 +1772,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 687898470}
     - target: {fileID: 4446377323988871211, guid: a6cb221df81d3774f87ef6e46b98ab6c, type: 3}
-      propertyPath: StampSound
+      propertyPath: PaperSound
       value: 
       objectReference: {fileID: 8300000, guid: fe596b4a48eeddd409d2b09b7cc60a0f, type: 3}
+    - target: {fileID: 4446377323988871211, guid: a6cb221df81d3774f87ef6e46b98ab6c, type: 3}
+      propertyPath: StampSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 1517b871eef36fc4aa780162aa33890a, type: 3}
     - target: {fileID: 4446377323988871211, guid: a6cb221df81d3774f87ef6e46b98ab6c, type: 3}
       propertyPath: musicSource
       value: 
@@ -1783,6 +1787,10 @@ PrefabInstance:
       propertyPath: HeartbeatSound
       value: 
       objectReference: {fileID: 8300000, guid: a57a86bac529a704189a54141132497e, type: 3}
+    - target: {fileID: 4446377323988871211, guid: a6cb221df81d3774f87ef6e46b98ab6c, type: 3}
+      propertyPath: itemPickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 1517b871eef36fc4aa780162aa33890a, type: 3}
     - target: {fileID: 4446377323988871211, guid: a6cb221df81d3774f87ef6e46b98ab6c, type: 3}
       propertyPath: PaperRipFastSound
       value: 
@@ -2616,7 +2624,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.47140652, w: 0.88191605}
   m_LocalPosition: {x: 2.705, y: 1.125, z: 0}
-  m_LocalScale: {x: 0.61108, y: 1.550441, z: 0.61108}
+  m_LocalScale: {x: 0.4098269, y: 1.163482, z: 0.61108}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1754196039}
@@ -3705,8 +3713,8 @@ GameObject:
   - component: {fileID: 694787586}
   - component: {fileID: 694787585}
   m_Layer: 5
-  m_Name: Image
-  m_TagString: Untagged
+  m_Name: InteractionText
+  m_TagString: InteractionText
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4102,7 +4110,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7573889553572224998, guid: 1a06a67b3bf26b343814d9ceb4a3d6ac, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3.469095
+      value: 2.3416045
+      objectReference: {fileID: 0}
+    - target: {fileID: 7573889553572224998, guid: 1a06a67b3bf26b343814d9ceb4a3d6ac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.95445997
       objectReference: {fileID: 0}
     - target: {fileID: 7573889553572224998, guid: 1a06a67b3bf26b343814d9ceb4a3d6ac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5642,37 +5654,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &1069717533
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1069717534}
-  m_Layer: 0
-  m_Name: BunnyAppearPointDoor1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1069717534
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069717533}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 279, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1076645327
 GameObject:
   m_ObjectHideFlags: 0
@@ -6717,37 +6698,6 @@ MonoBehaviour:
   flicker_black: {fileID: 1346897789}
   duration: 0.5
   num_flickers: 8
---- !u!1 &1369001288
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1369001289}
-  m_Layer: 0
-  m_Name: BunnyAppearPointDoor2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1369001289
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369001288}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1465, y: 294, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1392766499
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6762,15 +6712,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.072489
+      value: 1.2467662
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5837053
+      value: 0.95272404
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.072489
+      value: 1.2467662
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6778,7 +6728,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.86
+      value: -1.509
       objectReference: {fileID: 0}
     - target: {fileID: 7391988447410364837, guid: ad8d67714a3dbd241b35098c85395783, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7522,7 +7472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90207943a43a84428506f3198a5a66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 350
+  moveSpeed: 200
 --- !u!212 &1706604780
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7657,6 +7607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df3732605c6ad474395eb7e94c2dff57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
+  interactionText: {fileID: 694787583}
   interactionRadius: 2
   interactionKey: 101
   highlightMaterial: {fileID: 0}
@@ -7757,7 +7708,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.78, y: -3.02, z: 0}
-  m_LocalScale: {x: 0.70819896, y: 2.888918, z: 1.7865}
+  m_LocalScale: {x: 0.51345134, y: 2.7083607, z: 1.7865}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1754196039}
@@ -7927,7 +7878,7 @@ PrefabInstance:
       objectReference: {fileID: -3843535729188192998, guid: ca4a17ada3de66d46a557b125480b09e, type: 3}
     - target: {fileID: 1725753981425576966, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 1967316787269646510, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_Sprite
@@ -7935,7 +7886,7 @@ PrefabInstance:
       objectReference: {fileID: -4668086693623675817, guid: b3e1b870d2d1416458bf0962518602a3, type: 3}
     - target: {fileID: 1967316787269646510, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2118366859607605419, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_LocalScale.x
@@ -7967,7 +7918,7 @@ PrefabInstance:
       objectReference: {fileID: -8746212655164025884, guid: fc6ce45256328ef4f874189a0b8192cb, type: 3}
     - target: {fileID: 3965526417574888247, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4068363322519163429, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_Sprite
@@ -7975,7 +7926,7 @@ PrefabInstance:
       objectReference: {fileID: -25545044508815743, guid: 62820142dc4a2b74db408594f3638e6d, type: 3}
     - target: {fileID: 4068363322519163429, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4822129576331400578, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_LocalScale.x
@@ -8051,7 +8002,7 @@ PrefabInstance:
       objectReference: {fileID: -3113376514266285923, guid: 6d7a099cd5bd6ed44b7d6a17f5e1671d, type: 3}
     - target: {fileID: 5900844152011102288, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 5914062973885954170, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_Size.x
@@ -8083,7 +8034,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6574804245645443599, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6599612188483102882, guid: 2cb67bc2196260f479e250fda4a72a7d, type: 3}
       propertyPath: m_LocalScale.x
@@ -8417,8 +8368,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _appearPoint_Window: {fileID: 2082918471}
-  _appearPoint_Door1: {fileID: 1069717534}
-  _appearPoint_Door2: {fileID: 1369001289}
+  _appearPoint_Door1: {fileID: 0}
+  _appearPoint_Door2: {fileID: 0}
   _shoutDuration: 3
   _peekChance: 0.6
   _peekDuration: 2
@@ -9768,8 +9719,6 @@ SceneRoots:
   - {fileID: 1076645329}
   - {fileID: 502585614}
   - {fileID: 2082918471}
-  - {fileID: 1069717534}
-  - {fileID: 1369001289}
   - {fileID: 576512576}
   - {fileID: 1100974556}
   - {fileID: 504664146}

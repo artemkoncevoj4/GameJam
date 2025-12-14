@@ -6,6 +6,7 @@ using InteractiveObjects;
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("Настройки")]
+    public GameObject interactionText;
     public float interactionRadius = 5f;
     public KeyCode interactionKey = KeyCode.E;
     public Material highlightMaterial;
@@ -43,6 +44,12 @@ public class PlayerInteraction : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.gravityScale = 0;
         }
+    }
+
+    void Start()
+    {
+        //interactionText = GameObject.FindGameObjectWithTag("InteractionText");
+        interactionText.SetActive(false);
     }
 
     void Update()
@@ -193,6 +200,7 @@ public class PlayerInteraction : MonoBehaviour
         if (other.CompareTag("Interactive") && !objectsInRange.Contains(other.gameObject))
         {
             objectsInRange.Add(other.gameObject);
+            interactionText.SetActive(true);
             Debug.Log($"Объект вошел в зону: {other.name}");
         }
     }
@@ -201,6 +209,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (other.CompareTag("Interactive"))
         {
+            interactionText.SetActive(false);
             GameObject exitedObject = other.gameObject;
             objectsInRange.Remove(exitedObject);
 
@@ -221,15 +230,5 @@ public class PlayerInteraction : MonoBehaviour
             originalMaterials.Remove(exitedObject);
             Debug.Log($"Объект вышел из зоны: {other.name}");
         }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
-        
-        // Дополнительная визуализация для большей зоны закрытия
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRadius * 1.5f);
     }
 }

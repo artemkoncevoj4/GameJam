@@ -13,29 +13,30 @@ public class Paper : MonoBehaviour
     void OnMouseDown()
     {
         Vector3 mousePosition = Input.mousePosition;
-            Debug.Log($"Экранные координаты: {mousePosition}");
-            if (Stamp2D.isStumped) {
-                if (mousePosition.y < 420 && mousePosition.y > 270)
-                {
-                    StampTable.stampPos = StampPosition.Центр;
-                }
-                else if (mousePosition.x < 610)
-                {
-                    if (mousePosition.y <= 270)
-                    {
-                        StampTable.stampPos = StampPosition.Левый_нижний;
-                    }
-                    else if (mousePosition.x >= 420)
-                    {
-                        StampTable.stampPos = StampPosition.Левый_верхний;
-                    }
-                }
-                else if (mousePosition.y < 270)
-                {
-                    StampTable.stampPos = StampPosition.Правый_нижний;
-                }
-                StampTable.shouldCoroutineStop = true;
+        Debug.Log($"Экранные координаты: {mousePosition}");
+        if (Stamp2D.isStumped) {
+            if (mousePosition.y < 420 && mousePosition.y > 270)
+            {
+                StampTable.stampPos = StampPosition.Центр;
             }
+            else if (mousePosition.x < 610)
+            {
+                if (mousePosition.y <= 270)
+                {
+                    StampTable.stampPos = StampPosition.Левый_нижний;
+                }
+                else if (mousePosition.x >= 420)
+                {
+                    StampTable.stampPos = StampPosition.Левый_верхний;
+                }
+            }
+            else if (mousePosition.y < 270)
+            {
+                StampTable.stampPos = StampPosition.Правый_нижний;
+            }
+            StampTable.shouldCoroutineStop = true;
+        }
+        AudioManager.Instance?.PlaySoundByName("stamp");
     }
     //TODO сделать замену спрайтов
     private void ChangeSprite(PaperType paperType)

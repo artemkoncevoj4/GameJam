@@ -47,14 +47,14 @@ public class AudioManager : MonoBehaviour
     [Tooltip("Звук получения бонуса")]
     public AudioClip PenSound;
     
-    [Tooltip("Звук телепортации/перемещения")]
+    [Tooltip("Звук штампа")]
     public AudioClip StampSound;
     
     [Tooltip("Звук открытия двери/сундука")]
     public AudioClip PaperRipFastSound;
     
-    [Tooltip("Звук сбора предмета")]
-    public AudioClip itemPickupSound;
+    [Tooltip("Звук бумаги")]
+    public AudioClip PaperSound;
     
     [Tooltip("Звук подсказки/напоминания")]
     public AudioClip hintSound;
@@ -159,9 +159,9 @@ public class AudioManager : MonoBehaviour
             { "criticalfailure", criticalFailureSound },
             { "heartbeat", HeartbeatSound },
             { "pen", PenSound },
-            { "stamp", StampSound },
+            { "paper", PaperSound },
             { "paperripfast", PaperRipFastSound },
-            { "item", itemPickupSound },
+            { "stamp", StampSound },
             { "hint", hintSound },
             { "levelcomplete", levelCompleteSound }
         };

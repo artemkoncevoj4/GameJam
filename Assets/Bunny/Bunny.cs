@@ -321,18 +321,9 @@ namespace Bunny {
                     {
                         StopCoroutine(_currentBehavior);
                     }
-                    // Устанавливаем позицию для подглядывания
-                    bool whichDoor = UnityEngine.Random.value < 0.5f;
-                    if (whichDoor)
-                    {
-                        transform.position = _appearPoint_Door1.position;
-                        transform.rotation = _appearPoint_Door1.rotation;
-                    }
-                    else
-                    {
-                        transform.position = _appearPoint_Door2.position;
-                        transform.rotation = _appearPoint_Door2.rotation;
-                    }
+
+                        transform.position = _appearPoint_Window.position;
+                        transform.rotation = _appearPoint_Window.rotation;
                     // Запускаем поведение подглядывания
                     _currentBehavior = StartCoroutine(PeekBehavior());
                     return; // Не продолжаем выполнение, т.к. уже запустили PeekBehavior
