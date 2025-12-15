@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
+// ! Сгенерировно ИИ
+
 public class ScreenFader : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
@@ -100,19 +102,5 @@ public class ScreenFader : MonoBehaviour
         Color c = fadeImage.color;
         c.a = alpha;
         fadeImage.color = c;
-    }
-
-    void Update()
-    {
-        // Нажать F для Fade_out (осветления)
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Fade_out();
-        }
-        // Нажать G для Fade_in (затемнения)
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            Fade_in();
-        }
     }
 }

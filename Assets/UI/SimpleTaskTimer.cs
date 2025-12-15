@@ -3,14 +3,19 @@ using TMPro;
 using System.Collections;
 using TaskSystem;
 
+// * Жаркова Т.В.
+
 namespace UI
 {
     public class SimpleTaskTimer : MonoBehaviour
-    {
+    {   
+        /// <summary>
+        /// Поля для отображения таймера, 
+        /// а также флаги для управления состоянием таймера.
+        /// </summary>
         [SerializeField] private TextMeshProUGUI _timerText;
-        
-        private bool _isSubscribed = false;
-        private bool _hasActiveTask = false;
+        private bool _isSubscribed = false; // * Булево для отслеживания подписки на события
+        private bool _hasActiveTask = false; // * Булево для отслеживания активной задачи
 
         void Start()
         {
@@ -64,12 +69,14 @@ namespace UI
             // Отписываемся только если объект деактивируется
             UnsubscribeFromEvents();
         }
-
         void OnDestroy()
         {
             UnsubscribeFromEvents();
         }
-
+        /// <summary>
+        /// Подписывается на события TaskManager, чтобы отслеживать новые задания, 
+        /// обновления таймера и завершение заданий.
+        /// </summary>
         private void SubscribeToEvents()
         {
             if (_isSubscribed || TaskManager.Instance == null) return;
@@ -86,7 +93,9 @@ namespace UI
             // Проверяем, нет ли уже активного задания
             CheckForExistingTask();
         }
-
+        /// <summary>
+        /// Отписывается от событий TaskManager, чтобы прекратить отслеживание заданий.
+        /// </summary>
         private void UnsubscribeFromEvents()
         {
             if (!_isSubscribed || TaskManager.Instance == null) return;
@@ -100,7 +109,9 @@ namespace UI
             _isSubscribed = false;
             Debug.Log("<color=yellow>SimpleTaskTimer: Отписался от событий</color>");
         }
-
+        /// <summary>
+        /// Проверяет наличие активного задания при запуске таймера.
+        /// </summary>
         private void CheckForExistingTask()
         {
             if (TaskManager.Instance == null) return;
@@ -117,7 +128,11 @@ namespace UI
                 }
             }
         }
-
+        /// <summary>
+        /// Обработчик события нового задания. Устанавливает флаг активного задания 
+        /// и отображает время оставшегося времени на задание.
+        /// </summary>
+        /// <param name="task">Объект нового задания.</param>
         private void OnNewTask(BureaucraticTask task)
         {
             _hasActiveTask = true;
@@ -129,7 +144,11 @@ namespace UI
                 Debug.Log($"<color=green>SimpleTaskTimer: Новое задание, время: {task.TimeRemaining}</color>");
             }
         }
-
+        /// <summary>
+        /// Обработчик события обновления таймера. Обновляет отображение времени 
+        /// оставшегося на задание.
+        /// </summary>
+        /// <param name="timeRemaining">Время оставшегося на задание.</param>
         private void OnTimerUpdated(float timeRemaining)
         {
             if (_hasActiveTask && _timerText != null)
@@ -137,7 +156,11 @@ namespace UI
                 UpdateTimerDisplay(timeRemaining);
             }
         }
-
+        /// <summary>
+        /// Обработчик события завершения задания. Сбрасывает флаг активного задания 
+        /// и скрывает отображение таймера.
+        /// </summary>
+        /// <param name="task">Объект завершенного задания.</param>
         private void OnTaskCompleted(BureaucraticTask task)
         {
             _hasActiveTask = false;
@@ -148,7 +171,11 @@ namespace UI
                 Debug.Log("<color=cyan>SimpleTaskTimer: Задание завершено, скрываю таймер</color>");
             }
         }
-
+        /// <summary>
+        /// Обработчик события провала задания. Сбрасывает флаг активного задания 
+        /// и скрывает отображение таймера.
+        /// </summary>
+        /// <param name="task">Объект проваленного задания.</param>
         private void OnTaskFailed(BureaucraticTask task)
         {
             _hasActiveTask = false;
@@ -159,7 +186,11 @@ namespace UI
                 Debug.Log("<color=cyan>SimpleTaskTimer: Задание провалено, скрываю таймер</color>");
             }
         }
-
+        /// <summary>
+        /// Обработчик события изменения задания. При изменении задания просто обновляем 
+        /// время (оно могло поменяться).
+        /// </summary>
+        /// <param name="task">Объект измененного задания.</param>
         private void OnTaskCorrupted(BureaucraticTask task)
         {
             // При изменении задания просто обновляем время (оно могло поменяться)
@@ -169,7 +200,10 @@ namespace UI
                 Debug.Log("<color=cyan>SimpleTaskTimer: Задание изменено, обновляю таймер</color>");
             }
         }
-
+        /// <summary>
+        /// Обновляет отображение времени оставшегося на задание.
+        /// </summary>
+        /// <param name="timeRemaining">Время оставшегося на задание.</param>
         private void UpdateTimerDisplay(float timeRemaining)
         {
             if (_timerText == null) return;
@@ -197,7 +231,9 @@ namespace UI
                 StopPulseEffect();
             }
         }
-
+        /// <summary>
+        /// Пульсация отображения таймера при критическом времени.
+        /// </summary>
         private Coroutine _pulseCoroutine;
         
         private void StartPulseEffect()
@@ -233,7 +269,9 @@ namespace UI
             }
         }
 
-        // Метод для ручного обновления (например, при паузе/возобновлении)
+        /// <summary>
+        /// Метод для ручного обновления (например, при паузе/возобновлении)
+        /// </summary>
         public void ForceUpdate()
         {
             if (TaskManager.Instance != null && _hasActiveTask)

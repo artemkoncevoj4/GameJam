@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+
+// ! Сгенерировано ИИ
 public class ScreenFliskers : MonoBehaviour
 {
     [SerializeField] private Image flicker_black;
@@ -41,10 +43,8 @@ public class ScreenFliskers : MonoBehaviour
         for (int i = 0; i < num_flickers; i++)
         {
             SetAlpha(1f);
-            // !!! ИЗМЕНИТЬ НА WaitForSecondsRealtime !!!
             yield return new WaitForSecondsRealtime(interval * 0.8f); 
             SetAlpha(0f);
-            // !!! ИЗМЕНИТЬ НА WaitForSecondsRealtime !!!
             yield return new WaitForSecondsRealtime(interval * 0.8f);
         }
     }
@@ -54,14 +54,5 @@ public class ScreenFliskers : MonoBehaviour
         Color c = flicker_black.color;
         c.a = alpha;
         flicker_black.color = c;
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            Start_flickers();
-        }
-
     }
 }

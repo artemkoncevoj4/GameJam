@@ -1,9 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+
+// * Жаркова Т.В.
+
+/// <summary>
+/// Отображает индикатор стресс-уровня в виде полосы заполнения и текста.
+/// Также управляет анимациями в зависимости от уровня стресса.
+/// </summary>
 namespace UI {
     public class SimpleStressIndicator : MonoBehaviour
     {
+
         [SerializeField] private Image _fillBar;
         [SerializeField] private TextMeshProUGUI _percentageText;
         [SerializeField] private Animator _animator;
@@ -32,24 +40,18 @@ namespace UI {
         {
             _currentStress = stressLevel;
 
-            // ���������� �����
             if (_fillBar != null)
             {
                 _fillBar.fillAmount = stressLevel / 100;
-
-                // ��������� �����
                 Color stressColor = GetStressColor(stressLevel / 100);
                 _fillBar.color = stressColor;
             }
 
-            // ����� ���������
             if (_percentageText != null)
             {
                 _percentageText.text = $"СТРЕСС: {Mathf.RoundToInt(stressLevel)}%";
                 _percentageText.color = GetStressColor(stressLevel / 100);
             }
-
-            // ��������
             UpdateAnimations(stressLevel);
         }
 
@@ -67,7 +69,7 @@ namespace UI {
             _animator.SetBool(StressHigh, stress > 0.5f);
             _animator.SetBool(StressCritical, stress > 0.8f);
 
-            // �������� ��� �������� �������� �������� (��� ���� ������, ��� �������)
+            // Устанавливаем уровень стресс-уровня в аниматор для плавной анимации
             _animator.SetFloat("StressLevel", stress);
         }
     }

@@ -6,28 +6,47 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
+// * Идрисов Д.С
+
 namespace Bunny 
 {
+    /// <summary>
+    /// Специализированный менеджер диалогов для "Кроликов" (Bunny).
+    /// Расширяет базовый <see cref="DialogueManager"/> для управления диалогами, связанными с заданиями.
+    /// Автоматически использует таймер, отслеживает активного кролика и закрывает диалог при завершении задания.
+    /// </summary>
     public class BunnyDialogueManager : DialogueManager.DialogueManager
     {
         private global::Bunny.Bunny _activeBunny;
         private bool _isTaskDialogue = false;
+        
+        /// <summary>
+        /// Главный объект-контейнер для UI диалога, который должен быть активирован/деактивирован вместе с диалогом.
+        /// </summary>
         public GameObject dialogueContainer;
+        
         protected override void OnSentencePrinted()
         {
             base.OnSentencePrinted();
         }
         
+        /// <summary>
+        /// Начинает диалог, специфичный для кролика и связанный с заданием.
+        /// Устанавливает использование таймера и подписывается на события завершения заданий.
+        /// </summary>
+        /// <param name="dialogue">Объект диалога для отображения.</param>
+        /// <param name="bunny">Объект <see cref="global::Bunny.Bunny"/>, который инициирует диалог.</param>
          public void StartBunnyDialogue(Dialogue dialogue, global::Bunny.Bunny bunny)
         {
             Debug.Log($"<color=green>BunnyDialogueManager: StartBunnyDialogue called with bunny {bunny}</color>");
             
+            // Настройка: всегда используем таймер для диалогов кролика
             UseTimerForClosing = true;
             
             _activeBunny = bunny;
             _isTaskDialogue = true;
             
-            // [!] ИЗМЕНЕНО: Активируем контейнер диалога, если он задан
+            // Активируем контейнер диалога
             if (dialogueContainer != null)
             {
                 dialogueContainer.SetActive(true);
@@ -55,6 +74,10 @@ namespace Bunny
             }
         }
         
+        /// <summary>
+        /// Завершает диалог, отписывается от событий заданий и деактивирует контейнер.
+        /// Обновляет индекс диалога у активного кролика.
+        /// </summary>
          public override void EndDialogue()
         {
             Debug.Log("<color=cyan>BunnyDialogueManager: EndDialogue called</color>");
@@ -69,7 +92,7 @@ namespace Bunny
                 TaskManager.Instance.OnTaskFailed -= OnTaskEnded;
             }
             
-            // [!] ИЗМЕНЕНО: Деактивируем контейнер диалога, если он задан
+            // Деактивируем контейнер диалога
             if (dialogueContainer != null)
             {
                 dialogueContainer.SetActive(false);
@@ -78,6 +101,7 @@ namespace Bunny
             
             base.EndDialogue();
             
+            // Увеличиваем индекс диалога у кролика
             if (_activeBunny != null)
             {
                 _activeBunny.CurrentDialogueIndex++;
@@ -85,19 +109,25 @@ namespace Bunny
             }
         }
         
-        // Обработчик завершения задания (успешного или проваленного)
+        /// <summary>
+        /// Обработчик, вызываемый при завершении (успешном или провальном) бюрократического задания.
+        /// Закрывает диалог, если он активен.
+        /// </summary>
+        /// <param name="task">Задание, которое было завершено.</param>
          private void OnTaskEnded(BureaucraticTask task)
         {
             Debug.Log($"<color=green>BunnyDialogueManager: Задание завершено ({task?.Title}), закрываю диалог</color>");
             
-            // Если диалог еще активен, закрываем его
             if (IsDialogueActive())
             {
                 EndDialogue();
             }
         }
         
-        // Переопределяем CheckDialogueEnd для увеличения времени отображения
+        /// <summary>
+        /// Переопределяет логику проверки завершения диалога для управления таймером.
+        /// Увеличивает время отображения последнего предложения до 10 секунд.
+        /// </summary>
         protected override void CheckDialogueEnd()
         {
             if (continueText == null) return;
@@ -141,6 +171,11 @@ namespace Bunny
         }
         
         // ========== ЛОГИКА ОТОБРАЖЕНИЯ ЗАДАНИЯ ==========
+        
+        /// <summary>
+        /// Формирует короткое описание текущего задания, включая статус срочности, повреждения и оставшееся время.
+        /// </summary>
+        /// <returns>Строка с форматированным описанием текущего задания.</returns>
         public string GetTaskDescriptionForDialogue()
         {
             Debug.Log("<color=cyan>BunnyDialogueManager: GetTaskDescriptionForDialogue called</color>");
@@ -154,25 +189,21 @@ namespace Bunny
             var currentTask = TaskManager.Instance.GetCurrentTask();
             Debug.Log($"<color=cyan>BunnyDialogueManager: Current task is {(currentTask == null ? "null" : currentTask.Title)}</color>");
             
-            // Если задания нет, создаем новое
             if (currentTask == null)
             {
                 Debug.Log("<color=red>BunnyDialogueManager: No current task, returning default message</color>");
                 return "Новое задание создается...";
             }
             
-            // [!] ИЗМЕНЕНО: Используем стандартное форматирование времени
             string timeText = FormatTime(currentTask.TimeRemaining);
             
              string shortDescription = $"{currentTask.Description} Время: {timeText}.";
     
-            // Добавляем срочность, если задание срочное
             if (currentTask.IsUrgent)
             {
                 shortDescription = $"СРОЧНО! {shortDescription}";
             }
             
-            // Добавляем пометку об изменении, если задание испорчено
             if (currentTask.IsCorrupted)
             {
                 shortDescription = $"ВНИМАНИЕ: Заяц изменил требования! {shortDescription}";
@@ -182,7 +213,11 @@ namespace Bunny
             return shortDescription;
         }
 
-        // [!] НОВОЕ: Восстановлен метод форматирования времени (нужен для GetTaskDescriptionForDialogue)
+        /// <summary>
+        /// Преобразует время в секундах в формат "MM:SS".
+        /// </summary>
+        /// <param name="timeInSeconds">Время в секундах.</param>
+        /// <returns>Отформатированная строка времени.</returns>
         private string FormatTime(float timeInSeconds)
         {
             if (timeInSeconds <= 0) return "00:00";
@@ -192,9 +227,12 @@ namespace Bunny
             return $"{minutes:00}:{seconds:00}";
         }
         
-        // Метод форматирования времени
-        
-        // Метод для Bunny.cs для получения диалога с заданием
+        /// <summary>
+        /// Создает объект <see cref="Dialogue"/> для кролика, содержащий сгенерированную фразу, 
+        /// включающую дразнилки, сюжетные элементы и описание задания.
+        /// </summary>
+        /// <param name="bunny">Кролик, для которого создается диалог.</param>
+        /// <returns>Новый объект <see cref="Dialogue"/>.</returns>
         public Dialogue GetTaskDialogueForBunny(global::Bunny.Bunny bunny)
         {
             Debug.Log($"<color=green>BunnyDialogueManager: GetTaskDialogueForBunny called for {bunny.BunnyName}</color>");
@@ -206,7 +244,6 @@ namespace Bunny
                 taskDescription = "Новое задание будет готово через мгновение...";
             }
             
-            // [!] НОВОЕ: Получаем дразнящую фразу со сюжетными элементами
             string tauntingPhrase = GetEnhancedTauntingPhrase();
             
             Dialogue dialogue = new Dialogue
@@ -219,7 +256,11 @@ namespace Bunny
             return dialogue;
         }
 
-        // [!] НОВЫЙ МЕТОД: Улучшенная генерация дразнящих фраз
+        /// <summary>
+        /// Генерирует длинную, составную дразнящую фразу для диалога. 
+        /// Включает случайное количество сюжетных фраз и дразнилок, а также описание текущего задания.
+        /// </summary>
+        /// <returns>Полная составная фраза.</returns>
         private string GetEnhancedTauntingPhrase()
         {
             if (TaskManager.Instance == null)
@@ -234,16 +275,10 @@ namespace Bunny
                 return "Хм, кажется, у тебя нет задания... Как скучно!";
             }
             
-            // [!] НОВОЕ: Рандомное количество предложений от 4 до 7
             int sentenceCount = UnityEngine.Random.Range(4, 8);
-            
-            // [!] НОВОЕ: Определяем, будет ли сюжетная фраза (40% шанс)
             bool includeStory = UnityEngine.Random.value < 0.4f;
+            bool includeTask = true; 
             
-            // [!] НОВОЕ: Определяем, будет ли задание (всегда должно быть, но может быть в конце)
-            bool includeTask = true;
-            
-            // [!] НОВОЕ: Собираем список всех возможных частей фразы
             List<string> phraseParts = new List<string>();
             
             // 1. Сначала сюжетная фраза (если есть)
@@ -265,16 +300,22 @@ namespace Bunny
                 phraseParts.Add(GetTaskDescriptionForDialogue());
             }
             
-            // [!] НОВОЕ: Ограничиваем общее количество предложений и соединяем
+            // Ограничиваем общее количество предложений и соединяем
             phraseParts = LimitPhraseParts(phraseParts, sentenceCount);
             
-            // [!] НОВОЕ: Добавляем эмодзи в конец
+            // Добавляем эмодзи в конец
             string finalPhrase = string.Join(" ", phraseParts) + " " + GetRandomEmoji(currentTask);
             
             return finalPhrase;
         }
 
-        // [!] НОВЫЙ МЕТОД: Ограничение количества частей фразы
+        /// <summary>
+        /// Ограничивает количество частей фразы заданным максимальным числом, 
+        /// сохраняя первую часть (сюжет) и последнюю часть (задание).
+        /// </summary>
+        /// <param name="parts">Список частей фразы.</param>
+        /// <param name="maxSentences">Максимально допустимое количество предложений.</param>
+        /// <returns>Ограниченный список частей фразы.</returns>
         private List<string> LimitPhraseParts(List<string> parts, int maxSentences)
         {
             if (parts.Count <= maxSentences) return parts;
@@ -306,7 +347,10 @@ namespace Bunny
             return result;
         }
 
-        // [!] НОВЫЙ МЕТОД: Случайные сюжетные фразы
+        /// <summary>
+        /// Выбирает случайную сюжетную фразу из предопределенного списка.
+        /// </summary>
+        /// <returns>Сюжетная фраза.</returns>
         private string GetRandomStoryPhrase()
         {
             string[] storyPhrases = {
@@ -335,7 +379,10 @@ namespace Bunny
             return storyPhrases[UnityEngine.Random.Range(0, storyPhrases.Length)];
         }
 
-        // [!] НОВЫЙ МЕТОД: Больше шаблонов дразнилок
+        /// <summary>
+        /// Выбирает случайный шаблон дразнящей фразы из предопределенного списка.
+        /// </summary>
+        /// <returns>Дразнящая фраза.</returns>
         private string GetRandomTauntTemplate()
         {
             string[] tauntTemplates = {
@@ -364,22 +411,30 @@ namespace Bunny
             return tauntTemplates[UnityEngine.Random.Range(0, tauntTemplates.Length)];
         }
 
-        // [!] ОБНОВЛЕННЫЙ МЕТОД: Эмодзи с большим выбором
+        /// <summary>
+        /// Выбирает случайный символ в зависимости от статуса задания (испорчено, срочно или нормально).
+        /// Заменены сложные символы Юникода, которые могут не отображаться в шрифтах SDF, на более простые аналоги.
+        /// </summary>
+        /// <param name="task">Текущее бюрократическое задание.</param>
+        /// <returns>Случайный эмодзи или его текстовый аналог.</returns>
         private string GetRandomEmoji(BureaucraticTask task)
         {
             if (task.IsCorrupted)
             {
-                string[] corruptedEmojis = { "😈", "👹", "😏", "🦹", "🤪", "😼", "🃏", "🎭", "🤡", "👻" };
+                // Заменены: 👹, 🦹, 🃏, 🎭, 🤡, 👻
+                string[] corruptedEmojis = { "😈", "(Зло)", "😏", "(Жулик)", "🤪", "😼", "(Карта)", "(Маска)", "(Клоун)", "(Бу)" };
                 return corruptedEmojis[UnityEngine.Random.Range(0, corruptedEmojis.Length)];
             }
             else if (task.IsUrgent)
             {
-                string[] urgentEmojis = { "🔥", "⏰", "🚨", "💥", "⚡", "💢", "‼️", "⚠️", "🎯", "💣" };
+                // Заменены: 🎯, 💣
+                string[] urgentEmojis = { "🔥", "⏰", "🚨", "💥", "⚡", "💢", "‼️", "⚠️", "(!)", "(БОМБА)" };
                 return urgentEmojis[UnityEngine.Random.Range(0, urgentEmojis.Length)];
             }
             else
             {
-                string[] normalEmojis = { "🐰", "😄", "🤭", "😉", "🃏", "🎭", "🤡", "👀", "🎩", "✨", "🌟", "💫", "🎪", "🎲" };
+                // Заменены: 🃏, 🎭, 🤡, 🎩, 💫, 🎪, 🎲
+                string[] normalEmojis = { "🐰", "😄", "🤭", "😉", "(Карта)", "(Маска)", "(Клоун)", "👀", "(Шляпа)", "✨", "🌟", "(О)", "(Цирк)", "(Кубик)" };
                 return normalEmojis[UnityEngine.Random.Range(0, normalEmojis.Length)];
             }
         }

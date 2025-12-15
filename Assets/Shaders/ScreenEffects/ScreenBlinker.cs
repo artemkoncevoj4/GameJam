@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
+// ! Сгенерировано ИИ
+
 public class ScreenBlinker : MonoBehaviour
 {
     [SerializeField] private Image blinkImage;
@@ -117,14 +119,5 @@ public class ScreenBlinker : MonoBehaviour
         Color c = blinkImage.color;
         c.a = alpha;
         blinkImage.color = c;
-    }
-
-    void Update()
-    {
-        
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            BlinkScreen();
-        }
     }
 }

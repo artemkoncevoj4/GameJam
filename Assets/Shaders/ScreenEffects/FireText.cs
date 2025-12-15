@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
+// ! Сгенерировано ИИ
+
 namespace Shaders.ScreenEffects {
     public class Fire_text : MonoBehaviour
     {
@@ -11,17 +13,14 @@ namespace Shaders.ScreenEffects {
         [SerializeField] private float duration = 10f;
         
         private Coroutine currentGlitchCoroutine;
-        // Удалено: private string originalText; // Исходный текст больше не хранится здесь
         private bool isEffectActive = false;
 
         void Start()
         {
-            // Здесь Awake или Start не нужен для originalText, так как он будет передаваться
         }
         
         void OnEnable()
         {
-            // Убрана логика сохранения originalText при активации
         }
 
         /// <summary>
@@ -59,16 +58,13 @@ namespace Shaders.ScreenEffects {
             
             while (Time.time < endTime)
             {
-                // Показываем глитч-текст
                 textComponent.text = glitchText;
                 yield return new WaitForSeconds(blinkSpeed);
                 
-                // Возвращаем оригинальный текст
                 textComponent.text = originalText;
                 yield return new WaitForSeconds(blinkSpeed);
             }
             
-            // Гарантированно возвращаем оригинальный текст
             textComponent.text = originalText;
             currentGlitchCoroutine = null;
             isEffectActive = false;
@@ -102,16 +98,11 @@ namespace Shaders.ScreenEffects {
                 currentGlitchCoroutine = null;
             }
             
-            // Поскольку исходный текст здесь не хранится, этот метод должен быть вызван 
-            // с нужным текстом, или мы должны быть уверены, что текст будет восстановлен извне.
-            // На данный момент просто сбрасываем состояние.
-            
             isEffectActive = false;
             
             // Не отключаем объект здесь, так как текст еще может быть глитчевым. 
             // Восстановление текста должно произойти в вызывающем скрипте.
         }
-        
         public bool IsEffectActive => isEffectActive;
     }
 }

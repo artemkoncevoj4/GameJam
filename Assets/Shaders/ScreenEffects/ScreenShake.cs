@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+// ! Сгенерировано ИИ
+
 public class ScreenShake : MonoBehaviour
 {
     [SerializeField] private RectTransform shakeTransform;
@@ -55,14 +57,5 @@ public class ScreenShake : MonoBehaviour
         
         // Возвращаем в исходную позицию
         shakeTransform.anchoredPosition = originalPos;
-    }
-
-    void Update()
-    {
-        // Нажать S для Shake
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            Start_shaking();
-        }
     }
 }
