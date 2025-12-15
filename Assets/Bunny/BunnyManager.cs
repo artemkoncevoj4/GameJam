@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 namespace Bunny {
+    // Муштаков А.Ю.
+
     /// <summary>
     /// Управляет жизненным циклом и поведением основного объекта кролика (<see cref="Bunny"/>) 
     /// в ответ на события игрового цикла (<c>GameCycle</c>).
@@ -63,16 +63,5 @@ namespace Bunny {
             }
         }
         
-        /// <summary>
-        /// Тестовый метод для ручного вызова появления кролика. 
-        /// Может быть использован для отладки или с UI кнопками.
-        /// </summary>
-        public void TestSpawnBunny()
-        {
-            if (_bunny != null)
-            {
-                _bunny.Appear();
-            }
-        }
     }
 }

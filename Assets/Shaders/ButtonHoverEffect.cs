@@ -31,10 +31,6 @@ public class ButtonHoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerEx
     /// Обычно это яркий цвет с низким альфа-каналом.
     /// </summary>
     [SerializeField] private Color _glowColor = new Color(1f, 1f, 1f, 0.3f);
-    /// <summary>
-    /// Скорость плавного затухания свечения (в данный момент не используется в Update, но оставлено для возможного будущего расширения).
-    /// </summary>
-    [SerializeField] private float _glowSpeed = 10f;
     
     [Header("Shadow Effect")]
     /// <summary>

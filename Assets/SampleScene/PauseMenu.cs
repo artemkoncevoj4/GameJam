@@ -1,38 +1,52 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System.Collections;
-using Shaders.ScreenEffects;
-using UI;
+
 namespace SampleScene {
+    // Муштаков А.Ю.
+
+    //! Фактически сгенерировано ИИ с небольшими изменениями
+
+    /// <summary>
+    /// Управляет меню паузы, поражения и победы в игре.
+    /// Реализует паттерн Singleton для глобального доступа к функционалу меню.
+    /// Обрабатывает отображение различных состояний игры (пауза, поражение, победа) и предоставляет навигацию по меню.
+    /// </summary>
     public class PauseMenu : MonoBehaviour
     {
+        /// <summary>
+        /// Статический экземпляр для реализации паттерна Singleton.
+        /// Обеспечивает глобальный доступ к меню паузы из любых систем игры.
+        /// </summary>
         public static PauseMenu Instance { get; private set; }
 
         [Header("UI элементы")]
-        [SerializeField] private GameObject _pauseMenuPanel;
-        [SerializeField] private Button _resumeButton;
-        [SerializeField] private Button _mainMenuButton;
-        [SerializeField] private Button _restartButton;
+        [SerializeField] private GameObject _pauseMenuPanel; // Основная панель меню паузы
+        [SerializeField] private Button _resumeButton; // Кнопка возобновления игры
+        [SerializeField] private Button _mainMenuButton; // Кнопка перехода в главное меню
+        [SerializeField] private Button _restartButton; // Кнопка перезапуска уровня
         
         [Header("Тексты")]
-        [SerializeField] private GameObject _pauseText; // Текст "PAUSE"
-        [SerializeField] private GameObject _gameOverText; // Текст "GAME OVER"
-        [SerializeField] private GameObject _victoryText; // Текст "VICTORY"
+        [SerializeField] private GameObject _pauseText; // Текстовый элемент "PAUSE"
+        [SerializeField] private GameObject _gameOverText; // Текстовый элемент "GAME OVER"
+        [SerializeField] private GameObject _victoryText; // Текстовый элемент "VICTORY"
 
         [Header("Настройки")]
-        [SerializeField] private string _mainMenuSceneName = "MainMenu";
-        [SerializeField] private float _pauseBackgroundAlpha = 0.7f;
+        [SerializeField] private float _pauseBackgroundAlpha = 0.7f; // Прозрачность фона при паузе
         [SerializeField] private float _gameOverBackgroundAlpha = 0.85f; // Более темный фон для Game Over
-        private string _currentSceneName;
-        private bool _isPaused = false;
-        private bool _isGameOver = false;
-        private Image _backgroundImage;
+        
+        private string _currentSceneName; // Имя текущей сцены для перезагрузки
+        private bool _isPaused = false; // Флаг состояния паузы
+        private bool _isGameOver = false; // Флаг завершения игры (поражение или победа)
+        private Image _backgroundImage; // Компонент Image для фона меню
         
         [Header("Анимация")]
-        [SerializeField] private PauseMenuAnimator _menuAnimator;
-        [SerializeField] private float _animationDelay = 0.3f;
+        [SerializeField] private PauseMenuAnimator _menuAnimator; // Компонент анимации меню
+        [SerializeField] private float _animationDelay = 0.3f; // Задержка перед отключением панели после анимации
         
+        /// <summary>
+        /// Инициализирует Singleton и компоненты меню при создании объекта.
+        /// </summary>
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -47,10 +61,13 @@ namespace SampleScene {
             
             _currentSceneName = SceneManager.GetActiveScene().name;
             
-            // Скрываем все тексты по умолчанию
+            // Скрываем все текстовые элементы по умолчанию
             HideAllTexts();
         }
 
+        /// <summary>
+        /// Настраивает пользовательский интерфейс и подписывается на события при запуске.
+        /// </summary>
         void Start()
         {
             InitializeUI();
@@ -59,6 +76,9 @@ namespace SampleScene {
                 _pauseMenuPanel.SetActive(false);
         }
 
+        /// <summary>
+        /// Инициализирует компоненты пользовательского интерфейса, включая фон меню.
+        /// </summary>
         private void InitializeUI()
         {
             if (_pauseMenuPanel != null)
@@ -69,7 +89,6 @@ namespace SampleScene {
                     _backgroundImage = _pauseMenuPanel.AddComponent<Image>();
                 }
                 
-                // Начальный цвет - стандартный черный с прозрачностью
                 Color bgColor = Color.black;
                 bgColor.a = _pauseBackgroundAlpha;
                 _backgroundImage.color = bgColor;
@@ -77,6 +96,9 @@ namespace SampleScene {
             }
         }
 
+        /// <summary>
+        /// Скрывает все текстовые элементы меню (пауза, поражение, победа).
+        /// </summary>
         private void HideAllTexts()
         {
             if (_pauseText != null) 
@@ -96,6 +118,9 @@ namespace SampleScene {
             }
         }
 
+        /// <summary>
+        /// Настраивает обработчики событий для кнопок меню и подписывается на события GameCycle.
+        /// </summary>
         private void SetupEventListeners()
         {
             if (_resumeButton != null)
@@ -113,6 +138,11 @@ namespace SampleScene {
             }
         }
 
+        /// <summary>
+        /// Переключает состояние паузы игры.
+        /// Если игра на паузе - возобновляет, если активна - ставит на паузу.
+        /// Не действует, если игра завершена (поражение/победа).
+        /// </summary>
         public void TogglePause()
         {
             if (_isGameOver) return;
@@ -127,25 +157,25 @@ namespace SampleScene {
             }
         }
 
+        /// <summary>
+        /// Ставит игру на паузу и отображает меню паузы.
+        /// Приостанавливает игровое время, отключает ввод и показывает соответствующий интерфейс.
+        /// </summary>
         public void PauseGame()
         {
             if (_isPaused || _isGameOver) return;
             
             Debug.Log("<color=cyan>PauseGame called</color>");
             _isPaused = true;
-            // Ставим игру на паузу в GameCycle
             if (GameCycle.Instance != null)
                 GameCycle.Instance.PauseGame();
             
-            // Выключаем инпуты
             if (InputHandler.Instance != null)
                 InputHandler.Instance.DisableInput();
             
-            // Включаем панель
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(true);
             
-            // Показываем только текст паузы
             HideAllTexts();
             if (_pauseText != null) 
             {
@@ -153,12 +183,10 @@ namespace SampleScene {
                 Debug.Log("Pause text shown");
             }
             
-            // Все кнопки активны
             if (_resumeButton != null) _resumeButton.gameObject.SetActive(true);
             if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
             if (_restartButton != null) _restartButton.gameObject.SetActive(true);
             
-            // Стандартный цвет фона
             if (_backgroundImage != null)
             {
                 Color bgColor = Color.black;
@@ -166,13 +194,13 @@ namespace SampleScene {
                 _backgroundImage.color = bgColor;
             }
             
-            // Запускаем анимацию
             if (_menuAnimator != null)
                 _menuAnimator.ShowMenu();
         }
 
         /// <summary>
-        /// Показать меню поражения
+        /// Отображает меню поражения.
+        /// Вызывается при достижении предела стресса или других условиях поражения.
         /// </summary>
         public void ShowGameOverMenu()
         {
@@ -180,11 +208,9 @@ namespace SampleScene {
             _isPaused = true;
             _isGameOver = true;
             
-            // Включаем панель
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(true);
             
-            // Показываем только текст Game Over
             HideAllTexts();
             if (_gameOverText != null) 
             {
@@ -192,25 +218,23 @@ namespace SampleScene {
                 Debug.Log("Game Over text shown");
             }
             
-            // Скрываем кнопку Resume, остальные активны
             if (_resumeButton != null) _resumeButton.gameObject.SetActive(false);
             if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
             if (_restartButton != null) _restartButton.gameObject.SetActive(true);
-            
-            // Темный фон с красным оттенком
+
             if (_backgroundImage != null)
             {
                 Color bgColor = new Color(0.15f, 0f, 0f, _gameOverBackgroundAlpha);
                 _backgroundImage.color = bgColor;
             }
-            
-            // Запускаем анимацию
+
             if (_menuAnimator != null)
                 _menuAnimator.ShowMenu();
         }
 
         /// <summary>
-        /// Показать меню победы
+        /// Отображает меню победы.
+        /// Вызывается при успешном выполнении всех заданий.
         /// </summary>
         public void ShowVictoryMenu()
         {
@@ -227,13 +251,11 @@ namespace SampleScene {
                 _victoryText.SetActive(true);
                 Debug.Log("Victory text shown");
             }
-            
-            // Скрываем кнопку Resume, остальные активны
+
             if (_resumeButton != null) _resumeButton.gameObject.SetActive(false);
             if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
             if (_restartButton != null) _restartButton.gameObject.SetActive(true);
-            
-            // Темный фон с золотым оттенком
+
             if (_backgroundImage != null)
             {
                 Color bgColor = new Color(0.2f, 0.15f, 0f, _gameOverBackgroundAlpha);
@@ -244,26 +266,26 @@ namespace SampleScene {
                 _menuAnimator.ShowMenu();
         }
 
+        /// <summary>
+        /// Возобновляет игру после паузы.
+        /// Снимает паузу, восстанавливает ввод и скрывает меню с анимацией.
+        /// </summary>
         public void ResumeGame()
         {
             if (!_isPaused || _isGameOver) return;
             
             Debug.Log("<color=cyan>ResumeGame called</color>");
-            
-            // Снимаем флаг паузы
+
             _isPaused = false;
-            
-            // Снимаем паузу в GameCycle
+
             if (GameCycle.Instance != null)
                 GameCycle.Instance.ResumeGame();
-            
-            // Восстанавливаем инпуты
+
             if (InputHandler.Instance != null)
                 InputHandler.Instance.EnableInput();
-            
-            // Скрываем текст паузы ПЕРЕД анимацией
+
             HideAllTexts();
-            // Скрываем меню с анимацией
+
             if (_menuAnimator != null)
             {
                 _menuAnimator.HideMenu();
@@ -275,30 +297,29 @@ namespace SampleScene {
             }
         }
         
+        /// <summary>
+        /// Полностью отключает панель меню после завершения анимации скрытия.
+        /// Сбрасывает состояние меню и восстанавливает стандартные настройки.
+        /// </summary>
         private void DisableMenuPanel()
         {
             Debug.Log("<color=cyan>DisableMenuPanel called</color>");
-            
-            // Скрываем панель
+
             if (_pauseMenuPanel != null)
                 _pauseMenuPanel.SetActive(false);
-            
-            // Гарантируем, что все тексты скрыты
+
             HideAllTexts();
-            
-            // Сбрасываем флаги
+
             _isPaused = false;
             _isGameOver = false;
-            
-            // Восстанавливаем стандартный цвет фона
+
             if (_backgroundImage != null)
             {
                 Color bgColor = Color.black;
                 bgColor.a = _pauseBackgroundAlpha;
                 _backgroundImage.color = bgColor;
             }
-            
-            // Восстанавливаем все кнопки
+
             if (_resumeButton != null) _resumeButton.gameObject.SetActive(true);
             if (_mainMenuButton != null) _mainMenuButton.gameObject.SetActive(true);
             if (_restartButton != null) _restartButton.gameObject.SetActive(true);
@@ -306,32 +327,42 @@ namespace SampleScene {
             Debug.Log("Menu panel disabled and reset");
         }
         
+        /// <summary>
+        /// Перезапускает текущий уровень.
+        /// Восстанавливает нормальную скорость времени и загружает текущую сцену заново.
+        /// Выполняет очистку синглтонов для предотвращения конфликтов состояния.
+        /// </summary>
         private void RestartGame()
         {
             Debug.Log("<color=yellow>=== RESTART GAME ===</color>");
-            
-            // Восстанавливаем нормальную скорость времени
+
             Time.timeScale = 1f;
             CleanUpBeforeSceneChange();
-            // Загружаем текущую сцену заново
             SceneManager.LoadScene(_currentSceneName);
         }
 
+        /// <summary>
+        /// Переходит в главное меню игры.
+        /// Восстанавливает нормальную скорость времени и загружает сцену главного меню.
+        /// Выполняет очистку синглтонов для предотвращения конфликтов состояния.
+        /// </summary>
         private void GoToMainMenu()
         {
             Debug.Log("<color=yellow>Going to main menu...</color>");
-            
-            // Восстанавливаем нормальную скорость времени
+
             Time.timeScale = 1f;
             CleanUpBeforeSceneChange();
-            // Загружаем главное меню
             SceneManager.LoadScene(0);
         }
+        
+        /// <summary>
+        /// Очищает синглтоны и другие объекты, сохраняющие состояние, перед сменой сцены.
+        /// Предотвращает конфликты и утечки памяти при перезагрузке сцены или переходе в меню.
+        /// </summary>
         private void CleanUpBeforeSceneChange()
         {
             Debug.Log("Cleaning up before scene change...");
-            
-            // Уничтожаем синглтоны, которые могут сохранять состояние
+
             if (TaskSystem.TaskManager.Instance != null)
             {
                 Destroy(TaskSystem.TaskManager.Instance.gameObject);
@@ -349,12 +380,21 @@ namespace SampleScene {
             
             //TODO Можно добавить очистку других синглтонов при необходимости
         }
+        
+        /// <summary>
+        /// Обработчик события завершения игры.
+        /// Вызывается при победе, поражении или выходе из игры.
+        /// </summary>
+        /// <param name="result">Результат завершения игры.</param>
         private void OnGameEnded(GameCycle.GameResult result)
         {
             Debug.Log($"<color=cyan>PauseMenu: Game ended with result {result}</color>");
-            // Не обрабатываем здесь, так как мы показываем меню в GameCycle
         }
 
+        /// <summary>
+        /// Отписывается от событий и восстанавливает нормальную скорость времени при уничтожении объекта.
+        /// Предотвращает утечки памяти и некорректное поведение при перезагрузке сцен.
+        /// </summary>
         void OnDestroy()
         {
             if (_resumeButton != null)
@@ -370,12 +410,18 @@ namespace SampleScene {
             {
                 GameCycle.Instance.OnGameEnded -= OnGameEnded;
             }
-            
-            // Восстанавливаем нормальное время при уничтожении
+
             Time.timeScale = 1f;
         }
 
+        /// <summary>
+        /// Возвращает флаг, указывающий, находится ли игра в состоянии паузы.
+        /// </summary>
         public bool IsPaused => _isPaused;
+        
+        /// <summary>
+        /// Возвращает флаг, указывающий, завершена ли игра (поражение или победа).
+        /// </summary>
         public bool IsGameOver => _isGameOver;
     }
 }
