@@ -2641,11 +2641,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c396c571f3da964459f34ef3f25d524c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _itemDataId: 6
-  _item_placement: {fileID: 0}
-  _visualObject: {fileID: 0}
-  _paperSound: {fileID: 0}
-  documentModel: {fileID: 0}
   _movementEmpty: {fileID: 828919957}
 --- !u!212 &538486503
 SpriteRenderer:
@@ -4026,7 +4021,7 @@ GameObject:
   - component: {fileID: 751706353}
   - component: {fileID: 751706354}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Here
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7820,12 +7815,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90c24c9e74100a94fa4af9884b163249, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  _itemDataId: 5
-  _item_placement: {fileID: 0}
-  _visualObject: {fileID: 0}
-  _stampParticleEffect: {fileID: 0}
-  _stampSound: {fileID: 0}
-  documentModel: {fileID: 0}
   _movementEmpty: {fileID: 990763394}
 --- !u!212 &1757639908
 SpriteRenderer:

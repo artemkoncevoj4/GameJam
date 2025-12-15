@@ -6,14 +6,26 @@ using TaskSystem;
 using Shaders.ScreenEffects;
 
 namespace Bunny {
+    // Муштаков А.Ю. (логика появления и влияния)
+    // Идрисов Д.С. (диалоги и хаос эффекты)
+
+    /// <summary>
+    /// Управляет поведением кролика в игре, включая его появление, влияние на задания и создание хаотических эффектов.
+    /// Реализует паттерн Singleton для глобального доступа и координации поведения кролика.
+    /// </summary>
     public class Bunny : MonoBehaviour
     {
-        public static Bunny Instance { get; private set; } // Добавил статический экземпляр
+        /// <summary>
+        /// Статический экземпляр для реализации паттерна Singleton.
+        /// </summary>
+        public static Bunny Instance { get; private set; }
+        
         [Header("Эффекты экрана")]
         // Кэшированные ссылки на эффекты
         private ScreenShake _cachedScreenShake;
         private Fire_text _cachedFireText;
         private ScreenFliskers _cachedScreenFliskers;
+        
         [Header("Позиция появления")]
         [SerializeField] private Transform _appearPoint_Window;
 
@@ -26,21 +38,31 @@ namespace Bunny {
         private bool _isTaskPresent = false;
         private Coroutine _currentBehavior;
         private BunnyDialogueManager _bunnyDialogueManager;
+        
         [Header("Диалоги Зайца")] 
         [SerializeField] private Dialogue _shoutDialogue;
-        // [НОВОЕ] Хранит индекс следующего предложения для _shoutDialogue
+        
+        // Хранит индекс следующего предложения для _shoutDialogue
         private int _currentDialogueIndex = 0;
         public bool IsActive => _isActive; // Публичный геттер для _isActive
         public event Action OnRabbitActive; // Событие, когда заяц становится активным
-        // Start is called before the first frame update
+        
+        /// <summary>
+        /// Статический флаг, указывающий, находится ли кролик в режиме подглядывания.
+        /// </summary>
         public static bool Peeking = false;
+        
         public int CurrentDialogueIndex 
         { 
             get => _currentDialogueIndex; 
             set => _currentDialogueIndex = value; 
         }
 
-        void Awake() // Единственность
+        /// <summary>
+        /// Инициализирует Singleton при создании объекта.
+        /// Уничтожает дублирующиеся экземпляры для обеспечения единственности.
+        /// </summary>
+        void Awake()
         {
             if (Instance != null && Instance != this)
             {
@@ -50,6 +72,10 @@ namespace Bunny {
             Instance = this;
         }
 
+        /// <summary>
+        /// Инициализирует компоненты, подписывается на события и настраивает начальное состояние.
+        /// Выполняет отложенную подписку на события TaskManager для гарантии его инициализации.
+        /// </summary>
         void Start()
         {
             if (GameCycle.Instance != null)
@@ -58,12 +84,10 @@ namespace Bunny {
                 GameCycle.Instance.OnRabbitLeaving += Leave;
             }
             
-            // Подписка на события TaskManager - отложим до его инициализации
             StartCoroutine(SubscribeToTaskManagerEvents());
             
             _spriteRenderer = GetComponent<SpriteRenderer>();
             
-            // Инициализация эффектов с улучшенным поиском
             InitializeShaderObjects();
             
             SetVisible(false);
@@ -79,7 +103,12 @@ namespace Bunny {
                 Debug.LogError("<color=red>BunnyDialogueManager не найден в сцене!</color>");
             }
         }
-        void Update()
+        
+        /// <summary>
+        /// Обновляет позицию кролика каждый кадр, если он не находится в режиме подглядывания.
+        /// Подглядывание может изменять позицию кролика независимо от базовой точки появления.
+        /// </summary>
+        void Update() // TODO Сделать peeking появление глаз
         {
             if (!Peeking)
             {
@@ -88,14 +117,17 @@ namespace Bunny {
             }
         }
         
+        //! Метод сгенерирован ИИ
+        /// <summary>
+        /// Инициализирует ссылки на шейдерные эффекты с использованием многоуровневого поиска.
+        /// Выполняет поиск существующих объектов, а при их отсутствии создает новые.
+        /// </summary>
         private void InitializeShaderObjects()
         {
-            // Используем FindAnyObjectByType для поиска активных объектов
             _cachedScreenShake = FindAnyObjectByType<ScreenShake>();
             _cachedFireText = FindAnyObjectByType<Fire_text>();
             _cachedScreenFliskers = FindAnyObjectByType<ScreenFliskers>();
             
-            // Если не найдены через FindAnyObjectByType, ищем среди всех объектов
             if (_cachedScreenShake == null)
                 _cachedScreenShake = FindObjectInScene<ScreenShake>();
             if (_cachedFireText == null)
@@ -103,12 +135,10 @@ namespace Bunny {
             if (_cachedScreenFliskers == null)
                 _cachedScreenFliskers = FindObjectInScene<ScreenFliskers>();
             
-            // Логирование найденных эффектов
             Debug.Log($"Screen_Shake: {(_cachedScreenShake != null ? $"<color=green>найден ({_cachedScreenShake.gameObject.name})</color>" : "<color=red>не найден</color>")}");
             Debug.Log($"Fire_text: {(_cachedFireText != null ? $"<color=green>найден ({_cachedFireText.gameObject.name})</color>" : "<color=red>не найден</color>")}");
             Debug.Log($"ScreenFliskers: {(_cachedScreenFliskers != null ? $"<color=green>найден ({_cachedScreenFliskers.gameObject.name})</color>" : "<color=red>не найден</color>")}");
             
-            // Если все еще не найдены, создаем их динамически
             if (_cachedScreenShake == null)
             {
                 Debug.LogWarning("<color=yellow>Screen_Shake не найден, создаю новый объект...</color>");
@@ -126,6 +156,12 @@ namespace Bunny {
             }
         }
         
+        //! Метод сгенерирован ИИ
+        /// <summary>
+        /// Ищет объекты заданного типа во всех объектах сцены, включая неактивные.
+        /// </summary>
+        /// <typeparam name="T">Тип MonoBehaviour для поиска.</typeparam>
+        /// <returns>Найденный объект или null.</returns>
         private T FindObjectInScene<T>() where T : MonoBehaviour
         {
             // Ищем среди всех объектов, включая неактивные
@@ -147,6 +183,14 @@ namespace Bunny {
             return null;
         }
         
+        //! Метод сгенерирован ИИ
+        /// <summary>
+        /// Создает новый игровой объект с указанным компонентом.
+        /// Используется как резервный механизм при отсутствии необходимых эффектов в сцене.
+        /// </summary>
+        /// <typeparam name="T">Тип компонента для добавления.</typeparam>
+        /// <param name="name">Имя создаваемого объекта.</param>
+        /// <returns>Созданный компонент.</returns>
         private T CreateShaderObject<T>(string name) where T : MonoBehaviour
         {
             GameObject obj = new GameObject(name);
@@ -154,6 +198,10 @@ namespace Bunny {
             return obj.AddComponent<T>();
         }
         
+        /// <summary>
+        /// Ожидает инициализацию TaskManager и подписывается на его события.
+        /// Гарантирует, что подписка произойдет только после полной инициализации TaskManager.
+        /// </summary>
         private IEnumerator SubscribeToTaskManagerEvents()
         {
             // Ждем пока TaskManager инициализируется
@@ -168,6 +216,10 @@ namespace Bunny {
             TaskManager.Instance.OnTaskFailed += OnTaskCompletedHandler;
         }
 
+        /// <summary>
+        /// Отписывается от всех событий при уничтожении объекта.
+        /// Предотвращает утечки памяти и попытки обращения к уничтоженным объектам.
+        /// </summary>
         void OnDestroy()
         {
             if (GameCycle.Instance != null)
@@ -183,6 +235,10 @@ namespace Bunny {
             }
         }
 
+        /// <summary>
+        /// Запускает появление кролика с выбором поведения (подглядывание или крик).
+        /// Вызывает событие OnRabbitActive для уведомления других систем о появлении кролика.
+        /// </summary>
         public void Appear()    
         {
             if (_isActive) return;
@@ -211,6 +267,10 @@ namespace Bunny {
             Debug.Log($"<color=cyan>Заяц появился! Поведение: {(willPeek ? "Подглядывает" : "Кричит")}</color>");
         }
     
+        /// <summary>
+        /// Завершает активность кролика и скрывает его.
+        /// Останавливает текущее поведение и сбрасывает состояние.
+        /// </summary>
         public void Leave()
         {
             if (!_isActive) return;
@@ -228,12 +288,18 @@ namespace Bunny {
             Debug.Log("<color=cyan>Заяц ушёл</color>");
         }
         
+        /// <summary>
+        /// Поведение крика кролика: назначает или изменяет задание.
+        /// </summary>
         private IEnumerator ShoutBehavior()
         {
             AssignOrModifyTask();
             yield return new WaitForSeconds(_shoutDuration);
         }
     
+        /// <summary>
+        /// Поведение подглядывания кролика: вызывает хаотические эффекты.
+        /// </summary>
         private IEnumerator PeekBehavior()
         {
             TriggerChaosEffect();
@@ -243,10 +309,16 @@ namespace Bunny {
             Peeking = false;
         }
     
-       //* ========== ВОЗДЕЙСТВИЕ НА ИГРУ ==========
     
+        /// <summary>
+        /// Возвращает имя кролика из диалога или стандартное значение.
+        /// </summary>
         public string BunnyName => _shoutDialogue != null ? _shoutDialogue.name : "Заяц";
 
+        /// <summary>
+        /// Назначает новое задание или искажает существующее в зависимости от состояния игры.
+        /// Определяет поведение кролика относительно системы заданий.
+        /// </summary>
         private void AssignOrModifyTask()
         {
             //Debug.Log($"<color=cyan>Bunny: AssignOrModifyTask called. _bunnyDialogueManager is</color> {(_bunnyDialogueManager == null ? "<color=red>null</color>" : "<color=green>not null</color>")}");
@@ -268,7 +340,6 @@ namespace Bunny {
             }
 
             var currentTask = TaskManager.Instance.GetCurrentTask();
-            //Debug.Log($"<color=cyan>Bunny: Current task is {(currentTask == null ? "<color=red>null</color>" : currentTask.Title)}</color>");
 
             if (_isTaskPresent == false)
             {
@@ -290,6 +361,7 @@ namespace Bunny {
                 }
                 else
                 {
+                    TriggerChaosEffect();
                     //Debug.Log("<color=cyan>Заяц решил не трогать задание</color>");
                     Leave();
                     return;
@@ -322,12 +394,19 @@ namespace Bunny {
             }
         }
         
+        /// <summary>
+        /// Откладывает показ диалога задания на указанное время.
+        /// </summary>
+        /// <param name="delay">Задержка в секундах.</param>
         private IEnumerator ShowTaskDialogueWithDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
             ShowTaskDialogue();
         }
    
+        /// <summary>
+        /// Отображает диалог с заданием через BunnyDialogueManager.
+        /// </summary>
         private void ShowTaskDialogue()
         {
             if (_bunnyDialogueManager == null) 
@@ -337,7 +416,6 @@ namespace Bunny {
                 return;
             }
             
-            // Получаем диалог с заданием
             Dialogue taskDialogue = _bunnyDialogueManager.GetTaskDialogueForBunny(this);
             
             if (taskDialogue == null || taskDialogue.sentences.Length == 0)
@@ -349,13 +427,15 @@ namespace Bunny {
             
             Debug.Log($"<color=green>Bunny: Starting dialogue with: {taskDialogue.sentences[0]}</color>");
             
-            // [!] ОБНОВЛЯЕМ UI перед показом диалога
             UpdateTaskUI();
             
-            // Запускаем диалог
             _bunnyDialogueManager.StartBunnyDialogue(taskDialogue, this);
         }
         
+        /// <summary>
+        /// Обновляет пользовательский интерфейс задания.
+        /// Использует TaskUIManager при его наличии или выполняет ручное обновление.
+        /// </summary>
         private void UpdateTaskUI()
         {
             // Используем TaskUIManager если есть, иначе ищем компоненты вручную
@@ -365,7 +445,6 @@ namespace Bunny {
             }
             else
             {
-                // Ручное обновление
                 UI.SimpleTaskTimer timer = FindAnyObjectByType<UI.SimpleTaskTimer>();
                 UI.TaskDisplayUI display = FindAnyObjectByType<UI.TaskDisplayUI>();
                 
@@ -374,30 +453,35 @@ namespace Bunny {
             }
         }
         
+        /// <summary>
+        /// Запускает случайный хаотический эффект при подглядывании кролика.
+        /// Включает визуальные эффекты, изменение игровой механики и звуковое сопровождение.
+        /// </summary>
         private void TriggerChaosEffect()
         {
-            // Подглядывание вызывает хаос
             Debug.Log("<color=yellow>Заяц подглядывает и вызывает хаос!</color>");
             
-            // 1. Увеличить стресс
             if (GameCycle.Instance != null)
             {
-                GameCycle.Instance.AddStress(4f);
+                GameCycle.Instance.AddStress(3f);
             }
 
-            // 2. Случайная проблема для игрока
+            if (AudioManager.Instance == null)
+            {
+                Debug.LogError("AudioManager не найден");
+                return;
+            }
+
             float randomEffect = UnityEngine.Random.value;
             
             if (randomEffect < 0.1f) // 10% шанс - инверсия управления
             {
                 Debug.Log("<color=white>Хаос: Инверсия управления на 3 секунды!</color>");
                 Player.MovementPlayer.invertControls = true;
-                // Здесь можно вызвать инверсию управления у игрока
             }
             else if (randomEffect < 0.20f) // 10% шанс - замедление времени
             {
                 Debug.Log("<color=white>Хаос: Временное замедление!</color>");
-                // Замедлить время на 2 секунды
                 Time.timeScale = 0.5f;
                 Invoke(nameof(ResetTimeScale), 2f);
             }
@@ -407,15 +491,7 @@ namespace Bunny {
                 if (_cachedScreenShake != null)
                 {
                     _cachedScreenShake.Start_shaking();
-                    if (AudioManager.Instance != null)
-                    {
-                        AudioManager.Instance.PlayRandomChaosSound();
-                    }
-                    else
-                    {
-                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-                    }
-                    Debug.Log("<color=green>Вызван Screen_Shake</color>");
+                    AudioManager.Instance.PlayRandomChaosSound();
                 }
                 else
                 {
@@ -425,47 +501,29 @@ namespace Bunny {
             else if (randomEffect < 0.50f) // 15% шанс - затемнение экрана
             {
                 Debug.Log("<color=white>Хаос: экран потемнел!</color>");
-                // Вызываем затемнение через ScreenFader
                 StartCoroutine(QuickDarkenAndLighten());
-                    if (AudioManager.Instance != null)
-                    {
-                        AudioManager.Instance.PlayRandomChaosSound();
-                    }
-                    else
-                    {
-                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-                    }
+                AudioManager.Instance.PlayRandomChaosSound();
             }
-            else if (randomEffect < 0.65f) // 15% шанс - FireText
+            else if (randomEffect < 0.65f) // 15% шанс - мигание текста
             {
                 Debug.Log("<color=white>Хаос: FireText эффект!</color>");
                 if (_cachedFireText != null)
                 {
                     var currentTask = TaskSystem.TaskManager.Instance?.GetCurrentTask();
-                    string taskText = currentTask != null ? currentTask.Description : "Current Task"; // Используйте Title или Description
-
-                    // 2. Запускаем FireText, передавая исходный текст
+                    string taskText = currentTask != null ? currentTask.Description : "Current Task"; 
                     _cachedFireText.Fire(taskText);
-                    
-                    Debug.Log($"<color=green>Хаос: FireText запущен для задачи: {taskText}!</color>");
                 
+                    Debug.Log($"<color=green>Хаос: FireText запущен для задачи: {taskText}!</color>");
                 }
                 else
                 {
                     Debug.LogError("<color=red>Fire_text не найден!</color>");
                 }
             }
-            else if (randomEffect < 0.80f) // 15% шанс - мигание (ScreenFliskers)
+            else if (randomEffect < 0.75f) // 10% шанс - мигание (ScreenFliskers)
             {
                 Debug.Log("<color=white>Хаос: Мигание экрана!</color>");
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlayRandomChaosSound();
-                }
-                else
-                {
-                    Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-                }
+                AudioManager.Instance.PlayRandomChaosSound();
                 if (_cachedScreenFliskers != null)
                 {
                     _cachedScreenFliskers.Start_flickers();
@@ -476,23 +534,13 @@ namespace Bunny {
                     Debug.LogError("<color=red>ScreenFliskers не найден!</color>");
                 }
             }
-            else if (randomEffect < 0.90f) // 10% шанс - Эффект сердцебиения
+            else if (randomEffect < 0.90f) // 15% шанс - Эффект сердцебиения
             {
-                // [ИСПРАВЛЕНИЕ ОШИБКИ] Вызываем через StaticBlink с параметрами для "сердцебиения"
-                // Предполагаем, что ScreenFadeManager умеет передавать параметры в ScreenBlinker.Blink(duration, count, color)
                 if (Shaders.ScreenEffects.ScreenFadeManager.Instance != null)
                 {
-                    // Длительность 0.3, 2 пульса, цвет по умолчанию
                     Debug.Log("<color=green> Вызван Эффект серцебиения </color>");
                     Shaders.ScreenEffects.ScreenFadeManager.Instance.BlinkScreen(0.3f, 2, Color.red);
-                    if (AudioManager.Instance == null)
-                    {
-                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден!...</color>");
-                    }
-                    else
-                    {
-                        AudioManager.Instance.PlaySoundByName("heartbeat");
-                    }
+                    AudioManager.Instance.PlaySoundByName("heartbeat");
                     
                 }
                 else
@@ -503,25 +551,15 @@ namespace Bunny {
             else // 10% шанс - звуковой эффект
             {
                 Debug.Log("<color=white>Хаос: Случайный звуковой эффект!</color>");
-                if (AudioManager.Instance == null)
-                    {
-                        Debug.LogError("<color=red>Bunny: AudioManager.Instance не найден! Невозможно воспроизвести звук хаоса.</color>");
-                        return;
-                    }
-                    else
-                    {
-                        AudioManager.Instance.PlayRandomSpecialSFX();
-                        Debug.Log("<color=green>! 10% шанс - звуковой эффект !</color>");
-                    }
+                AudioManager.Instance.PlayRandomSpecialSFX();
             }
             
-            // [!] ДОПОЛНИТЕЛЬНЫЕ ЭФФЕКТЫ С ШАНСОМ 30%
             if (UnityEngine.Random.value < 0.3f) // 30% шанс на дополнительный эффект
             {
                 Debug.Log("<color=white>Дополнительный эффект хаоса!</color>");
                 float extraEffect = UnityEngine.Random.value;
                 
-                if (extraEffect < 0.5f) // 50% из 30% - ScreenShake
+                if (extraEffect < 0.5f) // 50%  - тряска экрана
                 {
                     ScreenShake extraShake = FindAnyObjectByType<ScreenShake>();
                     if (extraShake != null)
@@ -530,15 +568,14 @@ namespace Bunny {
                         Debug.Log("<color=white>Хаос: Дополнительная тряска экрана!</color>");
                     }
                 }
-                else // 50% из 30% - FireText
+                else // 50% - мигание текста
                 {
                     Fire_text extraFireText = FindAnyObjectByType<Fire_text>();
                     if (extraFireText != null)
                     {
                         var currentTask = TaskSystem.TaskManager.Instance?.GetCurrentTask();
-                        string taskText = currentTask != null ? currentTask.Description : "Current Task"; // Используйте Title или Description
+                        string taskText = currentTask != null ? currentTask.Description : "Current Task";
 
-                        // 2. Запускаем FireText, передавая исходный текст
                         _cachedFireText.Fire(taskText);
                         
                         Debug.Log($"<color=green>Хаос: FireText запущен для задачи: {taskText}!</color>");
@@ -548,7 +585,10 @@ namespace Bunny {
             }
         }
 
-        // Обновленная корутина для затемнения экрана
+        /// <summary>
+        /// Быстрое затемнение и осветление экрана с использованием ScreenFadeManager.
+        /// Создает эффект мигания для усиления хаотического воздействия.
+        /// </summary>
         private IEnumerator QuickDarkenAndLighten()
         {
             if (ScreenFadeManager.Instance == null)
@@ -567,29 +607,36 @@ namespace Bunny {
             ScreenFadeManager.StaticFadeOut(1f);
         }
 
+        /// <summary>
+        /// Восстанавливает нормальную скорость игры после временного замедления.
+        /// </summary>
         private void ResetTimeScale()
         {
             Time.timeScale = 1f;
         }
     
-        // ========== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ==========
-    
+        /// <summary>
+        /// Устанавливает видимость кролика.
+        /// </summary>
+        /// <param name="visible">Флаг видимости.</param>
         private void SetVisible(bool visible)
         {
             _spriteRenderer.enabled = visible;
-        
-            // Можно включить/выключить все дочерние объекты
-            foreach (Transform child in transform)
-            {
-                child.gameObject.SetActive(visible);
-            }
         }
 
+        /// <summary>
+        /// Обработчик событий завершения или провала задания.
+        /// </summary>
+        /// <param name="task">Задание, которое было завершено или провалено.</param>
         private void OnTaskCompletedHandler(TaskSystem.BureaucraticTask task)
         {
             ChangeToNoTask();
         }
 
+        /// <summary>
+        /// Сбрасывает состояние наличия активного задания.
+        /// Вызывается при завершении задания для подготовки к следующему появлению кролика.
+        /// </summary>
         public void ChangeToNoTask()
         {
             _isTaskPresent = false;

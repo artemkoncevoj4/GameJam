@@ -3,22 +3,30 @@ using TaskSystem;
 
 namespace InteractiveObjects
 {
+    // Муштаков А.Ю.
+
+    /// <summary>
+    /// Станция для сдачи документов, производная от базового класса Workstation.
+    /// Отвечает за обработку сдачи документов на проверку и взаимодействие с TaskManager.
+    /// </summary>
     public class SubmitStation : Workstation
     {
         [Header("Настройки сдачи")]
-        [SerializeField] private AudioClip _submitSound;
-        [SerializeField] private ParticleSystem _submitEffect;
+        [SerializeField] private AudioClip _submitSound; 
+        [SerializeField] private ParticleSystem _submitEffect; 
         
-        public string GetInteractionHint()
+        /// <summary>
+        /// Возвращает текстовую подсказку для взаимодействия со станцией.
+        /// </summary>
+        /// <returns>Строка с текстом подсказки.</returns>
+        public string GetInteractionHint() //TODO Должна быть как диалоговое окно снизу при приближении к станции (не реализовано)
         {
             return "Сдать документ (E)";
         }
-
-        public bool CanInteract()
-        {
-            return TaskManager.Instance != null && TaskManager.Instance.IsTaskActive;
-        }
         
+        /// <summary>
+        /// Выполняет взаимодействие со станцией: отправляет текущий документ на проверку через TaskManager.
+        /// </summary>
         public override void UseStation()
         {
             if (TaskManager.Instance == null)
@@ -30,42 +38,22 @@ namespace InteractiveObjects
             if (!TaskManager.Instance.IsTaskActive)
             {
                 Debug.Log("Нет активного задания");
-                PlayFailEffects();
                 return;
             }
             
             // Сдаем документ
             TaskManager.Instance.SubmitDocument();
             
-            // Эффекты
-            PlaySubmitEffects();
-            
             Debug.Log("Документ отправлен на проверку");
         }
         
+        /// <summary>
+        /// Сбрасывает состояние станции. 
+        /// В данной реализации не требует дополнительных действий, так как станция не имеет сложного состояния.
+        /// </summary>
         public override void ResetTable()
         {
             // Простая станция не имеет состояния
-        }
-        
-        private void PlaySubmitEffects()
-        {
-            if (_submitSound != null)
-                AudioSource.PlayClipAtPoint(_submitSound, transform.position);
-            
-            if (_submitEffect != null)
-                _submitEffect.Play();
-        }
-        
-        private void PlayFailEffects()
-        {
-            // Просто звук ошибки
-            if (_submitSound != null)
-            {
-                AudioSource audioSource = GetComponent<AudioSource>();
-                if (audioSource != null)
-                    audioSource.PlayOneShot(_submitSound);
-            }
         }
     }
 }

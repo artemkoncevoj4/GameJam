@@ -1,21 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 using SampleScene;
+
+// Муштаков А.Ю.
+
+/// <summary>
+/// Централизованный обработчик ввода, управляющий игровыми действиями через клавиатуру.
+/// Реализует паттерн Singleton для глобального доступа к состоянию ввода и событиям ввода.
+/// </summary>
 public class InputHandler : MonoBehaviour
 {
+    /// <summary>
+    /// Статический экземпляр для реализации паттерна Singleton.
+    /// Обеспечивает глобальный доступ к обработчику ввода из любых частей кода.
+    /// </summary>
     public static InputHandler Instance { get; private set; }
-    public event Action OnInteractPressed;
-    public event Action OnPausePressed;
-    public event Action OnCancelPressed;
     
-    // Для отладки/тестирования
-    public event Action OnDebugKeyPressed;
-    
-    // Состояние
+    /// <summary>
+    /// Флаг, указывающий, активен ли ввод в данный момент.
+    /// Когда false, все обработки ввода игнорируются.
+    /// </summary>
     private bool _inputEnabled = true;
     
+    /// <summary>
+    /// Инициализирует Singleton при создании объекта.
+    /// Уничтожает дублирующиеся экземпляры для обеспечения единственности.
+    /// </summary>
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -26,22 +35,23 @@ public class InputHandler : MonoBehaviour
         Instance = this;
     }
     
+    //! Метод сгенерирован ИИ
+
+    /// <summary>
+    /// Обрабатывает ввод с клавиатуры каждый кадр.
+    /// Проверяет нажатия клавиш и вызывает соответствующие события.
+    /// Содержит специальную логику для обработки паузы с поиском PauseMenu в сцене.
+    /// </summary>
     void Update()
     {
         if (!_inputEnabled) return;
         
-        // Основные игровые действия
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            OnInteractPressed?.Invoke();
-        }
         
-        // Обработка паузы - ИСПРАВЛЕННАЯ ЛОГИКА
+        // Обработка паузы
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Debug.Log("ESC pressed");
             
-            // Попробуем найти меню паузы, если оно еще не инициализировано
             if (PauseMenu.Instance == null)
             {
                 Debug.LogWarning("<color=yellow>PauseMenu.Instance is null, trying to find it...</color>");
@@ -62,25 +72,22 @@ public class InputHandler : MonoBehaviour
                 Debug.LogError("<color=red>PauseMenu.Instance is null! Cannot pause game.</color>");
             }
             
-            // Также вызываем событие для других систем
-            OnPausePressed?.Invoke();
-        }
-        
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            OnCancelPressed?.Invoke();
-        }
-        
-        // Для тестирования (можно быстро вызывать Кролика)
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-            OnDebugKeyPressed?.Invoke();
         }
     }
     
+    /// <summary>
+    /// Включает обработку ввода.
+    /// </summary>
     public void EnableInput() => _inputEnabled = true;
+    
+    /// <summary>
+    /// Отключает обработку ввода.
+    /// </summary>
     public void DisableInput() => _inputEnabled = false;
     
-    // Публичные геттеры для проверки состояния
+    /// <summary>
+    /// Возвращает текущее состояние обработки ввода.
+    /// </summary>
+    /// <value>True, если ввод включен, иначе False.</value>
     public bool IsInputEnabled => _inputEnabled;
 }

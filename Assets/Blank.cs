@@ -1,57 +1,74 @@
 using UnityEngine;
 using TaskSystem;
-using System;
 using InteractiveObjects;
+
+// Муштаков А.Ю.
+
+/// <summary>
+/// Класс, представляющий отдельный бланк для выбора типа бумаги.
+/// Обрабатывает взаимодействие с бланком через мышь и обновляет глобальное состояние выбора.
+/// </summary>
 public class Blank : MonoBehaviour
 {
     [Header("Настройки бланка")]
-    public string stampName = "Бланк";
-    [SerializeField] private PaperType _paperType = PaperType.Бланк_формы_7_Б;
-    private float hoverScale = 1.1f;
-    private float clickScale = 0.95f;
+    [SerializeField] private PaperType _paperType = PaperType.Бланк_формы_7_Б; // Тип бумаги, представленный этим бланком
     
-    private Vector2 originalScale;
-    private SpriteRenderer spriteRenderer;
-    public static event Action<PaperType> OnBlankUpdate;
+    private float hoverScale = 1.1f; // Масштаб при наведении курсора
+    private float clickScale = 0.95f; // Масштаб при клике
+    private Vector2 originalScale; // Исходный масштаб объекта
+
+    /// <summary>
+    /// Инициализирует компоненты и сохраняет исходные значения.
+    /// </summary>
     void Start()
     {
         // Сохраняем оригинальные значения
         originalScale = transform.localScale;
-        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     
+    /// <summary>
+    /// Обрабатывает клик мыши по бланку.
+    /// Устанавливает выбранный тип бумаги и обновляет глобальное состояние.
+    /// </summary>
     void OnMouseDown()
     {
-        // Обработка клика
-        Debug.Log($"Кликнут штамп: {stampName}");
-        //? paper. DONE?
         AudioManager.Instance?.PlaySoundByName("paper");
 
-        // Визуальная обратная связь
         transform.localScale = originalScale * clickScale;
         ResetBlank();
+        
         BlankTable.paperType = _paperType;
-        OnBlankUpdate?.Invoke(_paperType);
         BlankTable.shouldCoroutineStop = true;
     }
     
+    /// <summary>
+    /// Восстанавливает исходный масштаб после отпускания кнопки мыши.
+    /// </summary>
     void OnMouseUp()
     {
-
         transform.localScale = originalScale;
     }
     
+    /// <summary>
+    /// Увеличивает масштаб бланка при наведении курсора.
+    /// </summary>
     void OnMouseEnter()
     {
-
         transform.localScale = originalScale * hoverScale;
     }
     
+    /// <summary>
+    /// Восстанавливает исходный масштаб при уходе курсора с бланка.
+    /// </summary>
     void OnMouseExit()
     {
         transform.localScale = originalScale;
     }
     
+    /// <summary>
+    /// Сбрасывает состояние текущего документа к значениям по умолчанию для выбранного типа бумаги.
+    /// Обновляет все свойства документа в соответствии с выбранным бланком.
+    /// </summary>
     private void ResetBlank()
     {
         Document _currDoc = TaskManager.Instance.GetCurrentDocument();
@@ -62,10 +79,14 @@ public class Blank : MonoBehaviour
         _currDoc.IsStamped = false;
         _currDoc.InkColor = InkColor.Зеленые;
     }
+    
+    /// <summary>
+    /// Сбрасывает глобальное состояние при уничтожении объекта.
+    /// Важно для предотвращения сохранения устаревших значений между сессиями.
+    /// </summary>
     void OnDestroy()
     {
         BlankTable.paperType = PaperType.Бланк_формы_7_Б;
         BlankTable.shouldCoroutineStop = false;
     }
-    
 }

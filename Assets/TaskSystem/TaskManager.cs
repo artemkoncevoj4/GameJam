@@ -5,8 +5,18 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Player;
 namespace TaskSystem {
+
+    // Муштаков А.Ю.
+
+    /// <summary>
+    /// Управляет системой заданий в игре, включая генерацию, отслеживание и валидацию задач.
+    /// Реализует паттерн Singleton для централизованного управления заданиями.
+    /// </summary>
     public class TaskManager : MonoBehaviour
     {
+        /// <summary>
+        /// Статический экземпляр для реализации паттерна Singleton.
+        /// </summary>
         public static TaskManager Instance { get; private set; }
 
         [Header("Настройки заданий")]
@@ -23,25 +33,40 @@ namespace TaskSystem {
         [Header("Рабочие станции")]
         [SerializeField] private List<InteractiveObjects.Workstation> _workstations = new List<InteractiveObjects.Workstation>();
 
-        // Текущее состояние
         private TaskSystem.BureaucraticTask _currentTask = null;
         private TaskSystem.Document _currentDocument = null;
         private int _totalTasksCompleted = 0;
         private float _currentTaskTimeLimit;
         private bool _isTaskActive = false;
 
-        // События
+        /// <summary>
+        /// Событие создания нового задания.
+        /// </summary>
         public event Action<TaskSystem.BureaucraticTask> OnNewTask;
+        
+        /// <summary>
+        /// Событие успешного выполнения задания.
+        /// </summary>
         public event Action<TaskSystem.BureaucraticTask> OnTaskCompleted;
+        
+        /// <summary>
+        /// Событие провала задания.
+        /// </summary>
         public event Action<TaskSystem.BureaucraticTask> OnTaskFailed;
+        
+        /// <summary>
+        /// Событие искажения задания кроликом.
+        /// </summary>
         public event Action<TaskSystem.BureaucraticTask> OnTaskCorrupted;
+        
+        /// <summary>
+        /// Событие обновления таймера задания.
+        /// </summary>
         public event Action<float> OnTaskTimerUpdated;
 
-        public string ReturnTaskTime()
-        {
-            return Convert.ToString(_currentTaskTimeLimit);
-        }
-
+        /// <summary>
+        /// Инициализирует Singleton и обеспечивает единственность экземпляра.
+        /// </summary>
         void Awake()
         {
             if (Instance != null && Instance != this)
@@ -51,18 +76,26 @@ namespace TaskSystem {
             }
             Instance = this;
             
-            Debug.Log("<color=green>TaskManager: Awake called, Instance set</color>");
+            //Debug.Log("<color=green>TaskManager: Awake called, Instance set</color>");
         }
 
+        /// <summary>
+        /// Настраивает начальные параметры и подписывается на события кролика.
+        /// </summary>
         void Start()
         {
-            Debug.Log("<color=green>TaskManager: Start called</color>");
+            //Debug.Log("<color=green>TaskManager: Start called</color>");
             
             _currentTaskTimeLimit = _baseTaskTime;
             
             StartCoroutine(FindBunnyAndSubscribe());
         }
-
+        
+        //! Метод написан ИИ
+        
+        /// <summary>
+        /// Находит объект кролика в сцене и подписывается на его события.
+        /// </summary>
         private IEnumerator FindBunnyAndSubscribe()
         {
             yield return new WaitForSeconds(0.1f);
@@ -70,15 +103,18 @@ namespace TaskSystem {
             var bunny = FindAnyObjectByType<Bunny.Bunny>();
             if (bunny != null)
             {
-                Debug.Log("<color=green>TaskManager: Found Bunny, subscribing to events</color>");
+                //Debug.Log("<color=green>TaskManager: Found Bunny, subscribing to events</color>");
                 bunny.OnRabbitActive += HandleRabbitInterference;
             }
             else
             {
-                Debug.LogWarning("<color=red>TaskManager: Bunny not found in scene</color>");
+                //Debug.LogWarning("<color=red>TaskManager: Bunny not found in scene</color>");
             }
         }
 
+        /// <summary>
+        /// Отписывается от событий кролика при уничтожении объекта.
+        /// </summary>
         void OnDestroy()
         {
             if (Bunny.Bunny.Instance != null)
@@ -87,6 +123,9 @@ namespace TaskSystem {
             }
         }
 
+        /// <summary>
+        /// Обновляет таймер задания и проверяет истечение времени.
+        /// </summary>
         void Update()
         {
             if (GameCycle.Instance == null || GameCycle.Instance.CurrentState != GameCycle.GameState.Playing)
@@ -97,16 +136,20 @@ namespace TaskSystem {
                 if (_currentTask.UpdateTimer(Time.deltaTime))
                 {
                     FailCurrentTask("Время вышло!");
-                    // [!] Важно: при провале по времени сразу обновляем UI
                     OnTaskTimerUpdated?.Invoke(0f);
                 }
                 else
                 {
-                    // [!] Всегда обновляем UI с текущим временем
                     OnTaskTimerUpdated?.Invoke(_currentTask.TimeRemaining);
                 }
             }
         }
+        
+        //! Метод написан ИИ с изменением _currentTaskTimeLimit
+
+        /// <summary>
+        /// Создает и запускает новое задание со случайными параметрами.
+        /// </summary>
         public void StartNewTask()
         {
             if (_isTaskActive)
@@ -137,10 +180,13 @@ namespace TaskSystem {
             Debug.Log($"<color=cyan>Новое задание: {_currentTask.Title}</color>");
             Debug.Log($"<color=white>{_currentTask.Description}</color>");
             Debug.Log($"<color=white>время: {_currentTaskTimeLimit} </color>");
-            // [!] ВАЖНО: Принудительно обновляем UI
+            
             StartCoroutine(ForceUIUpdate());
         }
         
+        /// <summary>
+        /// Принудительно обновляет пользовательский интерфейс после создания задания.
+        /// </summary>
         private IEnumerator ForceUIUpdate()
         {
             yield return new WaitForSeconds(0.1f);
@@ -154,6 +200,10 @@ namespace TaskSystem {
             Debug.Log("<color=cyan>TaskManager: UI обновлен после создания задания</color>");
         }
 
+        /// <summary>
+        /// Генерирует случайные требования к документу.
+        /// </summary>
+        /// <returns>Сгенерированные требования DocumentRequirement.</returns>
         private TaskSystem.DocumentRequirement GenerateRandomRequirements()
         {
             TaskSystem.DocumentRequirement req = new TaskSystem.DocumentRequirement();
@@ -169,6 +219,12 @@ namespace TaskSystem {
             return req;
         }
 
+        //! Метод написан ИИ
+
+        /// <summary>
+        /// Возвращает случайный заголовок для задания.
+        /// </summary>
+        /// <returns>Строка с названием задания.</returns>
         private string GetRandomTaskTitle()
         {
             string[] titles = {
@@ -185,63 +241,9 @@ namespace TaskSystem {
         }
 
 
-        private void UpdateDocumentFromUsage(string stationType, string itemType)
-        {
-            if (_currentDocument == null) return;
-
-            if (itemType.Contains("ink"))
-            {
-                _currentDocument.InkColor = itemType switch
-                {
-                    "ink_black" => TaskSystem.InkColor.Черные,
-                    "ink_red" => TaskSystem.InkColor.Красные,
-                    "ink_green" => TaskSystem.InkColor.Зеленые,
-                    "ink_purple" => TaskSystem.InkColor.Фиолетовые,
-                    _ => _currentDocument.InkColor
-                };
-            }
-            else if (itemType.Contains("form") || itemType.Contains("parchment") || itemType.Contains("card"))
-            {
-                _currentDocument.PaperType = itemType switch
-                {
-                    "form_7b" => TaskSystem.PaperType.Бланк_формы_7_Б,
-                    "form_aay" => TaskSystem.PaperType.Бланк_формы_АА_Я,
-                    "parchment" => TaskSystem.PaperType.Пергамент,
-                    "card" => TaskSystem.PaperType.Карточка,
-                    _ => _currentDocument.PaperType
-                };
-            }
-
-            if (stationType == "signing_desk")
-            {
-                _currentDocument.IsSigned = true;
-                if (_currentTask != null)
-                {
-                    _currentDocument.StampPos = _currentTask.Requirements.requiredStampPos;
-                }
-            }
-            else if (stationType.Contains("stamping_desk") && itemType.Contains("stamp"))
-            {
-                _currentDocument.IsStamped = true;
-                _currentDocument.StampType = itemType switch
-                {
-                    "stamp_approve" => TaskSystem.StampType.Одобрено,
-                    "stamp_reject" => TaskSystem.StampType.Отклонено,
-                    "stamp_review" => TaskSystem.StampType.На_рассмотрении,
-                    "stamp_official" => TaskSystem.StampType.Официальная_печать,
-                    "stamp_secret" => TaskSystem.StampType.Секретная_печать,
-                    _ => _currentDocument.StampType
-                };
-            }
-
-            Debug.Log($"<color=yellow>Документ обновлен: Чернила={_currentDocument.InkColor}, Подпись={_currentDocument.IsSigned}, Штамп={_currentDocument.IsStamped}</color>");
-        }
-
-        private void CheckTaskRequirements()
-        {
-            if (_currentTask == null || _currentTask.IsCompleted) return;
-        }
-
+        /// <summary>
+        /// Отправляет документ на проверку и завершает задание.
+        /// </summary>
         public void SubmitDocument()
         {
             if (_currentTask == null || _currentTask.IsCompleted || _currentTask.IsFailed)
@@ -268,6 +270,9 @@ namespace TaskSystem {
             }
         }
 
+        /// <summary>
+        /// Завершает текущее задание как успешно выполненное.
+        /// </summary>
         private void CompleteCurrentTask()
         {
             _currentTask.Complete();
@@ -286,6 +291,9 @@ namespace TaskSystem {
             }
         }
 
+        /// <summary>
+        /// Проваливает текущее задание с указанной причиной.
+        /// </summary>
         private void FailCurrentTask(string reason)
         {
             _currentTask.Fail();
@@ -302,6 +310,9 @@ namespace TaskSystem {
             }
         }
 
+        /// <summary>
+        /// Обрабатывает вмешательство кролика, искажающего требования задания.
+        /// </summary>
         public void HandleRabbitInterference()
         {
             if (_currentTask != null && !_currentTask.IsCompleted)
@@ -309,8 +320,8 @@ namespace TaskSystem {
                 _currentTask.Corrupt();
                 OnTaskCorrupted?.Invoke(_currentTask);
 
-                Debug.Log("<color=yellow>Кролик изменил требования задания!</color>");
-                Debug.Log($"<color=white>Новые требования: {_currentTask.Description}</color>");
+                //Debug.Log("<color=yellow>Кролик изменил требования задания!</color>");
+                //Debug.Log($"<color=white>Новые требования: {_currentTask.Description}</color>");
 
                 if (GameCycle.Instance != null)
                 {
@@ -319,49 +330,55 @@ namespace TaskSystem {
             }
         }
 
+        /// <summary>
+        /// Возвращает текущее активное задание.
+        /// </summary>
+        /// <returns>Текущее задание BureaucraticTask или null.</returns>
         public TaskSystem.BureaucraticTask GetCurrentTask()
         {
             return _currentTask;
         }
 
+        /// <summary>
+        /// Возвращает общее количество выполненных заданий.
+        /// </summary>
+        /// <returns>Количество завершенных заданий.</returns>
         public int GetCompletedTasks()
         {
             return _totalTasksCompleted;
         }
 
+        /// <summary>
+        /// Возвращает заголовок текущего задания.
+        /// </summary>
+        /// <returns>Заголовок задания или null.</returns>
         public string GetTaskTitle()
         {
             return _currentTask?.Title;
         }
 
+        /// <summary>
+        /// Возвращает описание текущего задания.
+        /// </summary>
+        /// <returns>Описание задания или null.</returns>
         public string GetTaskDescription()
         {
             return _currentTask?.Description;
         }
 
-        public List<string> GetRequiredItemsForCurrentTask()
-        {
-            List<string> items = new List<string>();
-
-            if (_currentTask != null)
-            {
-                TaskSystem.DocumentRequirement req = _currentTask.Requirements;
-
-                items.Add($"Чернила: {req.requiredInkColor}");
-                items.Add($"Бумага: {req.requiredPaperType}");
-                items.Add($"Подпись: {req.requiredStampPos}");
-                if (req.isStamped)
-                    items.Add($"Штамп: {req.requiredStampType}");
-            }
-
-            return items;
-        }
+        /// <summary>
+        /// Возвращает текущий обрабатываемый документ.
+        /// </summary>
+        /// <returns>Текущий документ Document или null.</returns>
         public Document GetCurrentDocument()
         {
             if (_currentDocument != null) return _currentDocument;
             return null;
         }
 
+        /// <summary>
+        /// Возвращает флаг активности текущего задания.
+        /// </summary>
         public bool IsTaskActive => _isTaskActive;
     }
 }
