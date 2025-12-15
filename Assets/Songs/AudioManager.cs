@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
+// * Буйначева В.А.
+
 public class AudioManager : MonoBehaviour
 {
     // Статическая переменная для доступа к AudioManager из любого места (Singleton Pattern)
@@ -11,10 +13,10 @@ public class AudioManager : MonoBehaviour
     // Ссылки на Audio Source
     [Header("Источники звука")]
     [Tooltip("Источник для коротких звуковых эффектов (PlayOneShot)")]
-    public AudioSource sfxSource; // Главный AudioSource для SFX
+    public AudioSource sfxSource;
     
     [Tooltip("Источник для фоновой музыки")]
-    public AudioSource musicSource; // Второй AudioSource для музыки (Назначается в Inspector)
+    public AudioSource musicSource;
 
     [Header("Настройки Аудио Mixer")]
     [Tooltip("Ссылка на ваш главный Audio Mixer")]
@@ -24,47 +26,22 @@ public class AudioManager : MonoBehaviour
     [Tooltip("Имя группы микшера для музыки")]
     public string musicMixerGroupName = "Music";
 
-    // Основные SFX (примеры)
+
     [Header("1. Основные SFX (по умолчанию)")]
     public AudioClip spawnSound;
     public AudioClip clickSound;
     public AudioClip explosionSound;
-
-    // НОВЫЕ ПОЛЯ ДЛЯ ОСОБЫХ ЗВУКОВ - РАСШИРЕНО ДО 10
     [Header("2. Особые SFX (по триггеру)")]
-    [Tooltip("Специальный звук для действия зайца")]
-    public AudioClip bunnySpecialSound;
-    
-    [Tooltip("Звук активации особого события")]
-    public AudioClip eventActivationSound;
-    
-    [Tooltip("Звук проигрыша/критический SFX")]
-    public AudioClip criticalFailureSound;
-    
-    [Tooltip("Звук достижения успеха")]
+    [Tooltip("Звук сердцебиения")]
     public AudioClip HeartbeatSound;
-    
-    [Tooltip("Звук получения бонуса")]
+    [Tooltip("Звук использования канцелярской ручки")]
     public AudioClip PenSound;
-    
-    [Tooltip("Звук штампа")]
+    [Tooltip("Звук использования штампа")]
     public AudioClip StampSound;
-    
-    [Tooltip("Звук открытия двери/сундука")]
-    public AudioClip PaperRipFastSound;
-    
-    [Tooltip("Звук бумаги")]
+    [Tooltip("Звук разрыва документа (неравильно выполнено задание)")]
+    public AudioClip PaperRipFastSound;    
+    [Tooltip("Звук использования бумаги")]
     public AudioClip PaperSound;
-    
-    [Tooltip("Звук подсказки/напоминания")]
-    public AudioClip hintSound;
-    
-    [Tooltip("Звук завершения уровня")]
-    public AudioClip levelCompleteSound;
-
-    // Словарь для удобного доступа к звукам по имени
-    private Dictionary<string, AudioClip> soundClips;
-
     // Клипы для эффекта Хаоса
     [Header("3. Звуковые Клипы (Хаос)")]
     public AudioClip glitchSfx;
@@ -72,20 +49,18 @@ public class AudioManager : MonoBehaviour
     public AudioClip creepyTensionRise;
     public AudioClip scaryHitsRisers;
     private AudioClip[] chaosClips;
-
     [Header("4. Клипы для СЛУЧАЙНЫХ СПЕЦ. SFX (Хаос)")]
     [Tooltip("Клип 1 из 2 для случайного воспроизведения")]
     public AudioClip specialRandomSFX1; 
-    
     [Tooltip("Клип 2 из 2 для случайного воспроизведения")]
     public AudioClip specialRandomSFX2;
-    
-    private AudioClip[] specialRandomClips; // Новый массив для случайного выбора
-
     // Клип для фоновой музыки
     [Header("5. Музыка")]
     public AudioClip backgroundMusicClip;
 
+
+    private Dictionary<string, AudioClip> soundClips; // Словарь для удобного доступа к звукам по имени
+    private AudioClip[] specialRandomClips; // Массив для случайного выбора спец. звуков
     private void Awake()
     {
         if (Instance == null)
@@ -101,10 +76,9 @@ public class AudioManager : MonoBehaviour
                 Debug.LogError("<color=red>AudioManager: musicSource не назначен в инспекторе!</color>");
             }
 
-            // Назначаем группы микшера
             if (masterMixer != null)
             {
-                // Назначаем группу для SFX
+                
                 if (sfxSource != null)
                 {
                     AudioMixerGroup[] sfxGroups = masterMixer.FindMatchingGroups(sfxMixerGroupName);
@@ -118,7 +92,6 @@ public class AudioManager : MonoBehaviour
                     }
                 }
 
-                // Назначаем группу для Музыки
                 if (musicSource != null)
                 {
                     AudioMixerGroup[] musicGroups = masterMixer.FindMatchingGroups(musicMixerGroupName);
@@ -142,7 +115,9 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
+        /// <summary>
+        /// Инициализации словаря и массивов.
+        /// </summary>
         soundClips = new Dictionary<string, AudioClip>(StringComparer.OrdinalIgnoreCase)
         {
             // Основные SFX
@@ -151,19 +126,11 @@ public class AudioManager : MonoBehaviour
             { "explosion", explosionSound },
 
             // Особые SFX
-            { "bunny", bunnySpecialSound },
-            { "bunnyspecial", bunnySpecialSound },
-            { "event", eventActivationSound },
-            { "eventactivation", eventActivationSound },
-            { "critical", criticalFailureSound },
-            { "criticalfailure", criticalFailureSound },
             { "heartbeat", HeartbeatSound },
             { "pen", PenSound },
             { "paper", PaperSound },
             { "paperripfast", PaperRipFastSound },
-            { "stamp", StampSound },
-            { "hint", hintSound },
-            { "levelcomplete", levelCompleteSound }
+            { "stamp", StampSound }
         };
         
         // Инициализация массива случайных клипов
@@ -182,19 +149,12 @@ public class AudioManager : MonoBehaviour
             scaryHitsRisers
         };
     }
-    
-    // [НОВОЕ] Start для автоматического запуска фоновой музыки
     void Start()
     {
         PlayBackgroundMusic();
     }
-    
-    // =========================================================================================
-    // УНИВЕРСАЛЬНЫЕ МЕТОДЫ ДЛЯ ВОСПРОИЗВЕДЕНИЯ SFX
-    // =========================================================================================
-
     /// <summary>
-    /// Воспроизводит один короткий звуковой клип
+    /// МЕТОДЫ ДЛЯ ВОСПРОИЗВЕДЕНИЯ ЗВУКОВ.
     /// </summary>
     private void PlaySpecificSFX(AudioClip clip)
     {
@@ -214,9 +174,6 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Воспроизводит звук по имени
-    /// </summary>
     public void PlaySoundByName(string soundName)
     {
         if (soundClips.TryGetValue(soundName, out AudioClip clip))
@@ -262,11 +219,7 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("<color=orange>AudioManager: Массив specialRandomClips пуст.</color>");
         }
     }
-    
-    // =========================================================================================
-    // ОСТАЛЬНЫЕ МЕТОДЫ
-    // =========================================================================================
-    
+
     public void PlayBackgroundMusic()
     {
         if (musicSource == null)

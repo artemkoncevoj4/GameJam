@@ -3,8 +3,15 @@ using TMPro;
 using TaskSystem;
 using System.Collections;
 
+// * Жаркова Т.В.
+
 namespace UI
 {
+    /// <summary>
+    /// Компонент для отображения текущего бюрократического задания в пользовательском интерфейсе.
+    /// Управляет отображением текста задания, его цветом в зависимости от статуса (срочное, измененное)
+    /// и эффектами плавного появления/исчезновения и свечения.
+    /// </summary>
     public class TaskDisplayUI : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _taskText;
@@ -15,7 +22,10 @@ namespace UI
         [SerializeField] private Color _urgentColor = new Color(1f, 0.2f, 0.2f, 1f); // Красный для срочных
         [SerializeField] private Color _corruptedColor = new Color(1f, 1f, 0f, 1f); // Желтый для измененных
 
-         [Header("Связь с FireText")]
+         /// <summary>
+         /// Ссылка на эффект "горящего текста" (FireText).
+         /// </summary>
+        [Header("Связь с FireText")]
         [SerializeField] private Shaders.ScreenEffects.Fire_text _fireTextEffect;
 
         [Header("Эффекты")]
@@ -30,6 +40,9 @@ namespace UI
         private BureaucraticTask _pendingTask = null; // Задание в ожидании
         private bool _waitingForDialogueEnd = false; // Флаг ожидания окончания диалога
         
+        /// <summary>
+        /// Вызывается при запуске сцены. Инициализирует состояние UI и запускает процесс подписки.
+        /// </summary>
         void Start()
         {
             // Начинаем с прозрачного текста
@@ -49,6 +62,9 @@ namespace UI
             Invoke(nameof(Initialize), 0.5f);
         }
         
+        /// <summary>
+        /// Вызывается при включении объекта. Повторно подписывается на события, если это необходимо.
+        /// </summary>
         void OnEnable()
         {
             if (!_isSubscribed)
@@ -57,16 +73,25 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Вызывается при выключении объекта. Отписывается от событий TaskManager.
+        /// </summary>
         void OnDisable()
         {
             UnsubscribeFromEvents();
         }
         
+        /// <summary>
+        /// Вызывается при уничтожении объекта. Отписывается от событий TaskManager.
+        /// </summary>
         void OnDestroy()
         {
             UnsubscribeFromEvents();
         }
         
+        /// <summary>
+        /// Вызывается каждый кадр. Проверяет, закончился ли диалог, чтобы отобразить задание в ожидании.
+        /// </summary>
         void Update()
         {
             // Проверяем, закончился ли диалог зайца, если мы ждем
@@ -83,6 +108,9 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Инициализирует компонент, пытаясь получить доступ к TaskManager и подписаться на его события.
+        /// </summary>
         private void Initialize()
         {
             // Подписываемся на события TaskManager
@@ -115,6 +143,9 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Подписывается на события TaskManager.
+        /// </summary>
         private void SubscribeToEvents()
         {
             if (_isSubscribed || TaskManager.Instance == null) return;
@@ -127,6 +158,9 @@ namespace UI
             _isSubscribed = true;
         }
         
+        /// <summary>
+        /// Отписывается от событий TaskManager.
+        /// </summary>
         private void UnsubscribeFromEvents()
         {
             if (!_isSubscribed || TaskManager.Instance == null) return;
@@ -139,12 +173,20 @@ namespace UI
             _isSubscribed = false;
         }
         
+        /// <summary>
+        /// Обработчик события появления нового задания.
+        /// </summary>
+        /// <param name="task">Новое задание.</param>
         private void OnNewTask(BureaucraticTask task)
         {
             ShowTask(task);
             Debug.Log($"<color=green>TaskDisplayUI: Новое задание получено: {task.Title}</color>");
         }
         
+        /// <summary>
+        /// Обработчик события успешного завершения задания.
+        /// </summary>
+        /// <param name="task">Завершенное задание.</param>
         private void OnTaskCompleted(BureaucraticTask task)
         {
             HideTask();
@@ -153,6 +195,10 @@ namespace UI
             _waitingForDialogueEnd = false;
         }
         
+        /// <summary>
+        /// Обработчик события провала задания.
+        /// </summary>
+        /// <param name="task">Проваленное задание.</param>
         private void OnTaskFailed(BureaucraticTask task)
         {
             HideTask();
@@ -161,6 +207,10 @@ namespace UI
             _waitingForDialogueEnd = false;
         }
         
+        /// <summary>
+        /// Обработчик события изменения (порчи) задания.
+        /// </summary>
+        /// <param name="task">Измененное задание.</param>
         private void OnTaskCorrupted(BureaucraticTask task)
         {
             // Если задание уже отображается, обновляем его
@@ -176,15 +226,16 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Отображает указанное задание в UI с эффектом плавного появления.
+        /// </summary>
+        /// <param name="task">Задание для отображения.</param>
         private void ShowTask(BureaucraticTask task)
         {
             if (task == null || _taskText == null) return;
             
             UpdateTaskDisplay(task);
-             if (_fireTextEffect != null)
-            {
-               // _fireTextEffect.SetTargetText(_taskText.text);
-            }
+            
             if (_canvasGroup != null)
             {
                 if (_fadeCoroutine != null)
@@ -205,6 +256,9 @@ namespace UI
             Debug.Log($"<color=green>TaskDisplayUI: Показываю задание: {task.Title}</color>");
         }
         
+        /// <summary>
+        /// Скрывает текущее задание из UI с эффектом плавного исчезновения.
+        /// </summary>
         private void HideTask()
         {
             if (!_isVisible) return;
@@ -224,6 +278,10 @@ namespace UI
             Debug.Log("<color=yellow>TaskDisplayUI: Скрываю задание</color>");
         }
         
+        /// <summary>
+        /// Обновляет текстовое содержимое и цвет задания в UI.
+        /// </summary>
+        /// <param name="task">Задание, отображаемое в данный момент.</param>
         private void UpdateTaskDisplay(BureaucraticTask task)
         {
             if (task == null || _taskText == null) return;
@@ -231,10 +289,7 @@ namespace UI
             // Форматируем описание задания
             string description = FormatTaskDescription(task);
             _taskText.text = description;
-             if (_fireTextEffect != null)
-            {
-              //  _fireTextEffect.SetTargetText(description);
-            }
+            
             // Устанавливаем цвет в зависимости от типа задания
             if (task.IsCorrupted)
             {
@@ -250,17 +305,25 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Форматирует описание задания для отображения.
+        /// </summary>
+        /// <param name="task">Задание для форматирования.</param>
+        /// <returns>Отформатированная строка описания.</returns>
         private string FormatTaskDescription(BureaucraticTask task)
         {
             if (task == null) return "Задание не найдено";
             
-            // Получаем чистое описание задания (без дедлайна и меток)
             // Описание уже содержит: "Заполнить {paper} {ink} чернилами. Подпись: {signature}. Штамп: {stamp}."
             
-            // Можем добавить небольшие форматирование
+            // Добавляем завершающую точку, если ее нет, и убираем лишние пробелы.
             return task.Description.TrimEnd(' ', '.') + ".";
         }
         
+        /// <summary>
+        /// Проверяет, активен ли диалог "зайца" (BunnyDialogueManager).
+        /// </summary>
+        /// <returns>True, если диалог активен, иначе False.</returns>
         private bool IsBunnyDialogueActive()
         {
             // Ищем активный BunnyDialogueManager
@@ -272,6 +335,14 @@ namespace UI
             return false;
         }
         
+        /// <summary>
+        /// Корутина для плавного изменения прозрачности (alpha) CanvasGroup.
+        /// </summary>
+        /// <param name="startAlpha">Начальное значение alpha.</param>
+        /// <param name="endAlpha">Конечное значение alpha.</param>
+        /// <param name="duration">Длительность перехода.</param>
+        /// <param name="disableAfterFade">Отключить GameObject после завершения исчезновения.</param>
+        /// <returns>IEnumerator для корутины.</returns>
         private IEnumerator FadeCanvasGroup(float startAlpha, float endAlpha, float duration, bool disableAfterFade = false)
         {
             float elapsedTime = 0f;
@@ -293,6 +364,9 @@ namespace UI
             _fadeCoroutine = null;
         }
         
+        /// <summary>
+        /// Запускает эффект пульсирующего свечения для текста.
+        /// </summary>
         private void StartGlowEffect()
         {
             if (_pulseCoroutine != null)
@@ -301,6 +375,9 @@ namespace UI
             _pulseCoroutine = StartCoroutine(GlowPulseEffect());
         }
         
+        /// <summary>
+        /// Останавливает эффект пульсирующего свечения и сбрасывает силу свечения.
+        /// </summary>
         private void StopGlowEffect()
         {
             if (_pulseCoroutine != null)
@@ -315,10 +392,15 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Корутина для создания эффекта пульсирующего свечения текста.
+        /// </summary>
+        /// <returns>IEnumerator для корутины.</returns>
         private IEnumerator GlowPulseEffect()
         {
             while (true)
             {
+                // Вычисляем силу свечения на основе синусоиды
                 float glow = (Mathf.Sin(Time.time * _pulseSpeed) * 0.5f + 0.5f) * _glowIntensity;
                 
                 if (_taskText != null)
@@ -330,6 +412,11 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Запускает эффект кратковременного пульсации цвета.
+        /// </summary>
+        /// <param name="pulseColor">Цвет пульсации.</param>
+        /// <param name="pulseCount">Количество циклов пульсации.</param>
         private void StartPulseEffect(Color pulseColor, int pulseCount)
         {
             if (_pulseCoroutine != null)
@@ -338,6 +425,9 @@ namespace UI
             _pulseCoroutine = StartCoroutine(ColorPulseEffect(pulseColor, pulseCount));
         }
         
+        /// <summary>
+        /// Останавливает текущий эффект пульсации.
+        /// </summary>
         private void StopPulseEffect()
         {
             if (_pulseCoroutine != null)
@@ -347,6 +437,12 @@ namespace UI
             }
         }
         
+        /// <summary>
+        /// Корутина для создания эффекта кратковременной пульсации цвета текста.
+        /// </summary>
+        /// <param name="pulseColor">Цвет для пульсации.</param>
+        /// <param name="pulseCount">Количество циклов пульсации.</param>
+        /// <returns>IEnumerator для корутины.</returns>
         private IEnumerator ColorPulseEffect(Color pulseColor, int pulseCount)
         {
             Color originalColor = _taskText.color;
@@ -385,7 +481,9 @@ namespace UI
             }
         }
         
-        // Публичный метод для ручного обновления (например, при паузе)
+        /// <summary>
+        /// Публичный метод для принудительного обновления отображения текущего задания.
+        /// </summary>
         public void ForceUpdate()
         {
             if (TaskManager.Instance != null && _isVisible)
@@ -398,7 +496,9 @@ namespace UI
             }
         }
         
-        // Публичный метод для принудительного показа (например, из других скриптов)
+        /// <summary>
+        /// Публичный метод для принудительного отображения текущего задания.
+        /// </summary>
         public void ForceShowCurrentTask()
         {
             if (TaskManager.Instance != null)
